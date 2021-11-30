@@ -32,7 +32,7 @@ const generateBasePrice = () => getRandomInteger(1, 500) * 10;
 export const generateEvent = () => {
   const {dateFrom, dateTo} = generateDate();
   const {offers} = generateOffers();
-  const type = generateType();
+  const travelType = generateType();
 
   return {
     basePrice: generateBasePrice(),
@@ -42,6 +42,6 @@ export const generateEvent = () => {
     id: getRandomInteger(0, 1000000),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers,
-    type,
+    travelType,
   };
 };

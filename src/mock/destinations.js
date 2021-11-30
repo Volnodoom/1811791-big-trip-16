@@ -50,7 +50,7 @@ export const generateDestination = () => {
 
   return {
     description: generateDestinationDescription(),
-    name: generateName(),
+    destinationName: generateName(),
     pictures: new Array(picturesCount).fill().map(generatePicture),
   };
 };
