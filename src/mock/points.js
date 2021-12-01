@@ -29,7 +29,7 @@ const generateDate = () => {
 
 const generateBasePrice = () => getRandomInteger(1, 500) * 10;
 
-export const generateEvent = () => {
+export const generateTravelPoints = () => {
   const {dateFrom, dateTo} = generateDate();
   const {offers} = generateOffers();
   const travelType = generateType();

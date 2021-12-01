@@ -27,9 +27,9 @@ export const createSinglePointDestinationTemplate = (oneTravelPoint) => {
   <div class="event">
     <time class="event__date" datetime="${getTimeYYYYMMDD(dateFrom)}">${getTimeMMDD(dateFrom)}</time>
     <div class="event__type">
-      <img class="event__type-icon" width="42" height="42" src="img/icons/${travelType.replace(travelType[0], travelType[0].toUpperCase())}.png" alt="Event ${travelType.replace()} icon">
+      <img class="event__type-icon" width="42" height="42" src="img/icons/${travelType}.png" alt="Event ${travelType} icon">
     </div>
-    <h3 class="event__title">${travelType.replace()} ${destinationName}</h3>
+    <h3 class="event__title">${travelType.replace(travelType[0], travelType[0].toUpperCase())} ${destinationName}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="${getTimeYYYYMMDDHHMM(dateFrom)}">${getTimeHHMM(dateFrom)}</time>

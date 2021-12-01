@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 const YEAR_FORMAT = 'YYYY';
+const YEAR_FORMAT_SHORT = 'YY';
 const MONTH_NUMBER_FORMAT = 'MM';
 const MONTH_WORDS_FORMAT = 'MMM';
 const DAY_FORMAT = 'DD';
@@ -24,6 +25,7 @@ export const getRandomPositiveFloat = (valueA, valueB, digits = 1) => {
 export const getTimeYYYYMMDD = (data) => dayjs(data).format(`${YEAR_FORMAT}-${MONTH_NUMBER_FORMAT}-${DAY_FORMAT}`);
 export const getTimeHHMM = (data) => dayjs(data).format(`${HOURS_FORMAT}:${MINUTES_FORMAT}`);
 export const getTimeYYYYMMDDHHMM = (data) => dayjs(data).format(`${YEAR_FORMAT}-${MONTH_NUMBER_FORMAT}-${DAY_FORMAT}T${getTimeHHMM(data)}`);
+export const getTimeDDMMYYWithSlashAndHHMM = (data) => dayjs(data).format(`${DAY_FORMAT}/${MONTH_NUMBER_FORMAT}/${YEAR_FORMAT_SHORT} ${getTimeHHMM(data)}`);
 export const getTimeMMDD = (data) => dayjs(data).format(`${MONTH_WORDS_FORMAT} ${DAY_FORMAT}`);
 
 export const durationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).minute() - dayjs(timeStart).minute();

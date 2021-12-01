@@ -29,6 +29,6 @@ export const createPointListDestinationTemplate = (travelPoints) => (
 </form>
 
 <ul class="trip-events__list">
-  ${createSinglePointDestinationTemplate(travelPoints)}
+  ${travelPoints.slice().forEach((oneTravelPoint) => createSinglePointDestinationTemplate(oneTravelPoint))}
 </ul>`
 );
