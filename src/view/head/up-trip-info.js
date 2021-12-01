@@ -1,3 +1,5 @@
+import { getTimeMMDD } from '../../utils';
+
 export const createTripInfoTemplate = (travelPoints) => {
   const LIMIT_TOWN_INFO = 3;
 
@@ -11,7 +13,7 @@ export const createTripInfoTemplate = (travelPoints) => {
   const getTripDescription = () => {
     const resultedDestination = [];
 
-    travelPoints.slice().forEach((point) => resultedDestination.push(point));
+    travelPoints.slice().forEach((point) => resultedDestination.push(point.destination.destinationName));
     return resultedDestination.join(' &mdash; ');
   };
 
@@ -22,7 +24,7 @@ export const createTripInfoTemplate = (travelPoints) => {
     ? getTripDescription()
     : `${travelPoints[0].destination.destinationName}  &mdash; ... &mdash; ${travelPoints[travelPoints.length-1].destination.destinationName}`}
       </h1>
-      <p class="trip-info__dates">${travelPoints[0].dateFrom}&nbsp;&mdash;&nbsp;${travelPoints[travelPoints.length-1].dateTo}</p>
+      <p class="trip-info__dates">${getTimeMMDD(travelPoints[0].dateFrom)}&nbsp;&mdash;&nbsp;${getTimeMMDD(travelPoints[travelPoints.length-1].dateTo)}</p>
     </div>
     <p class="trip-info__cost">
     Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPriceWithoutOffers.reduce(reducer)}</span>

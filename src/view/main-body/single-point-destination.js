@@ -2,7 +2,7 @@ import { durationOfEventInMinutes, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, ge
 
 export const createSinglePointDestinationTemplate = (oneTravelPoint) => {
   const {destinationName} = oneTravelPoint.destination;
-  const {offers} = oneTravelPoint.offers;
+  const {offers} = oneTravelPoint;
   const {
     dateFrom,
     dateTo,
@@ -11,14 +11,18 @@ export const createSinglePointDestinationTemplate = (oneTravelPoint) => {
     isFavorite} = oneTravelPoint;
 
   const getListOfOffers = () => {
+    const result = [];
+
     if (offers) {
       offers
         .slice()
-        .forEach((offer) => `<li class="event__offer">
+        .forEach((offer) => result.push(`<li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
-        </li>`);
+        </li>`));
+
+      return result.join(' ');
     } else {return ' ';}
   };
 

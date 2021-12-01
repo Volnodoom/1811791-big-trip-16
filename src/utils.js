@@ -7,6 +7,7 @@ const MONTH_WORDS_FORMAT = 'MMM';
 const DAY_FORMAT = 'DD';
 const HOURS_FORMAT = 'HH';
 const MINUTES_FORMAT ='mm';
+const MINUTES_FOR_DIFFERENCE = 'm';
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -28,4 +29,4 @@ export const getTimeYYYYMMDDHHMM = (data) => dayjs(data).format(`${YEAR_FORMAT}-
 export const getTimeDDMMYYWithSlashAndHHMM = (data) => dayjs(data).format(`${DAY_FORMAT}/${MONTH_NUMBER_FORMAT}/${YEAR_FORMAT_SHORT} ${getTimeHHMM(data)}`);
 export const getTimeMMDD = (data) => dayjs(data).format(`${MONTH_WORDS_FORMAT} ${DAY_FORMAT}`);
 
-export const durationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).minute() - dayjs(timeStart).minute();
+export const durationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).diff(dayjs(timeStart), MINUTES_FOR_DIFFERENCE);

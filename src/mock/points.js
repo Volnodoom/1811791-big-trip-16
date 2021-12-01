@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import {generateOffers} from './offer';
-import {generateDestination} from './destination';
 import { getRandomInteger } from '../utils';
+import { generateDestination } from './destinations';
+import { generateOffers } from './offers';
 
 
 const generateType = () => {
@@ -31,8 +31,8 @@ const generateBasePrice = () => getRandomInteger(1, 500) * 10;
 
 export const generateTravelPoints = () => {
   const {dateFrom, dateTo} = generateDate();
-  const {offers} = generateOffers();
   const travelType = generateType();
+  const {offers} = generateOffers(travelType);
 
   return {
     basePrice: generateBasePrice(),

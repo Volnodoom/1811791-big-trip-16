@@ -1,7 +1,11 @@
 import { createSinglePointDestinationTemplate } from './single-point-destination';
 
-export const createPointListDestinationTemplate = (travelPoints) => (
-  `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+export const createPointListDestinationTemplate = (travelPoints) => {
+  const result = [];
+
+  travelPoints.slice().forEach((oneTravelPoint) => result.push(createSinglePointDestinationTemplate(oneTravelPoint)));
+
+  return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
   <div class="trip-sort__item  trip-sort__item--day">
     <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" checked>
     <label class="trip-sort__btn" for="sort-day">Day</label>
@@ -29,6 +33,6 @@ export const createPointListDestinationTemplate = (travelPoints) => (
 </form>
 
 <ul class="trip-events__list">
-  ${travelPoints.slice().forEach((oneTravelPoint) => createSinglePointDestinationTemplate(oneTravelPoint))}
-</ul>`
-);
+  ${result.join(' ')}
+</ul>`;
+};
