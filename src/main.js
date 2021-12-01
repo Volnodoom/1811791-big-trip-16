@@ -20,7 +20,7 @@ renderTemplate(siteNavigation, createFiltersTemplate(), RenderPosition.BEFOREEND
 
 renderTemplate(siteMainDataBody, createPointListDestinationTemplate(tripPoints), RenderPosition.BEFOREEND);
 
-const formEditForFirstLine = document.querySelector('.trip-events');
+const formEditForFirstLine = document.querySelector('.trip-events__item');
 
 renderTemplate(formEditForFirstLine, createFormEditingTemplate(tripPoints[0]), RenderPosition.BEFOREEND);
 

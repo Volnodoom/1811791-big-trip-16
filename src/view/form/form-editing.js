@@ -1,5 +1,5 @@
-import { createSectionOfferTemplate } from '../create/form-offer';
-import { createHeaderFormTemplate } from './form-header';
+import { createHeaderFormTemplate } from './header-form';
+import { createSectionOfferTemplate } from './section-offer';
 
 export const createFormEditingTemplate = (oneTravelPoint) => {
   const {description} = oneTravelPoint.destination;
