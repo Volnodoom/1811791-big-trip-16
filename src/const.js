@@ -18,4 +18,5 @@ export const RenderPosition = {
 
 export const NOTHING = 0;
 export const LIMIT_TOWN_INFO = 3;
+export const TRAVEL_POINT_COUNT = 15;
 
