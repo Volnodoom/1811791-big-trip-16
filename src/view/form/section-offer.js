@@ -1,6 +1,5 @@
 export const createSectionOfferTemplate = (oneTravelPoint) => {
   const {offers} = oneTravelPoint;
-  const result = [];
 
   const singleOfferButton = (oneOffer) => {
     const {title, price, id} = oneOffer;
@@ -22,13 +21,13 @@ export const createSectionOfferTemplate = (oneTravelPoint) => {
   </div>`;
   };
 
-  offers.slice().forEach((oneOffer) => result.push(singleOfferButton(oneOffer)));
+  const offerList = offers.map((oneOffer) => singleOfferButton(oneOffer));
 
   return `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
   <div class="event__available-offers">
-    ${result.join(' ')}
+    ${offerList.join(' ')}
   </div>
 </section>`;
 };

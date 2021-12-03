@@ -1,4 +1,4 @@
-export const createFieldsetEventTypeListTemplate = () => (
+export const createEventTypeListTemplate = () => (
   `<div class="event__type-list">
   <fieldset class="event__type-group">
     <legend class="visually-hidden">Event type</legend>

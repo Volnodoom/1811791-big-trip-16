@@ -1,3 +1,4 @@
+import { NOTHING } from '../../const';
 import { createHeaderFormTemplate } from './header-form';
 import { createFormDestinationTemplate } from './section-destination';
 import { createSectionOfferTemplate } from './section-offer';
@@ -12,9 +13,9 @@ export const createFormEditingTemplate = (oneTravelPoint) => {
 
       <section class="event__details">
 
-      ${offers ? createSectionOfferTemplate(oneTravelPoint) : ''}
+      ${offers.length === NOTHING ? '' : createSectionOfferTemplate(oneTravelPoint)}
 
-      ${destination ? createFormDestinationTemplate(oneTravelPoint) : ''}
+      ${destination.length === NOTHING ? '' : createFormDestinationTemplate(oneTravelPoint)}
 
       </section>
     </form>

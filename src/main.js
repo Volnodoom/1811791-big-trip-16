@@ -1,5 +1,6 @@
+import { RenderPosition } from './const';
 import { generateTravelPoints } from './mock/points';
-import { RenderPosition, renderTemplate } from './render';
+import { renderTemplate } from './render';
 import { createFormEditingTemplate } from './view/form/form-editing';
 import { createFiltersTemplate } from './view/head/up-filters';
 import { createMenuTemplate } from './view/head/up-menu';

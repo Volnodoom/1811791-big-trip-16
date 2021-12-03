@@ -1,5 +1,5 @@
 import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
-import { createFieldsetEventTypeListTemplate } from './fieldset-event-type-list';
+import { createEventTypeListTemplate } from './event-type-list';
 
 export const createHeaderFormTemplate = (oneTravelPoint) => {
   const {destinationName} = oneTravelPoint.destination;
@@ -25,7 +25,7 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
       </label>
     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-    ${createFieldsetEventTypeListTemplate()}
+    ${createEventTypeListTemplate()}
 
   </div>
 

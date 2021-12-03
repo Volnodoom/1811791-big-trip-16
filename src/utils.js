@@ -1,32 +1,17 @@
 import dayjs from 'dayjs';
+import { TimeFormat } from './const';
 
-const YEAR_FORMAT = 'YYYY';
-const YEAR_FORMAT_SHORT = 'YY';
-const MONTH_NUMBER_FORMAT = 'MM';
-const MONTH_WORDS_FORMAT = 'MMM';
-const DAY_FORMAT = 'DD';
-const HOURS_FORMAT = 'HH';
-const MINUTES_FORMAT ='mm';
-const MINUTES_FOR_DIFFERENCE = 'm';
-
-export const getRandomInteger = (a = 0, b = 1) => {
+export const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
 
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export const getRandomPositiveFloat = (valueA, valueB, digits = 1) => {
-  const lower = Math.min (Math.abs(valueA), Math.abs(valueB));
-  const upper = Math.max (Math.abs(valueA), Math.abs(valueB));
-  const result = Math.random () * (upper - lower) + lower;
-  return result.toFixed (digits);
-};
+export const getTimeYYYYMMDD = (data) => dayjs(data).format(`${TimeFormat.YEAR_FORMAT}-${TimeFormat.MONTH_NUMBER_FORMAT}-${TimeFormat.DAY_FORMAT}`);
+export const getTimeHHMM = (data) => dayjs(data).format(`${TimeFormat.HOURS_FORMAT}:${TimeFormat.MINUTES_FORMAT}`);
+export const getTimeYYYYMMDDHHMM = (data) => dayjs(data).format(`${TimeFormat.YEAR_FORMAT}-${TimeFormat.MONTH_NUMBER_FORMAT}-${TimeFormat.DAY_FORMAT}T${getTimeHHMM(data)}`);
+export const getTimeDDMMYYWithSlashAndHHMM = (data) => dayjs(data).format(`${TimeFormat.DAY_FORMAT}/${TimeFormat.MONTH_NUMBER_FORMAT}/${TimeFormat.YEAR_FORMAT_SHORT} ${getTimeHHMM(data)}`);
+export const getTimeMMDD = (data) => dayjs(data).format(`${TimeFormat.MONTH_WORDS_FORMAT} ${TimeFormat.DAY_FORMAT}`);
 
-export const getTimeYYYYMMDD = (data) => dayjs(data).format(`${YEAR_FORMAT}-${MONTH_NUMBER_FORMAT}-${DAY_FORMAT}`);
-export const getTimeHHMM = (data) => dayjs(data).format(`${HOURS_FORMAT}:${MINUTES_FORMAT}`);
-export const getTimeYYYYMMDDHHMM = (data) => dayjs(data).format(`${YEAR_FORMAT}-${MONTH_NUMBER_FORMAT}-${DAY_FORMAT}T${getTimeHHMM(data)}`);
-export const getTimeDDMMYYWithSlashAndHHMM = (data) => dayjs(data).format(`${DAY_FORMAT}/${MONTH_NUMBER_FORMAT}/${YEAR_FORMAT_SHORT} ${getTimeHHMM(data)}`);
-export const getTimeMMDD = (data) => dayjs(data).format(`${MONTH_WORDS_FORMAT} ${DAY_FORMAT}`);
-
-export const durationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).diff(dayjs(timeStart), MINUTES_FOR_DIFFERENCE);
+export const durationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).diff(dayjs(timeStart), TimeFormat.MINUTES_FOR_DIFFERENCE);
