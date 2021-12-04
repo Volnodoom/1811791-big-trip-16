@@ -1,11 +1,11 @@
 import { NOTHING, RenderPosition, TRAVEL_POINT_COUNT } from './const';
 import { generateTravelPoints } from './mock/points';
 import { renderTemplate } from './render';
-import { createFormEditingTemplate } from './view/form/form-editing';
+import { createFormEditingTemplate } from './view/form/form-edit-view';
 import { createFiltersTemplate } from './view/head/up-filters';
 import { createMenuTemplate } from './view/head/up-menu';
 import { createTripInfoTemplate } from './view/head/up-trip-info';
-import { createPointListDestinationTemplate } from './view/main-body/points-list-destination';
+import { createPointListDestinationTemplate } from './view/main-body/sorting-list';
 
 const tripPoints = new Array (TRAVEL_POINT_COUNT).fill(' ').map(generateTravelPoints);
 

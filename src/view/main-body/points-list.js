@@ -1,26 +1,28 @@
 import { NOTHING } from '../../const';
+import { createElement } from '../../render';
 import { durationOfEventInMinutes, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
 
-export const createSinglePointDestinationTemplate = (oneTravelPoint) => {
-  const {destinationName} = oneTravelPoint.destination;
-  const {offers} = oneTravelPoint;
-  const {
-    dateFrom,
-    dateTo,
-    travelType,
-    basePrice,
-    isFavorite} = oneTravelPoint;
+const createPointsListTemplate = (travelPoints) => {
+  const getSinglePointTemplate = (oneTravelPoint) => {
+    const {destinationName} = oneTravelPoint.destination;
+    const {offers} = oneTravelPoint;
+    const {
+      dateFrom,
+      dateTo,
+      travelType,
+      basePrice,
+      isFavorite} = oneTravelPoint;
 
-  const offersList = offers
-    .map((offer) => `<li class="event__offer">
+    const offersList = offers
+      .map((offer) => `<li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </li>`)
-    .join(' ');
+      .join(' ');
 
 
-  return `<li class="trip-events__item">
+    return `<li class="trip-events__item">
   <div class="event">
 
     <time
@@ -85,4 +87,38 @@ export const createSinglePointDestinationTemplate = (oneTravelPoint) => {
     </button>
   </div>
 </li>`;
+  };
+
+  const PointsList = travelPoints
+    .map((oneTravelPoint) => getSinglePointTemplate(oneTravelPoint))
+    .join(' ');
+
+  return `<ul class="trip-events__list">
+    ${PointsList}
+  </ul>`;
 };
+
+export default class PointListView {
+  #element = null;
+  #travelPoints = null;
+
+  constructor(travelPoints) {
+    this.#travelPoints = travelPoints;
+  }
+
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createPointsListTemplate(this.#travelPoints);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
