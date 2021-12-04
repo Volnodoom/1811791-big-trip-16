@@ -184,7 +184,7 @@ const createFormDestinationTemplate = (oneTravelPoint) => {
 const createFormEditingTemplate = (oneTravelPoint) => {
   const {destination, offers} = oneTravelPoint;
 
-  return ` <li class="trip-events__item">
+  return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
 
       ${createHeaderFormTemplate(oneTravelPoint)}

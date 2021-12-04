@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { TimeFormat } from './const';
+import { KeyCode, TimeFormat } from './const';
 
 export const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -15,3 +15,5 @@ export const getTimeDDMMYYWithSlashAndHHMM = (data) => dayjs(data).format(`${Tim
 export const getTimeMMDD = (data) => dayjs(data).format(`${TimeFormat.MONTH_WORDS_FORMAT} ${TimeFormat.DAY_FORMAT}`);
 
 export const durationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).diff(dayjs(timeStart), TimeFormat.MINUTES_FOR_DIFFERENCE);
+
+export const isEsc = ({ code }) => code === KeyCode.ESCAPE;
