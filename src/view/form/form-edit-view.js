@@ -1,7 +1,6 @@
-import { NOTHING } from '../../const';
+import { EventDescription, NOTHING } from '../../const';
 import { createElement } from '../../render';
 import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
-import { createEventTypeListTemplate } from './event-type-list-view';
 
 const createHeaderFormTemplate = (oneTravelPoint) => {
   const {destinationName} = oneTravelPoint.destination;
@@ -11,6 +10,23 @@ const createHeaderFormTemplate = (oneTravelPoint) => {
     travelType,
     basePrice,
   } = oneTravelPoint;
+
+  const getSingleEvent = (eventInfo) => (
+    `<div class="event__type-item">
+
+      <input
+        id="event-type-${eventInfo.lowCaseWord}-1"
+        class="event__type-input  visually-hidden"
+        type="radio" name="event-type"
+        value="${eventInfo.lowCaseWord}"
+        />
+
+      <label class="event__type-label  event__type-label--${eventInfo.lowCaseWord}"
+      for="event-type-${eventInfo.lowCaseWord}-1"
+      >${eventInfo.capitalLetterWord}</label>
+
+    </div>`
+  );
 
   return `  <header class="event__header">
   <div class="event__type-wrapper">
@@ -27,7 +43,22 @@ const createHeaderFormTemplate = (oneTravelPoint) => {
       </label>
     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-    ${createEventTypeListTemplate()}
+    <div class="event__type-list">
+      <fieldset class="event__type-group">
+      <legend class="visually-hidden">Event type</legend>
+
+    ${getSingleEvent(EventDescription.TAXI)}
+    ${getSingleEvent(EventDescription.BUS)}
+    ${getSingleEvent(EventDescription.TRAIN)}
+    ${getSingleEvent(EventDescription.SHIP)}
+    ${getSingleEvent(EventDescription.DRIVE)}
+    ${getSingleEvent(EventDescription.FLIGHT)}
+    ${getSingleEvent(EventDescription.CHECK_IN)}
+    ${getSingleEvent(EventDescription.SIGHTSEEING)}
+    ${getSingleEvent(EventDescription.RESTAURANT)}
+
+      </fieldset>
+    </div>
 
   </div>
 
@@ -98,24 +129,6 @@ const createHeaderFormTemplate = (oneTravelPoint) => {
 </header>`;
 };
 
-const createFormDestinationTemplate = (oneTravelPoint) => {
-  const {description, pictures} = oneTravelPoint.destination;
-
-  const pictureList = pictures
-    .map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`);
-
-  return `<section class="event__section  event__section--destination">
-    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${description}</p>
-
-    <div class="event__photos-container">
-      <div class="event__photos-tape">
-        ${pictureList.join(' ')}
-      </div>
-    </div>
-  </section>`;
-};
-
 const createSectionOfferTemplate = (oneTravelPoint) => {
   const {offers} = oneTravelPoint;
 
@@ -150,6 +163,24 @@ const createSectionOfferTemplate = (oneTravelPoint) => {
 </section>`;
 };
 
+const createFormDestinationTemplate = (oneTravelPoint) => {
+  const {description, pictures} = oneTravelPoint.destination;
+
+  const pictureList = pictures
+    .map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`);
+
+  return `<section class="event__section  event__section--destination">
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <p class="event__destination-description">${description}</p>
+
+    <div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${pictureList.join(' ')}
+      </div>
+    </div>
+  </section>`;
+};
+
 const createFormEditingTemplate = (oneTravelPoint) => {
   const {destination, offers} = oneTravelPoint;
 
@@ -162,7 +193,7 @@ const createFormEditingTemplate = (oneTravelPoint) => {
 
       ${offers.length === NOTHING ? '' : createSectionOfferTemplate(oneTravelPoint)}
 
-      ${destination.length === NOTHING ? '' : createFormDestinationTemplate(oneTravelPoint)}
+      ${destination ? createFormDestinationTemplate(oneTravelPoint) : ''}
 
       </section>
     </form>

@@ -31,7 +31,7 @@ const createSortTemplate = () => {
   </form>`;
 };
 
-export default class SortingList {
+export default class SortingListView {
   #element = null;
 
   get element() {

@@ -22,7 +22,7 @@ const createTripInfoTemplate = (travelPoints) => {
   </section>`;
 };
 
-export default class UpTripInfo {
+export default class UpTripInfoView {
   #element = null;
   #travelPoints = null;
 

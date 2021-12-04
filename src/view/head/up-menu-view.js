@@ -7,7 +7,7 @@ const createMenuTemplate = () => (
   </nav>`
 );
 
-export default class UpMenu {
+export default class UpMenuView {
   #element = null;
 
   get element () {
