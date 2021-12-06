@@ -55,14 +55,15 @@ const renderSinglePoint = (container, oneTravelPoint) => {
   singlePointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
     replacePointToFormEdit();
     document.addEventListener('keydown', escKeyDownHandler);
-    pointFormEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', editFormRollUpHandler);
-  });
 
-  pointFormEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    replaceFormEditToPoint();
-    document.removeEventListener('keydown', escKeyDownHandler);
-    pointFormEditComponent.removeElement();
+    pointFormEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', editFormRollUpHandler);
+
+    pointFormEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormEditToPoint();
+      document.removeEventListener('keydown', escKeyDownHandler);
+      pointFormEditComponent.removeElement();
+    });
   });
 
   render(container, singlePointComponent.element, RenderPosition.BEFOREEND);
