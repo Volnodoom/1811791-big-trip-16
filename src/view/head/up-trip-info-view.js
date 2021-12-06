@@ -1,7 +1,8 @@
 import { LIMIT_TOWN_INFO, NOTHING } from '../../const';
+import { createElement } from '../../render';
 import { getTimeMMDD } from '../../utils';
 
-export const createTripInfoTemplate = (travelPoints) => {
+const createTripInfoTemplate = (travelPoints) => {
 
   const totalPriceWithoutAdditionalOffersPrice = travelPoints
     .reduce((accumulator, {basePrice}) => accumulator + basePrice, NOTHING);
@@ -20,3 +21,28 @@ export const createTripInfoTemplate = (travelPoints) => {
     </p>
   </section>`;
 };
+
+export default class UpTripInfoView {
+  #element = null;
+  #travelPoints = null;
+
+  constructor(travelPoints) {
+    this.#travelPoints = travelPoints;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createTripInfoTemplate(this.#travelPoints);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

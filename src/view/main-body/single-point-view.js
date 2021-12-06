@@ -1,10 +1,12 @@
 import { NOTHING } from '../../const';
+import { createElement } from '../../render';
 import { durationOfEventInMinutes, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
 
-export const createSinglePointDestinationTemplate = (oneTravelPoint) => {
+const createSinglePointTemplate = (oneTravelPoint) => {
   const {destinationName} = oneTravelPoint.destination;
   const {offers} = oneTravelPoint;
   const {
+    id,
     dateFrom,
     dateTo,
     travelType,
@@ -20,7 +22,7 @@ export const createSinglePointDestinationTemplate = (oneTravelPoint) => {
     .join(' ');
 
 
-  return `<li class="trip-events__item">
+  return `<li class="trip-events__item" data-pointId="${id}">
   <div class="event">
 
     <time
@@ -86,3 +88,28 @@ export const createSinglePointDestinationTemplate = (oneTravelPoint) => {
   </div>
 </li>`;
 };
+
+export default class SinglePointView {
+  #element = null;
+  #oneTravelPoint = null;
+
+  constructor(oneTravelPoint) {
+    this.#oneTravelPoint = oneTravelPoint;
+  }
+
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createSinglePointTemplate(this.#oneTravelPoint);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

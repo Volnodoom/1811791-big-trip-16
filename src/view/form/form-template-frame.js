@@ -1,5 +1,5 @@
+import { EventDescription } from '../../const';
 import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
-import { createEventTypeListTemplate } from './event-type-list';
 
 export const createHeaderFormTemplate = (oneTravelPoint) => {
   const {destinationName} = oneTravelPoint.destination;
@@ -9,6 +9,23 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
     travelType,
     basePrice,
   } = oneTravelPoint;
+
+  const getSingleEvent = (eventInfo) => (
+    `<div class="event__type-item">
+
+      <input
+        id="event-type-${eventInfo.lowCaseWord}-1"
+        class="event__type-input  visually-hidden"
+        type="radio" name="event-type"
+        value="${eventInfo.lowCaseWord}"
+        />
+
+      <label class="event__type-label  event__type-label--${eventInfo.lowCaseWord}"
+      for="event-type-${eventInfo.lowCaseWord}-1"
+      >${eventInfo.capitalLetterWord}</label>
+
+    </div>`
+  );
 
   return `  <header class="event__header">
   <div class="event__type-wrapper">
@@ -25,7 +42,17 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
       </label>
     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-    ${createEventTypeListTemplate()}
+    <div class="event__type-list">
+      <fieldset class="event__type-group">
+      <legend class="visually-hidden">Event type</legend>
+
+    ${Object
+    .values(EventDescription)
+    .map((description) => getSingleEvent(description))
+    .join(' ')}
+
+      </fieldset>
+    </div>
 
   </div>
 
@@ -94,4 +121,56 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
     <span class="visually-hidden">Open event</span>
   </button>
 </header>`;
+};
+
+export const createSectionOfferTemplate = (oneTravelPoint) => {
+  const {offers} = oneTravelPoint;
+
+  const singleOfferButton = (oneOffer) => {
+    const {title, price, id} = oneOffer;
+
+    return `<div class="event__offer-selector">
+    <input
+    class="event__offer-checkbox  visually-hidden"
+    id="event-offer-luggage-${id}"
+    type="checkbox"
+    name="event-offer-luggage"
+    checked
+    >
+
+    <label class="event__offer-label" for="event-offer-luggage-1">
+      <span class="event__offer-title">${title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${price}</span>
+    </label>
+  </div>`;
+  };
+
+  const offerList = offers.map((oneOffer) => singleOfferButton(oneOffer));
+
+  return `<section class="event__section  event__section--offers">
+  <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+  <div class="event__available-offers">
+    ${offerList.join(' ')}
+  </div>
+</section>`;
+};
+
+export const createFormDestinationTemplate = (oneTravelPoint) => {
+  const {description, pictures} = oneTravelPoint.destination;
+
+  const pictureList = pictures
+    .map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`);
+
+  return `<section class="event__section  event__section--destination">
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <p class="event__destination-description">${description}</p>
+
+    <div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${pictureList.join(' ')}
+      </div>
+    </div>
+  </section>`;
 };
