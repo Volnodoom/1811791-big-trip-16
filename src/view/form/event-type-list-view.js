@@ -23,15 +23,10 @@ const createEventTypeListTemplate = () => {
   <fieldset class="event__type-group">
     <legend class="visually-hidden">Event type</legend>
 
-    ${getSingleEvent(EventDescription.TAXI)}
-    ${getSingleEvent(EventDescription.BUS)}
-    ${getSingleEvent(EventDescription.TRAIN)}
-    ${getSingleEvent(EventDescription.SHIP)}
-    ${getSingleEvent(EventDescription.DRIVE)}
-    ${getSingleEvent(EventDescription.FLIGHT)}
-    ${getSingleEvent(EventDescription.CHECK_IN)}
-    ${getSingleEvent(EventDescription.SIGHTSEEING)}
-    ${getSingleEvent(EventDescription.RESTAURANT)}
+    ${Object
+    .values(EventDescription)
+    .map((description) => getSingleEvent(description))
+    .join(' ')}
 
   </fieldset>
 </div>`;

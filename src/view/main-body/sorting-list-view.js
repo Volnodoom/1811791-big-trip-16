@@ -1,33 +1,41 @@
-import { SortingLabeling } from '../../const';
+import { SortingLabelStartFrame } from '../../const';
 import { createElement } from '../../render';
 
 const createSortTemplate = () => {
-  const getSortingLabel = (sortingInfo, isChecked = false, isDisabled = false) => (
-    `<div class="trip-sort__item  trip-sort__item--${sortingInfo.lowCaseWord}">
+  const getSortingLabel = (sortingInfo) => {
+    const {
+      lowCaseWord,
+      capitalLetterWord,
+      isChecked,
+      isDisabled,
+    } = sortingInfo;
+
+    return `<div class="trip-sort__item  trip-sort__item--${lowCaseWord}">
 
       <input
-        id="sort-${sortingInfo.lowCaseWord}"
+        id="sort-${lowCaseWord}"
         class="trip-sort__input  visually-hidden"
         type="radio" name="trip-sort"
-        value="sort-${sortingInfo.lowCaseWord}"
+        value="sort-${lowCaseWord}"
         ${isChecked ? 'checked' : ''}
         ${isDisabled ? 'disabled' : ''}
       />
 
-      <label class="trip-sort__btn" for="sort-${sortingInfo.lowCaseWord}"
+      <label class="trip-sort__btn" for="sort-${lowCaseWord}"
       >
-      ${sortingInfo.capitalLetterWord}
+      ${capitalLetterWord}
       </label>
 
-    </div>`
-  );
+    </div>`;
+  };
 
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    ${getSortingLabel(SortingLabeling.DAY, true)}
-    ${getSortingLabel(SortingLabeling.EVENT, false, true)}
-    ${getSortingLabel(SortingLabeling.TIME)}
-    ${getSortingLabel(SortingLabeling.PRICE)}
-    ${getSortingLabel(SortingLabeling.OFFERS, false, true)}
+
+  ${Object
+    .values(SortingLabelStartFrame)
+    .map((startFrame) => getSortingLabel(startFrame))
+    .join(' ')}
+
   </form>`;
 };
 

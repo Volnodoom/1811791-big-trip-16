@@ -16,10 +16,11 @@ export const RenderPosition = {
   AFTEREND: 'afterend',
 };
 
-export const FilterLabeling = {
+export const FilterLabelStartFrame  = {
   EVERYTHING: {
     lowCaseWord: 'everything',
     capitalLetterWord: 'Everything',
+    isChecked: true,
   },
   FUTURE: {
     lowCaseWord: 'future',
@@ -31,14 +32,16 @@ export const FilterLabeling = {
   }
 };
 
-export const SortingLabeling = {
+export const SortingLabelStartFrame = {
   DAY: {
     lowCaseWord: 'day',
     capitalLetterWord: 'Day',
+    isChecked: true,
   },
   EVENT: {
     lowCaseWord: 'event',
     capitalLetterWord: 'Event',
+    isDisabled: true,
   },
   TIME: {
     lowCaseWord: 'time',
@@ -51,6 +54,7 @@ export const SortingLabeling = {
   OFFERS: {
     lowCaseWord: 'offer',
     capitalLetterWord: 'Offers',
+    isDisabled: true,
   }
 };
 
@@ -85,7 +89,7 @@ export const EventDescription = {
   },
   SIGHTSEEING: {
     lowCaseWord: 'sightseeing',
-    capitalLetterWord: 'Sightseein',
+    capitalLetterWord: 'Sightseeing',
   },
   RESTAURANT: {
     lowCaseWord: 'restaurant',
