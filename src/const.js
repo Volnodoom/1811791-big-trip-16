@@ -18,15 +18,18 @@ export const RenderPosition = {
 
 export const FilterLabelStartFrame  = {
   EVERYTHING: {
+    filter: 'everything',
     lowCaseWord: 'everything',
     capitalLetterWord: 'Everything',
     isChecked: true,
   },
   FUTURE: {
+    filter: 'future',
     lowCaseWord: 'future',
     capitalLetterWord: 'Future',
   },
   PAST: {
+    filter: 'past',
     lowCaseWord: 'past',
     capitalLetterWord: 'Past',
   }
@@ -95,6 +98,12 @@ export const EventDescription = {
     lowCaseWord: 'restaurant',
     capitalLetterWord: 'Restaurant',
   }
+};
+
+export const EmptyMessageStatement = {
+  EVERYTHING: 'Click New Event to create your first point',
+  PAST: 'There are no past events now',
+  FUTURE: 'There are no future events now',
 };
 
 export const KeyCode = {
