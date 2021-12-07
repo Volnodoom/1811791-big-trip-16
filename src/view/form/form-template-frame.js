@@ -1,4 +1,4 @@
-import { EventDescription } from '../../const';
+import { DataAttributesList, EventDescription } from '../../const';
 import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
 export const createHeaderFormTemplate = (oneTravelPoint) => {
@@ -117,9 +117,15 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
   <button class="event__reset-btn" type="reset">Delete</button>
-  <button class="event__rollup-btn" type="button">
+
+  <button
+  class="event__rollup-btn"
+  type="button"
+  data-btnClick="${DataAttributesList.BUTTON_CLICK.rollupBtnForm}"
+  >
     <span class="visually-hidden">Open event</span>
   </button>
+
 </header>`;
 };
 

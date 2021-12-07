@@ -1,5 +1,5 @@
 import { EventDescription } from '../../const';
-import { createElement } from '../../render';
+import Abstract from '../abstract';
 
 const createEventTypeListTemplate = () => {
   const getSingleEvent = (eventInfo) => (
@@ -32,23 +32,9 @@ const createEventTypeListTemplate = () => {
 </div>`;
 };
 
-export default class EventTypeListView {
-  #element = null;
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class EventTypeListView extends Abstract {
   get template() {
     return createEventTypeListTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 

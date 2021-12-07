@@ -100,6 +100,16 @@ export const EventDescription = {
   }
 };
 
+export const DataAttributesList = {
+  BUTTON_CLICK: {
+    rollupBtnForm: 'rollup-btn-form',
+  },
+};
+
+export const ListOfEventsOn = {
+  ROLLUP_BTN_FORM: 'rollup-btn-form',
+};
+
 export const EmptyMessageStatement = {
   EVERYTHING: 'Click New Event to create your first point',
   PAST: 'There are no past events now',

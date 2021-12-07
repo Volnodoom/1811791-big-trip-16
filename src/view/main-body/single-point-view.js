@@ -1,6 +1,6 @@
 import { NOTHING } from '../../const';
-import { createElement } from '../../render';
 import { durationOfEventInMinutes, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
+import Abstract from '../abstract';
 
 const createSinglePointTemplate = (oneTravelPoint) => {
   const {destinationName} = oneTravelPoint.destination;
@@ -89,27 +89,25 @@ const createSinglePointTemplate = (oneTravelPoint) => {
 </li>`;
 };
 
-export default class SinglePointView {
-  #element = null;
+export default class SinglePointView extends Abstract {
   #oneTravelPoint = null;
 
   constructor(oneTravelPoint) {
+    super();
     this.#oneTravelPoint = oneTravelPoint;
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createSinglePointTemplate(this.#oneTravelPoint);
   }
 
-  removeElement() {
-    this.#element = null;
+  setClickHandler = (callback) =>  {
+    this._callback.clickOnRollUpBtnPoint = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+  }
+
+  #clickHandler = () => {
+    this._callback.clickOnRollUpBtnPoint();
   }
 }
+
