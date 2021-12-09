@@ -1,6 +1,6 @@
 import { LIMIT_TOWN_INFO, NOTHING } from '../../const';
-import { createElement } from '../../render';
 import { getTimeMMDD } from '../../utils';
+import Abstract from '../abstract';
 
 const createTripInfoTemplate = (travelPoints) => {
 
@@ -22,27 +22,15 @@ const createTripInfoTemplate = (travelPoints) => {
   </section>`;
 };
 
-export default class UpTripInfoView {
-  #element = null;
+export default class UpTripInfoView extends Abstract {
   #travelPoints = null;
 
   constructor(travelPoints) {
+    super();
     this.#travelPoints = travelPoints;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createTripInfoTemplate(this.#travelPoints);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

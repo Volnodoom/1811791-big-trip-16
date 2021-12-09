@@ -1,4 +1,4 @@
-import { createElement } from '../../render';
+import Abstract from '../abstract';
 
 const createMenuTemplate = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -7,22 +7,8 @@ const createMenuTemplate = () => (
   </nav>`
 );
 
-export default class UpMenuView {
-  #element = null;
-
-  get element () {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class UpMenuView extends Abstract {
   get template() {
     return createMenuTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

@@ -1,5 +1,5 @@
 import { FilterLabelStartFrame } from '../../const';
-import { createElement } from '../../render';
+import Abstract from '../abstract';
 
 const createFiltersTemplate = () => {
   const getSingleFilterDescription = (filterInfo) => {
@@ -35,22 +35,8 @@ const createFiltersTemplate = () => {
   </form>`;
 };
 
-export default class UpFiltersView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class UpFiltersView extends Abstract{
   get template() {
     return createFiltersTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

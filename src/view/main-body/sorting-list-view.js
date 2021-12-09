@@ -1,5 +1,5 @@
 import { SortingLabelStartFrame } from '../../const';
-import { createElement } from '../../render';
+import Abstract from '../abstract';
 
 const createSortTemplate = () => {
   const getSortingLabel = (sortingInfo) => {
@@ -39,22 +39,10 @@ const createSortTemplate = () => {
   </form>`;
 };
 
-export default class SortingListView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class SortingListView extends Abstract{
   get template() {
     return createSortTemplate();
   }
 
-  removeElement() {
-    this.#element = null;
-  }
+
 }
