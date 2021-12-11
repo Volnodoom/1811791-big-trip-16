@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { getRandomInteger } from '../utils';
 import { generateDestination } from './destinations';
 import { generateOffers } from './offers';
+import {nanoid} from 'nanoid';
 
 
 const generateType = () => {
@@ -39,7 +40,7 @@ export const generateTravelPoints = () => {
     dateFrom,
     dateTo,
     destination: generateDestination(),
-    id: getRandomInteger(0, 1000000),
+    id: nanoid(),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers,
     travelType,

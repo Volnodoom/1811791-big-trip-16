@@ -4,6 +4,7 @@ import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
 import PointPresenter from './point-presenter';
+import { updateArrayItem } from '../utils';
 
 export default class TripBoardPresenter {
   #tripBoardContainer = null;
@@ -15,6 +16,8 @@ export default class TripBoardPresenter {
   #tripPointsListComponent = new PointsListView();
 
   #tripPoints = [];
+
+  #storOfPointPresenters = new Map();
 
   constructor(tripBoardContainer) {
     this.#tripBoardContainer = tripBoardContainer;
@@ -51,16 +54,18 @@ export default class TripBoardPresenter {
   }
 
   #renderOneTripPoint = (oneTravelPoint) => {
-    const pointPresenter = new PointPresenter(this.#tripPointsListComponent);
+    const pointPresenter = new PointPresenter(
+      this.#tripPointsListComponent,
+      this.#pointUpdateHandle,
+      this.#changeModeHandle);
     pointPresenter.init(oneTravelPoint);
+    this.#storOfPointPresenters.set(oneTravelPoint.id, pointPresenter);
   }
 
   #renderTripPoints = () => {
-
     render(this.#sortingComponent, this.#tripPointsListComponent, RenderPosition.AFTEREND);
 
     this.#tripPoints.forEach((oneTravelPoint) => this.#renderOneTripPoint(oneTravelPoint));
-
   }
 
   #renderTripBoard = () => {
@@ -73,4 +78,19 @@ export default class TripBoardPresenter {
     this.#renderTripPoints();
 
   }
+
+  #pointUpdateHandle = (update) => {
+    this.#tripPoints = updateArrayItem(this.#tripPoints, update);
+    this.#storOfPointPresenters.get(update.id).init(update);
+  }
+
+  #changeModeHandle = () => {
+    this.#storOfPointPresenters.forEach((presenter) => presenter.resetView());
+  }
+
+  #clearTripBoard = () => {
+    this.#storOfPointPresenters.forEach((presenter) => presenter.destroy());
+    this.#storOfPointPresenters.clear();
+  }
+
 }

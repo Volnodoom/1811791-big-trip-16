@@ -1,4 +1,4 @@
-import { NOTHING } from '../../const';
+import { ListOfEventsOn, NOTHING } from '../../const';
 import { durationOfEventInMinutes, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
 import Abstract from '../abstract';
 
@@ -101,13 +101,30 @@ export default class SinglePointView extends Abstract {
     return createSinglePointTemplate(this.#oneTravelPoint);
   }
 
-  setClickHandler = (callback) =>  {
-    this._callback.clickOnRollUpBtnPoint = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+  setClickHandler = (type, callback) =>  {
+    switch (type) {
+      case ListOfEventsOn.ROLLUP_BTN:
+        this._callback.clickOnRollUpBtnPoint = callback;
+        this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+        break;
+      case ListOfEventsOn.FAVORITE_BTN:
+        this._callback.clickOnFavoriteBtn = callback;
+        this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#clickHandler);
+        break;
+      default:
+        throw new Error('ClickHandler for SINGLE-POINT_VIEW does not contain such TYPE of callback');
+    }
   }
 
-  #clickHandler = () => {
-    this._callback.clickOnRollUpBtnPoint();
+  #clickHandler = (evt) => {
+    switch (true) {
+      case (evt.target.className === 'event__rollup-btn'):
+        this._callback.clickOnRollUpBtnPoint();
+        break;
+      case (evt.target.closest('.event__favorite-btn').className.includes('event__favorite-btn')):
+        this._callback.clickOnFavoriteBtn();
+        break;
+    }
   }
 }
 

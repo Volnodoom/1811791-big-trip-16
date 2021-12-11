@@ -108,6 +108,8 @@ export const DataAttributesList = {
 
 export const ListOfEventsOn = {
   ROLLUP_BTN_FORM: 'rollup-btn-form',
+  ROLLUP_BTN: 'event__rollup-btn',
+  FAVORITE_BTN: 'event__favorite-btn',
 };
 
 export const EmptyMessageStatement = {
@@ -118,6 +120,11 @@ export const EmptyMessageStatement = {
 
 export const KeyCode = {
   ESCAPE: 'Escape',
+};
+
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
 };
 
 export const NOTHING = 0;
