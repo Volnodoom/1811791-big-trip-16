@@ -1,10 +1,10 @@
-import { EmptyMessageStatement, FilterLabelStartFrame, RenderPosition } from '../const';
+import { EmptyMessageStatement, FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame } from '../const';
 import { render } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
 import PointPresenter from './point-presenter';
-import { updateArrayItem } from '../utils';
+import { sortDate, sortDuration, sortPrice, updateArrayItem } from '../utils';
 
 export default class TripBoardPresenter {
   #tripBoardContainer = null;
@@ -18,6 +18,7 @@ export default class TripBoardPresenter {
   #tripPoints = [];
 
   #storOfPointPresenters = new Map();
+  #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
 
   constructor(tripBoardContainer) {
     this.#tripBoardContainer = tripBoardContainer;
@@ -29,9 +30,8 @@ export default class TripBoardPresenter {
   }
 
   #renderSort = () => {
-
     render(this.#tripBoardContainer, this.#sortingComponent, RenderPosition.BEFOREEND);
-
+    this.#sortingComponent.setSortTypeChangeHandler(this.#changeSortTypeHandle);
   }
 
   #renderNoPoints = () => {
@@ -82,6 +82,34 @@ export default class TripBoardPresenter {
   #pointUpdateHandle = (update) => {
     this.#tripPoints = updateArrayItem(this.#tripPoints, update);
     this.#storOfPointPresenters.get(update.id).init(update);
+  }
+
+  #sortPoints = (sortType) => {
+    switch (sortType) {
+      case SortingLabelStartFrame.DAY.lowCaseWord:
+        this.#tripPoints.sort(sortDate);
+        break;
+      case SortingLabelStartFrame.TIME.lowCaseWord:
+        this.#tripPoints.sort(sortDuration);
+        break;
+      case SortingLabelStartFrame.PRICE.lowCaseWord:
+        this.#tripPoints.sort(sortPrice);
+        break;
+      default:
+        throw new Error('Please, specify your Sorting time in TRIP-BOARD-PRESENTER file!');
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #changeSortTypeHandle = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearTripBoard();
+    this.#renderTripBoard();
   }
 
   #changeModeHandle = () => {

@@ -32,3 +32,12 @@ export const updateArrayItem = (items, update) => {
   ];
 };
 
+export const sortDate = (point) => dayjs(point.dateFrom).diff(dayjs());
+
+export const sortDuration = (pointA, pointB) => {
+  const valueA = durationOfEventInMinutes(pointA.dateFrom, pointA.dateTo);
+  const valueB = durationOfEventInMinutes(pointB.dateFrom, pointB.dateTo);
+  return valueB-valueA;
+};
+
+export const sortPrice = (pointA, pointB) => pointB.basePrice-pointA.basePrice;
