@@ -17,7 +17,7 @@ export default class TripBoardPresenter {
 
   #tripPoints = [];
 
-  #storOfPointPresenters = new Map();
+  #pointPresentersStore = new Map();
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
 
   constructor(tripBoardContainer) {
@@ -31,7 +31,7 @@ export default class TripBoardPresenter {
 
   #renderSort = () => {
     render(this.#tripBoardContainer, this.#sortingComponent, RenderPosition.BEFOREEND);
-    this.#sortingComponent.setSortTypeChangeHandler(this.#changeSortTypeHandle);
+    this.#sortingComponent.setSortTypeChangeHandler(this.#handleSortChange);
   }
 
   #renderNoPoints = () => {
@@ -56,10 +56,10 @@ export default class TripBoardPresenter {
   #renderOneTripPoint = (oneTravelPoint) => {
     const pointPresenter = new PointPresenter(
       this.#tripPointsListComponent,
-      this.#pointUpdateHandle,
-      this.#changeModeHandle);
+      this.#handlePointUpdate,
+      this.#handleChangeMode);
     pointPresenter.init(oneTravelPoint);
-    this.#storOfPointPresenters.set(oneTravelPoint.id, pointPresenter);
+    this.#pointPresentersStore.set(oneTravelPoint.id, pointPresenter);
   }
 
   #renderTripPoints = () => {
@@ -79,9 +79,9 @@ export default class TripBoardPresenter {
 
   }
 
-  #pointUpdateHandle = (update) => {
+  #handlePointUpdate = (update) => {
     this.#tripPoints = updateArrayItem(this.#tripPoints, update);
-    this.#storOfPointPresenters.get(update.id).init(update);
+    this.#pointPresentersStore.get(update.id).init(update);
   }
 
   #sortPoints = (sortType) => {
@@ -102,7 +102,7 @@ export default class TripBoardPresenter {
     this.#currentSortType = sortType;
   }
 
-  #changeSortTypeHandle = (sortType) => {
+  #handleSortChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
@@ -112,13 +112,13 @@ export default class TripBoardPresenter {
     this.#renderTripBoard();
   }
 
-  #changeModeHandle = () => {
-    this.#storOfPointPresenters.forEach((presenter) => presenter.resetView());
+  #handleChangeMode = () => {
+    this.#pointPresentersStore.forEach((presenter) => presenter.resetView());
   }
 
   #clearTripBoard = () => {
-    this.#storOfPointPresenters.forEach((presenter) => presenter.destroy());
-    this.#storOfPointPresenters.clear();
+    this.#pointPresentersStore.forEach((presenter) => presenter.destroy());
+    this.#pointPresentersStore.clear();
   }
 
 }

@@ -45,11 +45,10 @@ export default class PointPresenter {
     }
 
     remove(prevPointFormEditComponent);
-    remove(prevPointFormEditComponent);
   }
 
   #setHandlersOnSinglePoint = () => {
-    this.#singlePointComponent.setClickHandler(ListOfEventsOn.FAVORITE_BTN, this.#favoriteClickHandle);
+    this.#singlePointComponent.setClickHandler(ListOfEventsOn.FAVORITE_BTN, this.#handleFavoriteClick);
     this.#singlePointComponent.setClickHandler(ListOfEventsOn.ROLLUP_BTN, () => {
       this.#openForm();
       this.#setHandlersOnFormEdit();
@@ -74,7 +73,7 @@ export default class PointPresenter {
     this.#mode = Mode.EDITING;
   };
 
-  #favoriteClickHandle = () => {
+  #handleFavoriteClick = () => {
     this.#updateData({
       ...this.#oneTravelPoint,
       isFavorite: !this.#oneTravelPoint.isFavorite,

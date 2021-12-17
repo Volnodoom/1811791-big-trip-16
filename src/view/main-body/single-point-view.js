@@ -75,6 +75,7 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     <button
     class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ' '}"
     type="button"
+    data-favorite-btn="${ListOfEventsOn.FAVORITE_BTN}"
     >
     <span class="visually-hidden">Add to favorite</span>
       <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -82,7 +83,11 @@ const createSinglePointTemplate = (oneTravelPoint) => {
       </svg>
     </button>
 
-    <button class="event__rollup-btn" type="button">
+    <button
+    class="event__rollup-btn"
+    type="button"
+    data-single-rollup="${ListOfEventsOn.ROLLUP_BTN}"
+    >
       <span class="visually-hidden">Open event</span>
     </button>
   </div>
@@ -118,10 +123,10 @@ export default class SinglePointView extends Abstract {
 
   #clickHandler = (evt) => {
     switch (true) {
-      case (evt.target.className === 'event__rollup-btn'):
+      case (evt.target.dataset.singleRollup === ListOfEventsOn.ROLLUP_BTN):
         this._callback.clickOnRollUpBtnPoint();
         break;
-      case (evt.target.closest('.event__favorite-btn').className.includes('event__favorite-btn')):
+      case (evt.currentTarget.dataset.favoriteBtn === ListOfEventsOn.FAVORITE_BTN):
         this._callback.clickOnFavoriteBtn();
         break;
     }
