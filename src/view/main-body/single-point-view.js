@@ -1,4 +1,4 @@
-import { NOTHING } from '../../const';
+import { ListOfEventsOn, NOTHING } from '../../const';
 import { durationOfEventInMinutes, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
 import Abstract from '../abstract';
 
@@ -75,6 +75,7 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     <button
     class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ' '}"
     type="button"
+    data-favorite-btn="${ListOfEventsOn.FAVORITE_BTN}"
     >
     <span class="visually-hidden">Add to favorite</span>
       <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -82,7 +83,11 @@ const createSinglePointTemplate = (oneTravelPoint) => {
       </svg>
     </button>
 
-    <button class="event__rollup-btn" type="button">
+    <button
+    class="event__rollup-btn"
+    type="button"
+    data-single-rollup="${ListOfEventsOn.ROLLUP_BTN}"
+    >
       <span class="visually-hidden">Open event</span>
     </button>
   </div>
@@ -101,13 +106,30 @@ export default class SinglePointView extends Abstract {
     return createSinglePointTemplate(this.#oneTravelPoint);
   }
 
-  setClickHandler = (callback) =>  {
-    this._callback.clickOnRollUpBtnPoint = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+  setClickHandler = (type, callback) =>  {
+    switch (type) {
+      case ListOfEventsOn.ROLLUP_BTN:
+        this._callback.clickOnRollUpBtnPoint = callback;
+        this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+        break;
+      case ListOfEventsOn.FAVORITE_BTN:
+        this._callback.clickOnFavoriteBtn = callback;
+        this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#clickHandler);
+        break;
+      default:
+        throw new Error('ClickHandler for SINGLE-POINT_VIEW does not contain such TYPE of callback');
+    }
   }
 
-  #clickHandler = () => {
-    this._callback.clickOnRollUpBtnPoint();
+  #clickHandler = (evt) => {
+    switch (true) {
+      case (evt.target.dataset.singleRollup === ListOfEventsOn.ROLLUP_BTN):
+        this._callback.clickOnRollUpBtnPoint();
+        break;
+      case (evt.currentTarget.dataset.favoriteBtn === ListOfEventsOn.FAVORITE_BTN):
+        this._callback.clickOnFavoriteBtn();
+        break;
+    }
   }
 }
 

@@ -21,7 +21,10 @@ const createSortTemplate = () => {
         ${isDisabled ? 'disabled' : ''}
       />
 
-      <label class="trip-sort__btn" for="sort-${lowCaseWord}"
+      <label
+      class="trip-sort__btn"
+      for="sort-${lowCaseWord}"
+      data-sort-type="${lowCaseWord}"
       >
       ${capitalLetterWord}
       </label>
@@ -44,5 +47,12 @@ export default class SortingListView extends Abstract{
     return createSortTemplate();
   }
 
+  setSortTypeChangeHandler = (callback) => {
+    this._callback.sortTypeChange = callback;
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+  }
 
+  #sortTypeChangeHandler = (evt) => {
+    this._callback.sortTypeChange(evt.target.dataset.sortType);
+  }
 }
