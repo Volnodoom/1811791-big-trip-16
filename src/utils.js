@@ -32,7 +32,7 @@ export const updateArrayItem = (items, update) => {
   ];
 };
 
-export const sortDate = (point) => dayjs(point.dateFrom).diff(dayjs());
+export const sortDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 
 export const sortDuration = (pointA, pointB) => {
   const valueA = durationOfEventInMinutes(pointA.dateFrom, pointA.dateTo);

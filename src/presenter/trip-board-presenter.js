@@ -26,6 +26,7 @@ export default class TripBoardPresenter {
 
   init = (travelPoints) => {
     this.#tripPoints = [...travelPoints];
+    this.#sortPoints(SortingLabelStartFrame.DAY.lowCaseWord);
     this.#renderTripBoard();
   }
 
