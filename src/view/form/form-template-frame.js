@@ -1,4 +1,4 @@
-import { DataAttributesList, EventDescription } from '../../const';
+import { EventDescription, ListOfEventsOn } from '../../const';
 import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
 export const createHeaderFormTemplate = (oneTravelPoint) => {
@@ -22,6 +22,7 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
 
       <label class="event__type-label  event__type-label--${eventInfo.lowCaseWord}"
       for="event-type-${eventInfo.lowCaseWord}-1"
+      data-event-type = "${ListOfEventsOn.EVENT_TYPE}"
       >${eventInfo.capitalLetterWord}</label>
 
     </div>`
@@ -57,7 +58,9 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
   </div>
 
   <div class="event__field-group  event__field-group--destination">
-    <label class="event__label  event__type-output" for="event-destination-1">
+    <label class="event__label  event__type-output"
+    for="event-destination-1"
+    data-destination-point="${ListOfEventsOn.DESTINATION_POINT}">
     ${travelType.replace(travelType[0], travelType[0].toUpperCase())}
     </label>
 
@@ -121,7 +124,7 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
   <button
   class="event__rollup-btn"
   type="button"
-  data-btnClick="${DataAttributesList.BUTTON_CLICK.rollupBtnForm}"
+  data-close-rollup-form="${ListOfEventsOn.CLOSE_ROLLUP_BTN}"
   >
     <span class="visually-hidden">Open event</span>
   </button>

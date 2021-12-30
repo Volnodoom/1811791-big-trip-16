@@ -57,7 +57,9 @@ export default class PointPresenter {
 
   #setHandlersOnFormEdit = () => {
     this.#pointFormEditComponent.setEscPressHandler(this.#closeForm);
-    this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.ROLLUP_BTN_FORM, this.#closeForm);
+    this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CLOSE_ROLLUP_BTN, this.#closeForm);
+    this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.EVENT_TYPE, this.#updateEventType);
+    this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.DESTINATION_POINT, this.#updateDestinationPoint);
     this.#pointFormEditComponent.setSubmitHandler(this.#closeForm);
   }
 
@@ -65,6 +67,16 @@ export default class PointPresenter {
     replace(this.#singlePointComponent, this.#pointFormEditComponent);
     remove(this.#pointFormEditComponent);
     this.#mode = Mode.DEFAULT;
+  };
+
+  #updateEventType = (data) => {
+    // this.#pointFormEditComponent.updateData({
+    //   travelType: data,
+    // });
+  };
+
+  #updateDestinationPoint = (data) => {
+
   };
 
   #openForm = () => {

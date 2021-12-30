@@ -1,6 +1,7 @@
-import { DataAttributesList, ListOfEventsOn, NOTHING } from '../../const';
+import { ListOfEventsOn, NOTHING } from '../../const';
 import { isEsc } from '../../utils';
-import Abstract from '../abstract';
+
+import Smart from '../smart';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
 
 const createFormEditingTemplate = (oneTravelPoint) => {
@@ -22,11 +23,10 @@ const createFormEditingTemplate = (oneTravelPoint) => {
 </li>`;
 };
 
-export default class FormEditView extends Abstract{
+export default class FormEditView extends Smart {
   constructor(oneTravelPoint) {
     super();
     this._data = FormEditView.parsePointInformationToData(oneTravelPoint);
-
   }
 
   get template() {
@@ -35,8 +35,14 @@ export default class FormEditView extends Abstract{
 
   setClickHandler = (type, callback) =>  {
     switch (type) {
-      case ListOfEventsOn.ROLLUP_BTN_FORM:
+      case ListOfEventsOn.CLOSE_ROLLUP_BTN:
         this._callback.clickOnRollUpBtnForm = callback;
+        break;
+      case ListOfEventsOn.EVENT_TYPE:
+        this._callback.clickOnEventTypeBtn = callback;
+        break;
+      case ListOfEventsOn.DESTINATION_POINT:
+        this._callback.clickOnDestinationPoint = callback;
         break;
       default:
         throw new Error('ClickHandler does not contain such TYPE of callback');
@@ -46,22 +52,32 @@ export default class FormEditView extends Abstract{
   }
 
   #clickHandler = (evt) => {
-    switch (evt.target.getAttribute('data-btnClick')) {
-      case DataAttributesList.BUTTON_CLICK.rollupBtnForm:
+    switch (true) {
+      case (evt.target.dataset.closeRollupForm === ListOfEventsOn.CLOSE_ROLLUP_BTN):
         this._callback.clickOnRollUpBtnForm();
+        document.removeEventListener('keydown', this.#escPressHandler);
+        break;
+      case (evt.target.dataset.eventType === ListOfEventsOn.EVENT_TYPE):
+        this._callback.clickOnEventTypeBtn(evt.target.textContent);
+        this.updateData({travelType: evt.target.textContent});
+        break;
+      case (evt.target.dataset.destinationPoint === ListOfEventsOn.DESTINATION_POINT):
+        this._callback.clickOnDestinationPoint();
+        console.log('You have pressed Destination type CHANGE button');
         break;
     }
   }
 
   setEscPressHandler = (callback) => {
     this._callback.pressEscape = callback;
-    this.element.addEventListener('keydown', this.#escPressHandler);
+    document.addEventListener('keydown', this.#escPressHandler);
   }
 
   #escPressHandler = (evt) => {
     if (isEsc(evt)) {
       evt.preventDefault();
       this._callback.pressEscape();
+      document.removeEventListener('keydown', this.#escPressHandler);
     }
   }
 
@@ -75,6 +91,11 @@ export default class FormEditView extends Abstract{
     this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
   }
 
+  restoreHandlers = () => {
+    this.element.addEventListener('click', this.#clickHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
+  }
+
   static parsePointInformationToData = (pointInfo) => ({
     ...pointInfo,
     hasOptions: pointInfo.offers.length !== NOTHING ?? false,
@@ -86,5 +107,25 @@ export default class FormEditView extends Abstract{
     delete point.hasOptions;
 
     return point;
+  }
+
+  updateData = (update) => {
+    if (!update) {
+      return;
+    }
+
+    this._data = {...this._data, ...update};
+    this.updateElement();
+  }
+
+  updateElement = () => {
+    const prevElement = this.element;
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.element;
+    parent.replaceChild(newElement, prevElement);
+
+    this.restoreHandlers();
   }
 }

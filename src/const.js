@@ -100,16 +100,12 @@ export const EventDescription = {
   }
 };
 
-export const DataAttributesList = {
-  BUTTON_CLICK: {
-    rollupBtnForm: 'rollup-btn-form',
-  },
-};
-
 export const ListOfEventsOn = {
-  ROLLUP_BTN_FORM: 'rollup-btn-form',
+  CLOSE_ROLLUP_BTN: 'rollup-btn-form',
   ROLLUP_BTN: 'event__rollup-btn',
   FAVORITE_BTN: 'event__favorite-btn',
+  EVENT_TYPE: 'event__type  event__type-btn',
+  DESTINATION_POINT: 'event__field-group  event__field-group--destination',
 };
 
 export const EmptyMessageStatement = {
