@@ -1,8 +1,10 @@
 import { ListOfEventsOn, NOTHING } from '../../const';
 import { isEsc } from '../../utils';
-
 import Smart from '../smart';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
+import flatpickr from 'flatpickr';
+
+import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createFormEditingTemplate = (oneTravelPoint) => {
   const {destination, hasOptions} = oneTravelPoint;
@@ -24,11 +26,15 @@ const createFormEditingTemplate = (oneTravelPoint) => {
 };
 
 export default class FormEditView extends Smart {
+  #datapickerStart = null;
+  #datapickerEnd = null;
+
   constructor(oneTravelPoint) {
     super();
     this._data = FormEditView.parsePointInformationToData(oneTravelPoint);
 
     this.#setInnerClickHandler();
+    this.#setDatepicker();
   }
 
   get template() {
@@ -66,7 +72,6 @@ export default class FormEditView extends Smart {
         this.updateData({travelType: evt.target.textContent});
         break;
       case (evt.target.dataset.destinationPoint === ListOfEventsOn.DESTINATION_POINT):
-        console.log('You have pressed Destination type CHANGE button');
         break;
     }
   }
@@ -95,16 +100,57 @@ export default class FormEditView extends Smart {
     document.removeEventListener('keydown', this.#escPressHandler);
   }
 
+  #setDatepicker = () => {
+    this.#datapickerStart = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/Y H:m',
+        'time_24hr': true,
+        defaultDate: this._data.dateFrom,
+        onChange: this.#startDateChangeHandler,
+      },
+    );
+
+    this.#datapickerEnd = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/Y H:m',
+        'time_24hr': true,
+        defaultDate: this._data.dateTo,
+        onChange: this.#endDateChangeHandler,
+      },
+    );
+  }
+
+  #startDateChangeHandler = ([userDate]) => {
+    this.updateData({dateFrom: userDate});
+  }
+
+  #endDateChangeHandler = ([userDate]) => {
+    this.updateData({dateTo: userDate});
+  }
+
   restoreHandlers = () => {
+    this.removeDatapicker();
     this.element.addEventListener('click', this.#clickHandler);
     this.#setInnerClickHandler();
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
+    this.#setDatepicker();
   }
 
   reset = (point) => {
     this.updateData(
       FormEditView.parsePointInformationToData(point),
     );
+  }
+
+  removeDatapicker = () => {
+    this.#datapickerStart.destroy();
+    this.#datapickerStart = null;
+    this.#datapickerEnd.destroy();
+    this.#datapickerEnd = null;
   }
 
   static parsePointInformationToData = (pointInfo) => ({

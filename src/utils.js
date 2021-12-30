@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { KeyCode, TimeFormat } from './const';
+import { KeyCode, ONE_HOUR, TimeFormat, TWENTY_FOUR_HOURS } from './const';
 
 export const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -15,6 +15,17 @@ export const getTimeDDMMYYWithSlashAndHHMM = (data) => dayjs(data).format(`${Tim
 export const getTimeMMDD = (data) => dayjs(data).format(`${TimeFormat.MONTH_WORDS_FORMAT} ${TimeFormat.DAY_FORMAT}`);
 
 export const durationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).diff(dayjs(timeStart), TimeFormat.MINUTES_FOR_DIFFERENCE);
+
+export const durationOfOnePointEvent = (difference) => {
+  switch (true) {
+    case (difference < ONE_HOUR) :
+      return `${difference}M`;
+    case (difference < TWENTY_FOUR_HOURS) :
+      return `${Math.floor(difference/ONE_HOUR)}H ${difference%ONE_HOUR}M`;
+    case (difference >= TWENTY_FOUR_HOURS) :
+      return `${Math.floor(difference/TWENTY_FOUR_HOURS)}D ${Math.floor(difference%TWENTY_FOUR_HOURS/ONE_HOUR)}H ${difference%TWENTY_FOUR_HOURS%ONE_HOUR}M`;
+  }
+};
 
 export const isEsc = ({ code }) => code === KeyCode.ESCAPE;
 
