@@ -27,22 +27,18 @@ export default class FormEditView extends Smart {
   constructor(oneTravelPoint) {
     super();
     this._data = FormEditView.parsePointInformationToData(oneTravelPoint);
+
+    this.#setInnerClickHandler();
   }
 
   get template() {
     return createFormEditingTemplate(this._data);
   }
 
-  setClickHandler = (type, callback) =>  {
+  setClickHandler = (type, callback = null) =>  {
     switch (type) {
       case ListOfEventsOn.CLOSE_ROLLUP_BTN:
         this._callback.clickOnRollUpBtnForm = callback;
-        break;
-      case ListOfEventsOn.EVENT_TYPE:
-        this._callback.clickOnEventTypeBtn = callback;
-        break;
-      case ListOfEventsOn.DESTINATION_POINT:
-        this._callback.clickOnDestinationPoint = callback;
         break;
       default:
         throw new Error('ClickHandler does not contain such TYPE of callback');
@@ -57,12 +53,19 @@ export default class FormEditView extends Smart {
         this._callback.clickOnRollUpBtnForm();
         document.removeEventListener('keydown', this.#escPressHandler);
         break;
+    }
+  }
+
+  #setInnerClickHandler = () => {
+    this.element.addEventListener('click', this.#innerClickHandler);
+  }
+
+  #innerClickHandler = (evt) => {
+    switch (true) {
       case (evt.target.dataset.eventType === ListOfEventsOn.EVENT_TYPE):
-        this._callback.clickOnEventTypeBtn(evt.target.textContent);
         this.updateData({travelType: evt.target.textContent});
         break;
       case (evt.target.dataset.destinationPoint === ListOfEventsOn.DESTINATION_POINT):
-        this._callback.clickOnDestinationPoint();
         console.log('You have pressed Destination type CHANGE button');
         break;
     }
@@ -89,11 +92,19 @@ export default class FormEditView extends Smart {
   #submitHandler = (evt) => {
     evt.preventDefault();
     this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
+    document.removeEventListener('keydown', this.#escPressHandler);
   }
 
   restoreHandlers = () => {
     this.element.addEventListener('click', this.#clickHandler);
+    this.#setInnerClickHandler();
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
+  }
+
+  reset = (point) => {
+    this.updateData(
+      FormEditView.parsePointInformationToData(point),
+    );
   }
 
   static parsePointInformationToData = (pointInfo) => ({
@@ -107,25 +118,5 @@ export default class FormEditView extends Smart {
     delete point.hasOptions;
 
     return point;
-  }
-
-  updateData = (update) => {
-    if (!update) {
-      return;
-    }
-
-    this._data = {...this._data, ...update};
-    this.updateElement();
-  }
-
-  updateElement = () => {
-    const prevElement = this.element;
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.element;
-    parent.replaceChild(newElement, prevElement);
-
-    this.restoreHandlers();
   }
 }
