@@ -4,7 +4,7 @@ import Abstract from '../abstract';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
 
 const createFormEditingTemplate = (oneTravelPoint) => {
-  const {destination, offers} = oneTravelPoint;
+  const {destination, hasOptions} = oneTravelPoint;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -13,7 +13,7 @@ const createFormEditingTemplate = (oneTravelPoint) => {
 
       <section class="event__details">
 
-      ${offers.length === NOTHING ? '' : createSectionOfferTemplate(oneTravelPoint)}
+      ${hasOptions ? createSectionOfferTemplate(oneTravelPoint) : ''}
 
       ${destination ? createFormDestinationTemplate(oneTravelPoint) : ''}
 
@@ -23,15 +23,14 @@ const createFormEditingTemplate = (oneTravelPoint) => {
 };
 
 export default class FormEditView extends Abstract{
-  #oneTravelPoint = null;
-
   constructor(oneTravelPoint) {
     super();
-    this.#oneTravelPoint = oneTravelPoint;
+    this._data = FormEditView.parsePointInformationToData(oneTravelPoint);
+
   }
 
   get template() {
-    return createFormEditingTemplate(this.#oneTravelPoint);
+    return createFormEditingTemplate(this._data);
   }
 
   setClickHandler = (type, callback) =>  {
@@ -73,6 +72,19 @@ export default class FormEditView extends Abstract{
 
   #submitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.submitClick();
+    this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
+  }
+
+  static parsePointInformationToData = (pointInfo) => ({
+    ...pointInfo,
+    hasOptions: pointInfo.offers.length !== NOTHING ?? false,
+  })
+
+  static parseDataToPointInfo = (data) => {
+    const point = {...data};
+
+    delete point.hasOptions;
+
+    return point;
   }
 }
