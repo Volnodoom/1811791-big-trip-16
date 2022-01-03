@@ -6,13 +6,13 @@ import flatpickr from 'flatpickr';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createFormEditingTemplate = (oneTravelPoint) => {
+const createFormEditingTemplate = (oneTravelPoint, destinationList) => {
   const {destination, hasOptions} = oneTravelPoint;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
 
-      ${createHeaderFormTemplate(oneTravelPoint)}
+      ${createHeaderFormTemplate(oneTravelPoint, destinationList)}
 
       <section class="event__details">
 
@@ -29,16 +29,19 @@ export default class FormEditView extends Smart {
   #datapickerStart = null;
   #datapickerEnd = null;
 
-  constructor(oneTravelPoint) {
+  constructor(oneTravelPoint, destinationList) {
     super();
     this._data = FormEditView.parsePointInformationToData(oneTravelPoint);
 
+    this._destinationList = destinationList;
+
     this.#setInnerClickHandler();
+    this.#setInnerChangeHandler();
     this.#setDatepicker();
   }
 
   get template() {
-    return createFormEditingTemplate(this._data);
+    return createFormEditingTemplate(this._data, this._destinationList);
   }
 
   setClickHandler = (type, callback = null) =>  {
@@ -71,9 +74,39 @@ export default class FormEditView extends Smart {
       case (evt.target.dataset.eventType === ListOfEventsOn.EVENT_TYPE):
         this.updateData({travelType: evt.target.textContent});
         break;
-      case (evt.target.dataset.destinationPoint === ListOfEventsOn.DESTINATION_POINT):
-        break;
     }
+  }
+
+  #setInnerChangeHandler = () => {
+    this.element
+      .querySelector('.event__input--destination')
+      .addEventListener('change', this.#innerChangeHandler);
+  }
+
+  #innerChangeHandler = (evt) => {
+    const inputValue = evt.target.value;
+    const list = [];
+
+    this._destinationList.forEach((onePoint) => list.push(onePoint));
+    const hasCity = list.some((onePoint) => onePoint.destination.destinationName === inputValue);
+
+    if (inputValue.length === NOTHING) {
+      evt.target.setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
+    } else if (!hasCity) {
+      evt.target.setCustomValidity('This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive');
+    } else {
+      evt.target.setCustomValidity('');
+      this.updateData(
+        {
+          destination: {
+            description: list.find((onePoint) => onePoint.destination.destinationName === inputValue).description,
+            name: inputValue,
+            pictures: list.find((onePoint) => onePoint.destination.destinationName === inputValue).pictures,
+          },
+        },
+      );
+    }
+    evt.target.reportValidity();
   }
 
   setEscPressHandler = (callback) => {
@@ -133,7 +166,6 @@ export default class FormEditView extends Smart {
   }
 
   restoreHandlers = () => {
-    this.removeDatapicker();
     this.element.addEventListener('click', this.#clickHandler);
     this.#setInnerClickHandler();
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
@@ -146,11 +178,15 @@ export default class FormEditView extends Smart {
     );
   }
 
-  removeDatapicker = () => {
-    this.#datapickerStart.destroy();
-    this.#datapickerStart = null;
-    this.#datapickerEnd.destroy();
-    this.#datapickerEnd = null;
+  removeElement  = () => {
+    super.removeElement();
+
+    if (this.#datapickerStart || this.#datapickerEnd) {
+      this.#datapickerStart.destroy();
+      this.#datapickerStart = null;
+      this.#datapickerEnd.destroy();
+      this.#datapickerEnd = null;
+    }
   }
 
   static parsePointInformationToData = (pointInfo) => ({

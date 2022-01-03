@@ -1,7 +1,7 @@
 import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn } from '../../const';
 import { findCurrentOfferForUser, getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
-export const createHeaderFormTemplate = (oneTravelPoint) => {
+export const createHeaderFormTemplate = (oneTravelPoint, destinationList) => {
   const {destinationName} = oneTravelPoint.destination;
   const {
     dateFrom,
@@ -10,6 +10,9 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
     basePrice,
     offers,
   } = oneTravelPoint;
+
+  const list = [];
+  destinationList.forEach((onePoint) => list.push(`<option value="${onePoint.destination.destinationName}"></option>`));
 
   const getSingleEvent = (eventInfo) => (
     `<div class="event__type-item">
@@ -82,9 +85,7 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
     >
 
     <datalist id="destination-list-1">
-      <option value="Amsterdam"></option>
-      <option value="Geneva"></option>
-      <option value="Chamonix"></option>
+      ${list.join(' ')}
     </datalist>
   </div>
 

@@ -3,12 +3,17 @@ import Abstract from './abstract';
 export default class Smart extends Abstract {
   _data = {};
 
-  updateData = (update) => {
+  updateData = (update, justTextRefresh) => {
     if (!update) {
       return;
     }
 
     this._data = {...this._data, ...update};
+
+    if (justTextRefresh) {
+      return;
+    }
+
     this.updateElement();
   }
 

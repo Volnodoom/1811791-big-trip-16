@@ -18,6 +18,7 @@ export default class TripBoardPresenter {
   #tripPoints = [];
 
   #pointPresentersStore = new Map();
+  #destinationList = new Map();
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
 
   constructor(tripBoardContainer) {
@@ -59,8 +60,9 @@ export default class TripBoardPresenter {
       this.#tripPointsListComponent,
       this.#handlePointUpdate,
       this.#handleChangeMode);
-    pointPresenter.init(oneTravelPoint);
     this.#pointPresentersStore.set(oneTravelPoint.id, pointPresenter);
+    this.#destinationList.set(oneTravelPoint.destination.destinationName, oneTravelPoint);
+    pointPresenter.init(oneTravelPoint, this.#destinationList);
   }
 
   #renderTripPoints = () => {

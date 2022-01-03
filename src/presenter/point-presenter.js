@@ -20,14 +20,14 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point) => {
+  init = (point, destinationList) => {
     this.#oneTravelPoint = point;
 
     const prevSinglePointComponent = this.#singlePointComponent;
     const prevPointFormEditComponent = this.#pointFormEditComponent;
 
     this.#singlePointComponent = new SinglePointView(point);
-    this.#pointFormEditComponent = new FormEditView(point);
+    this.#pointFormEditComponent = new FormEditView(point, destinationList);
 
     this.#setHandlersOnSinglePoint();
 
