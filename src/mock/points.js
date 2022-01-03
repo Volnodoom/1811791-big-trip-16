@@ -5,14 +5,14 @@ import { generateOffers } from './offers';
 import {nanoid} from 'nanoid';
 
 
-const generateType = () => {
+const generateTypes = () => {
   const types = [
     'Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant',
   ];
 
-  const randomIndex = getRandomInteger(0, types.length - 1);
+  const randomLength = getRandomInteger(0, types.length - 1);
 
-  return types[randomIndex];
+  return types.slice(randomLength);
 };
 
 const generateDate = () => {
@@ -32,8 +32,8 @@ const generateBasePrice = () => getRandomInteger(1, 500) * 10;
 
 export const generateTravelPoints = () => {
   const {dateFrom, dateTo} = generateDate();
-  const travelType = generateType();
-  const {offers} = generateOffers(travelType);
+  const travelTypes = generateTypes();
+  const offers = generateOffers(travelTypes);
 
   return {
     basePrice: generateBasePrice(),
@@ -43,6 +43,6 @@ export const generateTravelPoints = () => {
     id: nanoid(),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers,
-    travelType,
+    travelType: travelTypes[0],
   };
 };

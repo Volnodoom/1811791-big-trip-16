@@ -69,8 +69,8 @@ export default class PointPresenter {
   };
 
   #submitForm = (update) => {
-    this.#closeForm();
     this.#updateData(update);
+    this.#closeForm();
   }
 
   #openForm = () => {

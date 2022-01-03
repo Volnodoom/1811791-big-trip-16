@@ -125,8 +125,9 @@ export const Mode = {
 
 export const NOTHING = 0;
 export const LIMIT_TOWN_INFO = 3;
-export const TRAVEL_POINT_COUNT = 15;
+export const TRAVEL_POINT_COUNT = 3;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
 
-
+export const CHECK_IN = 'CHECK-IN';
+export const CHECK_IN_SPECIFIC = 'CHECK_IN';

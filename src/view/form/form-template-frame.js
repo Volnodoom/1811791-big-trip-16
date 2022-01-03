@@ -1,5 +1,5 @@
-import { EventDescription, ListOfEventsOn } from '../../const';
-import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
+import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn } from '../../const';
+import { findCurrentOfferForUser, getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
 export const createHeaderFormTemplate = (oneTravelPoint) => {
   const {destinationName} = oneTravelPoint.destination;
@@ -8,6 +8,7 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
     dateTo,
     travelType,
     basePrice,
+    offers,
   } = oneTravelPoint;
 
   const getSingleEvent = (eventInfo) => (
@@ -28,6 +29,14 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
     </div>`
   );
 
+  const getListOfEventsForThePoint = () => offers.map((offer) => {
+    if (offer.type.toUpperCase() !== CHECK_IN) {
+      return EventDescription[offer.type.toUpperCase()];
+    } else {
+      return EventDescription[CHECK_IN_SPECIFIC];
+    }
+  });
+
   return `  <header class="event__header">
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -47,8 +56,7 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
       <fieldset class="event__type-group">
       <legend class="visually-hidden">Event type</legend>
 
-    ${Object
-    .values(EventDescription)
+    ${getListOfEventsForThePoint()
     .map((description) => getSingleEvent(description))
     .join(' ')}
 
@@ -133,7 +141,7 @@ export const createHeaderFormTemplate = (oneTravelPoint) => {
 };
 
 export const createSectionOfferTemplate = (oneTravelPoint) => {
-  const {offers} = oneTravelPoint;
+  const {offers, travelType} = oneTravelPoint;
 
   const singleOfferButton = (oneOffer) => {
     const {title, price, id} = oneOffer;
@@ -144,10 +152,9 @@ export const createSectionOfferTemplate = (oneTravelPoint) => {
     id="event-offer-luggage-${id}"
     type="checkbox"
     name="event-offer-luggage"
-    checked
     >
 
-    <label class="event__offer-label" for="event-offer-luggage-1">
+    <label class="event__offer-label" for="event-offer-luggage-${id}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${price}</span>
@@ -155,14 +162,12 @@ export const createSectionOfferTemplate = (oneTravelPoint) => {
   </div>`;
   };
 
-  const offerList = offers.map((oneOffer) => singleOfferButton(oneOffer));
+  const offerList = findCurrentOfferForUser(offers, travelType).map((oneOffer) => singleOfferButton(oneOffer));
 
   return `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-  <div class="event__available-offers">
-    ${offerList.join(' ')}
-  </div>
+  <div class="event__available-offers">${offerList.join(' ')}</div>
 </section>`;
 };
 

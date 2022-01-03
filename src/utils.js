@@ -52,3 +52,8 @@ export const sortDuration = (pointA, pointB) => {
 };
 
 export const sortPrice = (pointA, pointB) => pointB.basePrice-pointA.basePrice;
+
+export const findCurrentOfferForUser = (offers, eventType) => {
+  const index = offers.findIndex((offer) => offer.type === eventType);
+  return offers[index].offers;
+};

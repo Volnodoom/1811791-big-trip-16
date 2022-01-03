@@ -1,5 +1,5 @@
 import { ListOfEventsOn, NOTHING } from '../../const';
-import { durationOfEventInMinutes, durationOfOnePointEvent, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
+import { durationOfEventInMinutes, durationOfOnePointEvent, findCurrentOfferForUser, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
 import Abstract from '../abstract';
 
 const createSinglePointTemplate = (oneTravelPoint) => {
@@ -15,7 +15,7 @@ const createSinglePointTemplate = (oneTravelPoint) => {
 
   const differenceInMinutes = durationOfEventInMinutes(dateFrom, dateTo);
 
-  const offersList = offers
+  const offersList = findCurrentOfferForUser(offers, travelType)
     .map((offer) => `<li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;

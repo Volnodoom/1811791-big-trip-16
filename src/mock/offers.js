@@ -16,11 +16,15 @@ const generateOffer = (idCount) => {
   };
 };
 
-export const generateOffers = (type) => {
+export const generateOffers = (types) => {
   const offersCount = getRandomInteger(0, 5);
-  return {
+
+  const offersData = types.map((type) => ({
     type,
     offers: new Array(offersCount).fill().map((_, idCount) => generateOffer(idCount)),
-  };
+  })
+  );
+
+  return offersData;
 };
 
