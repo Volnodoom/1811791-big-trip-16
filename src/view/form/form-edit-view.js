@@ -28,12 +28,13 @@ const createFormEditingTemplate = (oneTravelPoint, destinationList) => {
 export default class FormEditView extends Smart {
   #datapickerStart = null;
   #datapickerEnd = null;
+  #destinationList = [];
 
   constructor(oneTravelPoint, destinationList) {
     super();
     this._data = FormEditView.parsePointInformationToData(oneTravelPoint);
 
-    this._destinationList = destinationList;
+    this.#destinationList = destinationList;
 
     this.#setInnerClickHandler();
     this.#setInnerChangeHandler();
@@ -41,7 +42,7 @@ export default class FormEditView extends Smart {
   }
 
   get template() {
-    return createFormEditingTemplate(this._data, this._destinationList);
+    return createFormEditingTemplate(this._data, this.#destinationList);
   }
 
   setClickHandler = (type, callback = null) =>  {
@@ -84,11 +85,10 @@ export default class FormEditView extends Smart {
   }
 
   #innerChangeHandler = (evt) => {
-    const inputValue = evt.target.value;
-    const list = [];
 
-    this._destinationList.forEach((onePoint) => list.push(onePoint));
-    const hasCity = list.some((onePoint) => onePoint.destination.destinationName === inputValue);
+    const inputValue = evt.target.value;
+
+    const hasCity = this.#destinationList.some((onePoint) => onePoint.destination.destinationName === inputValue);
 
     if (inputValue.length === NOTHING) {
       evt.target.setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
@@ -96,13 +96,17 @@ export default class FormEditView extends Smart {
       evt.target.setCustomValidity('This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive');
     } else {
       evt.target.setCustomValidity('');
+
       this.updateData(
         {
           destination: {
-            description: list.find((onePoint) => onePoint.destination.destinationName === inputValue).description,
-            name: inputValue,
-            pictures: list.find((onePoint) => onePoint.destination.destinationName === inputValue).pictures,
+            description: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).destination.description,
+            destinationName: inputValue,
+            pictures: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).destination.pictures,
           },
+          offers: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).offers,
+          travelType: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).travelType,
+          basePrice: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).basePrice,
         },
       );
     }
@@ -170,6 +174,7 @@ export default class FormEditView extends Smart {
     this.#setInnerClickHandler();
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
     this.#setDatepicker();
+    this.#setInnerChangeHandler();
   }
 
   reset = (point) => {

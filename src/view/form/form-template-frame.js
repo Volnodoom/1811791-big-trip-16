@@ -11,8 +11,7 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList) => {
     offers,
   } = oneTravelPoint;
 
-  const list = [];
-  destinationList.forEach((onePoint) => list.push(`<option value="${onePoint.destination.destinationName}"></option>`));
+  const list = destinationList.map((onePoint) => `<option value="${onePoint.destination.destinationName}"></option>`);
 
   const getSingleEvent = (eventInfo) => (
     `<div class="event__type-item">
