@@ -12,12 +12,14 @@ export default class PointPresenter {
   #pointFormEditComponent = null;
 
   #oneTravelPoint = null;
+  #destinationList = [];
   #mode = Mode.DEFAULT;
 
-  constructor(container, updateData, changeMode) {
+  constructor(container, updateData, changeMode, destinationList) {
     this.#pointContainer = container;
     this.#updateData = updateData;
     this.#changeMode = changeMode;
+    this.#destinationList = destinationList;
   }
 
   init = (point) => {
@@ -27,7 +29,7 @@ export default class PointPresenter {
     const prevPointFormEditComponent = this.#pointFormEditComponent;
 
     this.#singlePointComponent = new SinglePointView(point);
-    this.#pointFormEditComponent = new FormEditView(point);
+    this.#pointFormEditComponent = new FormEditView(point, this.#destinationList);
 
     this.#setHandlersOnSinglePoint();
 
@@ -57,15 +59,21 @@ export default class PointPresenter {
 
   #setHandlersOnFormEdit = () => {
     this.#pointFormEditComponent.setEscPressHandler(this.#closeForm);
-    this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.ROLLUP_BTN_FORM, this.#closeForm);
-    this.#pointFormEditComponent.setSubmitHandler(this.#closeForm);
+    this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CLOSE_ROLLUP_BTN, this.#closeForm);
+    this.#pointFormEditComponent.setSubmitHandler(this.#submitForm);
   }
 
   #closeForm = () => {
     replace(this.#singlePointComponent, this.#pointFormEditComponent);
     remove(this.#pointFormEditComponent);
+    this.#pointFormEditComponent.reset(this.#oneTravelPoint);
     this.#mode = Mode.DEFAULT;
   };
+
+  #submitForm = (update) => {
+    this.#updateData(update);
+    this.#closeForm();
+  }
 
   #openForm = () => {
     replace(this.#pointFormEditComponent, this.#singlePointComponent);

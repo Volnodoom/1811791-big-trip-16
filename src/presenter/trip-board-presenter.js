@@ -58,9 +58,10 @@ export default class TripBoardPresenter {
     const pointPresenter = new PointPresenter(
       this.#tripPointsListComponent,
       this.#handlePointUpdate,
-      this.#handleChangeMode);
-    pointPresenter.init(oneTravelPoint);
+      this.#handleChangeMode,
+      this.#tripPoints);
     this.#pointPresentersStore.set(oneTravelPoint.id, pointPresenter);
+    pointPresenter.init(oneTravelPoint);
   }
 
   #renderTripPoints = () => {

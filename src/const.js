@@ -100,16 +100,12 @@ export const EventDescription = {
   }
 };
 
-export const DataAttributesList = {
-  BUTTON_CLICK: {
-    rollupBtnForm: 'rollup-btn-form',
-  },
-};
-
 export const ListOfEventsOn = {
-  ROLLUP_BTN_FORM: 'rollup-btn-form',
+  CLOSE_ROLLUP_BTN: 'rollup-btn-form',
   ROLLUP_BTN: 'event__rollup-btn',
   FAVORITE_BTN: 'event__favorite-btn',
+  EVENT_TYPE: 'event__type  event__type-btn',
+  DESTINATION_POINT: 'event__field-group  event__field-group--destination',
 };
 
 export const EmptyMessageStatement = {
@@ -129,6 +125,9 @@ export const Mode = {
 
 export const NOTHING = 0;
 export const LIMIT_TOWN_INFO = 3;
-export const TRAVEL_POINT_COUNT = 15;
+export const TRAVEL_POINT_COUNT = 3;
+export const ONE_HOUR = 60;
+export const TWENTY_FOUR_HOURS = 1440;
 
-
+export const CHECK_IN = 'CHECK-IN';
+export const CHECK_IN_SPECIFIC = 'CHECK_IN';
