@@ -1,5 +1,5 @@
-import { EmptyMessageStatement, FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame } from '../const';
-import { render } from '../render';
+import { EmptyMessageStatement, FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
+import { remove, render } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
@@ -13,11 +13,11 @@ export default class TripBoardPresenter {
   #pointsEmptyEveryComponent = new PointsEmptyView(EmptyMessageStatement.EVERYTHING);
   #pointsEmptyPastComponent = new PointsEmptyView(EmptyMessageStatement.PAST);
   #pointsEmptyFutureComponent = new PointsEmptyView(EmptyMessageStatement.FUTURE);
-  #sortingComponent = new SortingListView();
   #tripPointsListComponent = new PointsListView();
+  #sortingComponent = null;
 
-  #pointPresentersStore = new Map();
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+  #pointPresentersStore = new Map();
 
   constructor(tripBoardContainer, pointsModel) {
     this.#tripBoardContainer = tripBoardContainer;
@@ -29,16 +29,16 @@ export default class TripBoardPresenter {
   get allPoints() {
     switch (this.#currentSortType) {
       case SortingLabelStartFrame.DAY.lowCaseWord:
-        [...this.#pointsModel.points].sort(sortDate);
+        this.#pointsModel.points.sort(sortDate);
         break;
       case SortingLabelStartFrame.TIME.lowCaseWord:
-        [...this.#pointsModel.points].sort(sortDuration);
+        this.#pointsModel.points.sort(sortDuration);
         break;
       case SortingLabelStartFrame.PRICE.lowCaseWord:
-        [...this.#pointsModel.points].sort(sortPrice);
+        this.#pointsModel.points.sort(sortPrice);
         break;
       default:
-        throw new Error('Please, specify your Sorting time in TRIP-BOARD-PRESENTER file!');
+        return this.#pointsModel.points;
     }
 
     return this.#pointsModel.points;
@@ -49,8 +49,10 @@ export default class TripBoardPresenter {
   }
 
   #renderSort = () => {
-    render(this.#tripBoardContainer, this.#sortingComponent, RenderPosition.BEFOREEND);
+    this.#sortingComponent = new SortingListView(this.#currentSortType);
     this.#sortingComponent.setSortTypeChangeHandler(this.#handleSortChange);
+
+    render(this.#tripBoardContainer, this.#sortingComponent, RenderPosition.BEFOREEND);
   }
 
   #renderNoPoints = () => {
@@ -101,11 +103,36 @@ export default class TripBoardPresenter {
   }
 
   #handleViewAction = (actionType, updateType, update) => {
-
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
   }
 
   #handleModelEvent = (updateType, data) => {
-
+    switch (updateType) {
+      case UpdateType.PATCH:
+        // - обновить часть списка (например, когда поменялось описание)
+        this.#pointPresentersStore.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        // - обновить список (например, когда задача ушла в архив)
+        this.#clearTripBoard();
+        this.#renderTripBoard();
+        break;
+      case UpdateType.MAJOR:
+        // - обновить всю доску (например, при переключении фильтра)
+        this.#clearTripBoard(true);
+        this.#renderTripBoard();
+        break;
+    }
   }
 
   #handleSortChange = (sortType) => {
@@ -122,9 +149,18 @@ export default class TripBoardPresenter {
     this.#pointPresentersStore.forEach((presenter) => presenter.resetView());
   }
 
-  #clearTripBoard = () => {
+  #clearTripBoard = (resetSortType = false) => {
     this.#pointPresentersStore.forEach((presenter) => presenter.destroy());
     this.#pointPresentersStore.clear();
+
+    remove(this.#sortingComponent);
+    remove(this.#pointsEmptyEveryComponent);
+    remove(this.#pointsEmptyPastComponent);
+    remove(this.#pointsEmptyFutureComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+    }
   }
 
 }

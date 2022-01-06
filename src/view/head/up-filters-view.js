@@ -1,9 +1,9 @@
 import { FilterLabelStartFrame } from '../../const';
 import Abstract from '../abstract';
 
-const createFiltersTemplate = () => {
+const createFiltersTemplate = (currentFilterType) => {
   const getSingleFilterDescription = (filterInfo) => {
-    const {lowCaseWord, capitalLetterWord, isChecked} = filterInfo;
+    const {lowCaseWord, capitalLetterWord} = filterInfo;
 
     return `<div class="trip-filters__filter">
 
@@ -13,7 +13,7 @@ const createFiltersTemplate = () => {
     type="radio"
     name="trip-filter"
     value="${lowCaseWord}"
-    ${isChecked ? 'checked' : ''}
+    ${currentFilterType === lowCaseWord ? 'checked' : ''}
     />
 
     <label
@@ -36,7 +36,23 @@ const createFiltersTemplate = () => {
 };
 
 export default class UpFiltersView extends Abstract{
+  #currentFilter = null;
+
+  constructor(currentFilter) {
+    super();
+    this.#currentFilter = currentFilter;
+  }
+
   get template() {
-    return createFiltersTemplate();
+    return createFiltersTemplate(this.#currentFilter);
+  }
+
+  setFilterTypeChangeHandler = (callback) => {
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
+  }
+
+  #filterTypeChangeHandler = (evt) => {
+    this._callback.filterTypeChange(evt.target.value);
   }
 }

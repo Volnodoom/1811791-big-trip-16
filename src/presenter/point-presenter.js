@@ -61,6 +61,7 @@ export default class PointPresenter {
     this.#pointFormEditComponent.setEscPressHandler(this.#closeForm);
     this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CLOSE_ROLLUP_BTN, this.#closeForm);
     this.#pointFormEditComponent.setSubmitHandler(this.#submitForm);
+    this.#pointFormEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
   }
 
   #closeForm = () => {
@@ -68,6 +69,12 @@ export default class PointPresenter {
     remove(this.#pointFormEditComponent);
     this.#pointFormEditComponent.reset(this.#oneTravelPoint);
     this.#mode = Mode.DEFAULT;
+  };
+
+  #openForm = () => {
+    replace(this.#pointFormEditComponent, this.#singlePointComponent);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
   };
 
   #submitForm = (pointUpdate) => {
@@ -79,11 +86,14 @@ export default class PointPresenter {
     this.#closeForm();
   }
 
-  #openForm = () => {
-    replace(this.#pointFormEditComponent, this.#singlePointComponent);
-    this.#changeMode();
-    this.#mode = Mode.EDITING;
-  };
+  #handleDeleteClick = (point) => {
+    this.#updateData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+  }
+
 
   #handleFavoriteClick = () => {
     this.#updateData(

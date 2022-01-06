@@ -7,24 +7,46 @@ import UpTripInfoView from '../view/head/up-trip-info-view';
 export default class HeadSitePresenter {
   #headContainer = null;
   #navigationContainer = null;
-
   #tripInfoContainer = null;
+
   #menuContainer = new UpMenuView();
-  #filtersContainer =  new UpFiltersView();
+  #filtersComponent =  null;
 
   #tripPoints = [];
 
-  constructor(containerHead, containerNavigation) {
+  #filterModel = null;
+
+  constructor(containerHead, containerNavigation, filterModel) {
     this.#headContainer = containerHead;
     this.#navigationContainer = containerNavigation;
+    this.#filterModel = filterModel;
+
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   init = (travelPoints) => {
+    this.#filtersComponent =  new UpFiltersView(this.#filterModel.filter);
+    this.#filtersComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
+
     this.#tripPoints = [...travelPoints];
 
     this.#tripInfoContainer = new UpTripInfoView(travelPoints);
 
     this.#renderHead();
+
+
+  }
+
+  #renderFilter = () => {
+
+  }
+
+  #handleFilterTypeChange = () => {
+
+  }
+
+  #handleModelEvent = () => {
+    this.init();
   }
 
   #renderHead = () => {
@@ -33,7 +55,7 @@ export default class HeadSitePresenter {
     }
 
     render(this.#navigationContainer, this.#menuContainer, RenderPosition.BEFOREEND);
-    render(this.#navigationContainer, this.#filtersContainer, RenderPosition.BEFOREEND);
+    render(this.#navigationContainer, this.#filtersComponent, RenderPosition.BEFOREEND);
   }
 
 }

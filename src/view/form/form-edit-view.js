@@ -137,6 +137,16 @@ export default class FormEditView extends Smart {
     document.removeEventListener('keydown', this.#escPressHandler);
   }
 
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  }
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(FormEditView.parseDataToPointInfo(this._data));
+  }
+
   #setDatepicker = () => {
     this.#datapickerStart = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
@@ -175,6 +185,7 @@ export default class FormEditView extends Smart {
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
     this.#setDatepicker();
     this.#setInnerChangeHandler();
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   reset = (point) => {

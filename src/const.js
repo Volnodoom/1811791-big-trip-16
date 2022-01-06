@@ -21,7 +21,6 @@ export const FilterLabelStartFrame  = {
     filter: 'everything',
     lowCaseWord: 'everything',
     capitalLetterWord: 'Everything',
-    isChecked: true,
   },
   FUTURE: {
     filter: 'future',
@@ -39,7 +38,6 @@ export const SortingLabelStartFrame = {
   DAY: {
     lowCaseWord: 'day',
     capitalLetterWord: 'Day',
-    isChecked: true,
   },
   EVENT: {
     lowCaseWord: 'event',
@@ -137,7 +135,7 @@ export const UpdateType = {
 
 export const NOTHING = 0;
 export const LIMIT_TOWN_INFO = 3;
-export const TRAVEL_POINT_COUNT = 3;
+export const TRAVEL_POINT_COUNT = 15;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
 
