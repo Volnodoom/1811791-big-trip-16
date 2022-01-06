@@ -1,4 +1,4 @@
-import { ListOfEventsOn, Mode, RenderPosition } from '../const';
+import { ListOfEventsOn, Mode, RenderPosition, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
 import FormEditView from '../view/form/form-edit-view';
 import SinglePointView from '../view/main-body/single-point-view';
@@ -70,8 +70,12 @@ export default class PointPresenter {
     this.#mode = Mode.DEFAULT;
   };
 
-  #submitForm = (update) => {
-    this.#updateData(update);
+  #submitForm = (pointUpdate) => {
+    this.#updateData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      pointUpdate,
+    );
     this.#closeForm();
   }
 
@@ -82,10 +86,13 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#updateData({
-      ...this.#oneTravelPoint,
-      isFavorite: !this.#oneTravelPoint.isFavorite,
-    });
+    this.#updateData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {
+        ...this.#oneTravelPoint,
+        isFavorite: !this.#oneTravelPoint.isFavorite,
+      });
   }
 
   resetView() {
