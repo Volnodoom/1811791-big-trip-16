@@ -17,9 +17,8 @@ const siteHeadInformation = document.querySelector('.trip-main');
 const siteNavigation = siteHeadInformation.querySelector('.trip-controls__navigation');
 const siteMainDataBody = document.querySelector('.trip-events');
 
-const headSitePresenter = new HeadSitePresenter(siteHeadInformation, siteNavigation);
+const headSitePresenter = new HeadSitePresenter(siteHeadInformation, siteNavigation, pointsModel, filterModel);
 const tripBoardPresenter = new TripBoardPresenter(siteMainDataBody, pointsModel);
 
-//we also need to correct head on the same was as we did with board presenter
-headSitePresenter.init(tripPoints);
+headSitePresenter.init();
 tripBoardPresenter.init();
