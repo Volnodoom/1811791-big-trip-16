@@ -1,47 +1,53 @@
-import { EmptyMessageStatement, FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
+import { FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
 import { remove, render } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
 import PointPresenter from './point-presenter';
-import { sortDate, sortDuration, sortPrice } from '../utils';
+import { filterPointsForTimeDifference, sortDate, sortDuration, sortPrice } from '../utils';
 
 export default class TripBoardPresenter {
   #tripBoardContainer = null;
   #pointsModel = null;
+  #filterModel = null;
 
-  #pointsEmptyEveryComponent = new PointsEmptyView(EmptyMessageStatement.EVERYTHING);
-  #pointsEmptyPastComponent = new PointsEmptyView(EmptyMessageStatement.PAST);
-  #pointsEmptyFutureComponent = new PointsEmptyView(EmptyMessageStatement.FUTURE);
+  #pointsEmptyComponent = null;
   #tripPointsListComponent = new PointsListView();
   #sortingComponent = null;
 
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+  #filterType = FilterLabelStartFrame.EVERYTHING.filter;
   #pointPresentersStore = new Map();
 
-  constructor(tripBoardContainer, pointsModel) {
+  constructor(tripBoardContainer, pointsModel, filterModel) {
     this.#tripBoardContainer = tripBoardContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get allPoints() {
+    this.#filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filterPointsForTimeDifference[this.#filterType](points);
+
     switch (this.#currentSortType) {
       case SortingLabelStartFrame.DAY.lowCaseWord:
-        this.#pointsModel.points.sort(sortDate);
+        filteredPoints.sort(sortDate);
         break;
       case SortingLabelStartFrame.TIME.lowCaseWord:
-        this.#pointsModel.points.sort(sortDuration);
+        filteredPoints.sort(sortDuration);
         break;
       case SortingLabelStartFrame.PRICE.lowCaseWord:
-        this.#pointsModel.points.sort(sortPrice);
+        filteredPoints.sort(sortPrice);
         break;
       default:
         return this.#pointsModel.points;
     }
 
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
   init = () => {
@@ -56,22 +62,8 @@ export default class TripBoardPresenter {
   }
 
   #renderNoPoints = () => {
-    const activeFilterStatus =  FilterLabelStartFrame.EVERYTHING.filter;
-
-    const getEmptyMessageAccordingToFilter = (activeFilter) => {
-      switch (activeFilter) {
-        case FilterLabelStartFrame.EVERYTHING.filter:
-          return render(this.#tripBoardContainer, this.#pointsEmptyEveryComponent, RenderPosition.BEFOREEND);
-        case FilterLabelStartFrame.PAST.filter:
-          return render(this.#tripBoardContainer, this.#pointsEmptyPastComponent, RenderPosition.BEFOREEND);
-        case FilterLabelStartFrame.FUTURE.filter:
-          return render(this.#tripBoardContainer, this.#pointsEmptyFutureComponent, RenderPosition.BEFOREEND);
-        default:
-          throw new Error('This filter does not exist in our dataBase');
-      }
-    };
-
-    getEmptyMessageAccordingToFilter(activeFilterStatus);
+    this.#pointsEmptyComponent = new PointsEmptyView(this.#filterType);
+    return render(this.#tripBoardContainer, this.#pointsEmptyComponent, RenderPosition.BEFOREEND);
   }
 
   #renderOneTripPoint = (oneTravelPoint) => {
@@ -154,9 +146,7 @@ export default class TripBoardPresenter {
     this.#pointPresentersStore.clear();
 
     remove(this.#sortingComponent);
-    remove(this.#pointsEmptyEveryComponent);
-    remove(this.#pointsEmptyPastComponent);
-    remove(this.#pointsEmptyFutureComponent);
+    remove(this.#pointsEmptyComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;

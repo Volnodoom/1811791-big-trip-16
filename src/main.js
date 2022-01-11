@@ -18,7 +18,7 @@ const siteNavigation = siteHeadInformation.querySelector('.trip-controls__naviga
 const siteMainDataBody = document.querySelector('.trip-events');
 
 const headSitePresenter = new HeadSitePresenter(siteHeadInformation, siteNavigation, pointsModel, filterModel);
-const tripBoardPresenter = new TripBoardPresenter(siteMainDataBody, pointsModel);
+const tripBoardPresenter = new TripBoardPresenter(siteMainDataBody, pointsModel, filterModel);
 
 headSitePresenter.init();
 tripBoardPresenter.init();

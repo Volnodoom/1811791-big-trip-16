@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { KeyCode, ONE_HOUR, TimeFormat, TWENTY_FOUR_HOURS } from './const';
+import { FilterLabelStartFrame, KeyCode, NOTHING, ONE_HOUR, TimeFormat, TWENTY_FOUR_HOURS } from './const';
 
 export const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -42,4 +42,18 @@ export const sortPrice = (pointA, pointB) => pointB.basePrice-pointA.basePrice;
 export const findCurrentOfferForUser = (offers, eventType) => {
   const index = offers.findIndex((offer) => offer.type === eventType);
   return offers[index].offers;
+};
+
+const isPointInProcessOfHappening = (point) => {
+  if((dayjs(point.dateFrom).diff(dayjs()) < NOTHING) &&  (dayjs(point.dateTo).diff(dayjs()) >= NOTHING)) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export const filterPointsForTimeDifference = {
+  [FilterLabelStartFrame.EVERYTHING.filter]: (points) => points,
+  [FilterLabelStartFrame.FUTURE.filter]: (points) => points.filter((point) => (dayjs(point.dateFrom).diff(dayjs()) >= NOTHING) || isPointInProcessOfHappening(point)),
+  [FilterLabelStartFrame.PAST.filter]: (points) => points.filter((point) => (dayjs(point.dateFrom).diff(dayjs()) < NOTHING) || isPointInProcessOfHappening(point)),
 };

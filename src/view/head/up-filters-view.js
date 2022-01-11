@@ -12,13 +12,13 @@ const createFiltersTemplate = (currentFilterType) => {
     class="trip-filters__filter-input  visually-hidden"
     type="radio"
     name="trip-filter"
-    value="${lowCaseWord}"
     ${currentFilterType === lowCaseWord ? 'checked' : ''}
+    value="${lowCaseWord}"
     />
 
     <label
     class="trip-filters__filter-label"
-    for="filter-everything"
+    for="filter-${lowCaseWord}"
     >${capitalLetterWord}</label>
 
     </div>`;
@@ -29,7 +29,6 @@ const createFiltersTemplate = (currentFilterType) => {
     .values(FilterLabelStartFrame)
     .map((StartFrame) => getSingleFilterDescription(StartFrame))
     .join(' ')}
-
 
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
@@ -53,6 +52,7 @@ export default class UpFiltersView extends Abstract{
   }
 
   #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
     this._callback.filterTypeChange(evt.target.value);
   }
 }

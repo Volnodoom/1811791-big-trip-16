@@ -1,4 +1,4 @@
-import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn } from '../../const';
+import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn, NOTHING } from '../../const';
 import { findCurrentOfferForUser, getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
 export const createHeaderFormTemplate = (oneTravelPoint, destinationList) => {
@@ -142,6 +142,7 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList) => {
 
 export const createSectionOfferTemplate = (oneTravelPoint) => {
   const {offers, travelType} = oneTravelPoint;
+  let offerList = '';
 
   const singleOfferButton = (oneOffer) => {
     const {title, price, id} = oneOffer;
@@ -162,12 +163,14 @@ export const createSectionOfferTemplate = (oneTravelPoint) => {
   </div>`;
   };
 
-  const offerList = findCurrentOfferForUser(offers, travelType).map((oneOffer) => singleOfferButton(oneOffer));
+  if (offers.length !== NOTHING) {
+    offerList = findCurrentOfferForUser(offers, travelType).map((oneOffer) => singleOfferButton(oneOffer));
+  }
 
   return `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-  <div class="event__available-offers">${offerList.join(' ')}</div>
+  <div class="event__available-offers">${offers.length !== NOTHING ? offerList.join(' ') : ''}</div>
 </section>`;
 };
 

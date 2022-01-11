@@ -107,9 +107,9 @@ export const ListOfEventsOn = {
 };
 
 export const EmptyMessageStatement = {
-  EVERYTHING: 'Click New Event to create your first point',
-  PAST: 'There are no past events now',
-  FUTURE: 'There are no future events now',
+  [FilterLabelStartFrame.EVERYTHING.filter]: 'Click New Event to create your first point',
+  [FilterLabelStartFrame.PAST.filter]: 'There are no past events now',
+  [FilterLabelStartFrame.FUTURE.filter]: 'There are no future events now',
 };
 
 export const KeyCode = {
@@ -133,7 +133,26 @@ export const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
+export const BLANK_POINT = {
+  basePrice: '0',
+  dateFrom: '01/01/01',
+  dateTo: '01/01/01',
+  destination: {
+    description: generateDestinationDescription(),
+    destinationName: generateName(),
+    pictures: new Array(picturesCount).fill().map(generatePicture),
+  },
+  offers: [
+    {
+      type,
+      offers
+    }
+  ],
+  travelType: 'Taxi',
+};
+
 export const NOTHING = 0;
+export const ARRAY_WITH_EMPTY_OBJECT = 1;
 export const LIMIT_TOWN_INFO = 3;
 export const TRAVEL_POINT_COUNT = 15;
 export const ONE_HOUR = 60;
