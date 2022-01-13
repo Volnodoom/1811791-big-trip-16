@@ -104,6 +104,7 @@ export const ListOfEventsOn = {
   FAVORITE_BTN: 'event__favorite-btn',
   EVENT_TYPE: 'event__type  event__type-btn',
   DESTINATION_POINT: 'event__field-group  event__field-group--destination',
+  CANCEL_BTN_FORM: 'Cancel'
 };
 
 export const EmptyMessageStatement = {
@@ -138,17 +139,14 @@ export const BLANK_POINT = {
   dateFrom: '01/01/01',
   dateTo: '01/01/01',
   destination: {
-    description: generateDestinationDescription(),
-    destinationName: generateName(),
-    pictures: new Array(picturesCount).fill().map(generatePicture),
+    description: '',
+    destinationName: '',
+    pictures: [],
   },
-  offers: [
-    {
-      type,
-      offers
-    }
-  ],
+  offers: [],
   travelType: 'Taxi',
+  isBlankPoint: true,
+  hasOptions: false,
 };
 
 export const NOTHING = 0;

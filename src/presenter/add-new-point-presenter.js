@@ -1,3 +1,6 @@
+import { ListOfEventsOn, RenderPosition, UpdateType, UserAction } from '../const';
+import { remove, render } from '../render';
+import FormEditView from '../view/form/form-edit-view';
 
 export default class AddNewPointPresenter {
     #pointContainer = null;
@@ -7,46 +10,48 @@ export default class AddNewPointPresenter {
 
     #destinationList = [];
 
-    constructor(container, updateData, destinationList) {
-      this.#pointContainer = container;
+    constructor(pointContainer, updateData, destinationList) {
+      this.#pointContainer = pointContainer;
       this.#updateData = updateData;
       this.#destinationList = destinationList;
     }
 
     init = () => {
-      this.#pointFormEditComponent = new FormEditView(point, this.#destinationList);
+      this.#pointFormEditComponent = new FormEditView(false, this.#destinationList);
 
-        render(this.#pointContainer, this.#pointFormEditComponent, RenderPosition.BEFOREEND);
 
+      render(this.#pointContainer, this.#pointFormEditComponent, RenderPosition.AFTERBEGIN);
+      this.#setHandlersOnFormEdit();
     }
 
 
     #setHandlersOnFormEdit = () => {
-      this.#pointFormEditComponent.setEscPressHandler(this.#closeForm);
-      this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CLOSE_ROLLUP_BTN, this.#closeForm);
-      this.#pointFormEditComponent.setSubmitHandler(this.#submitForm);
-      this.#pointFormEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
+      this.#pointFormEditComponent.setEscPressHandler(this.#handleCloseForm);
+      this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CANCEL_BTN_FORM, this.#handleCloseForm);
+      this.#pointFormEditComponent.setSubmitHandler(this.#handleSubmitForm);
     }
 
-    #closeForm = () => {
+    #handleCloseForm = () => {
       remove(this.#pointFormEditComponent);
-
-      this.#mode = Mode.DEFAULT;
     };
 
 
-    #submitForm = (pointUpdate) => {
+    #handleSubmitForm = (pointUpdate) => {
       this.#updateData(
-        UserAction.UPDATE_POINT,
+        UserAction.ADD_POINT,
         UpdateType.MINOR,
         pointUpdate,
       );
-      this.#closeForm();
+      this.#handleCloseForm();
     }
 
     destroy() {
+      if (this.#pointFormEditComponent === null) {
+        return;
+      }
+
       remove(this.#pointFormEditComponent);
-      remove(this.#singlePointComponent);
+      this.#pointFormEditComponent = null;
     }
 
 }

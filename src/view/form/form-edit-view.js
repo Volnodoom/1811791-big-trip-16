@@ -1,4 +1,4 @@
-import { ListOfEventsOn, NOTHING } from '../../const';
+import { BLANK_POINT, ListOfEventsOn, NOTHING } from '../../const';
 import { isEsc } from '../../utils';
 import Smart from '../smart';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
@@ -18,7 +18,7 @@ const createFormEditingTemplate = (oneTravelPoint, destinationList) => {
 
       ${hasOptions ? createSectionOfferTemplate(oneTravelPoint) : ''}
 
-      ${destination ? createFormDestinationTemplate(oneTravelPoint) : ''}
+      ${destination.description ? createFormDestinationTemplate(oneTravelPoint) : ''}
 
       </section>
     </form>
@@ -32,7 +32,11 @@ export default class FormEditView extends Smart {
 
   constructor(oneTravelPoint, destinationList) {
     super();
-    this._data = FormEditView.parsePointInformationToData(oneTravelPoint);
+    if (oneTravelPoint === false) {
+      this._data = BLANK_POINT;
+    } else {
+      this._data = FormEditView.parsePointInformationToData(oneTravelPoint);
+    }
 
     this.#destinationList = destinationList;
 
@@ -50,6 +54,9 @@ export default class FormEditView extends Smart {
       case ListOfEventsOn.CLOSE_ROLLUP_BTN:
         this._callback.clickOnRollUpBtnForm = callback;
         break;
+      case ListOfEventsOn.CANCEL_BTN_FORM:
+        this._callback.clickOnCancelBtn = callback;
+        break;
       default:
         throw new Error('ClickHandler does not contain such TYPE of callback');
     }
@@ -61,9 +68,12 @@ export default class FormEditView extends Smart {
     switch (true) {
       case (evt.target.dataset.closeRollupForm === ListOfEventsOn.CLOSE_ROLLUP_BTN):
         this._callback.clickOnRollUpBtnForm();
-        document.removeEventListener('keydown', this.#escPressHandler);
         break;
+      case (evt.target.textContent === ListOfEventsOn.CANCEL_BTN_FORM):
+        this._callback.clickOnCancelBtn();
     }
+
+    document.removeEventListener('keydown', this.#escPressHandler);
   }
 
   #setInnerClickHandler = () => {
@@ -107,6 +117,7 @@ export default class FormEditView extends Smart {
           offers: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).offers,
           travelType: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).travelType,
           basePrice: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).basePrice,
+          hasOptions: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).offers.length !== NOTHING ?? false,
         },
       );
     }
@@ -133,6 +144,19 @@ export default class FormEditView extends Smart {
 
   #submitHandler = (evt) => {
     evt.preventDefault();
+
+    const hasCity = this.#destinationList.some((onePoint) => onePoint.destination.destinationName === this._data.destination.destinationName);
+    const inputElement = this.element.querySelector('.event__input  event__input--destination');
+    console.log(inputElement)
+    if (this._data.destination.destinationName.length === NOTHING || null) {
+      inputElement.setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
+    } else if (!hasCity) {
+      inputElement.setCustomValidity('This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive');
+    } else {
+      inputElement.setCustomValidity('');
+    }
+    inputElement.reportValidity();
+
     this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
     document.removeEventListener('keydown', this.#escPressHandler);
   }
@@ -214,6 +238,9 @@ export default class FormEditView extends Smart {
     const point = {...data};
 
     delete point.hasOptions;
+    if (point.isBlankPoint) {
+      delete point.isBlankPoint;
+    }
 
     return point;
   }

@@ -84,5 +84,4 @@ export default class HeadSitePresenter {
   #handlePointsModelEvent = () => {
     this.renderHeadInfo();
   }
-
 }

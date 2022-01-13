@@ -5,6 +5,8 @@ import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
 import PointPresenter from './point-presenter';
 import { filterPointsForTimeDifference, sortDate, sortDuration, sortPrice } from '../utils';
+import NewEventBtnView from '../view/head/new-event-btn-view';
+import AddNewPointPresenter from './add-new-point-presenter';
 
 export default class TripBoardPresenter {
   #tripBoardContainer = null;
@@ -14,10 +16,14 @@ export default class TripBoardPresenter {
   #pointsEmptyComponent = null;
   #tripPointsListComponent = new PointsListView();
   #sortingComponent = null;
+  #newEventBtnComponent = new NewEventBtnView();
+  #addNewPointPresenter = null;
 
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
   #filterType = FilterLabelStartFrame.EVERYTHING.filter;
   #pointPresentersStore = new Map();
+
+  #containerForNewEventBtn = this.#newEventBtnComponent.getContainerForBtn();
 
   constructor(tripBoardContainer, pointsModel, filterModel) {
     this.#tripBoardContainer = tripBoardContainer;
@@ -51,7 +57,10 @@ export default class TripBoardPresenter {
   }
 
   init = () => {
+    render(this.#containerForNewEventBtn, this.#newEventBtnComponent, RenderPosition.BEFOREEND);
     this.#renderTripBoard();
+
+    this.#setAddNewPoint();
   }
 
   #renderSort = () => {
@@ -153,4 +162,20 @@ export default class TripBoardPresenter {
     }
   }
 
+  #setAddNewPoint = () => {
+    this.#addNewPointPresenter = new AddNewPointPresenter(
+      this.#tripPointsListComponent,
+      this.#handleViewAction,
+      this.allPoints,
+    );
+
+    this.#newEventBtnComponent.setClickHandler(this.#handleNewPointCreation);
+  }
+
+  #handleNewPointCreation = () => {
+    this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
+
+    this.#addNewPointPresenter.init();
+  }
 }

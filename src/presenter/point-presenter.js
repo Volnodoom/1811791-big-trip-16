@@ -52,38 +52,38 @@ export default class PointPresenter {
   #setHandlersOnSinglePoint = () => {
     this.#singlePointComponent.setClickHandler(ListOfEventsOn.FAVORITE_BTN, this.#handleFavoriteClick);
     this.#singlePointComponent.setClickHandler(ListOfEventsOn.ROLLUP_BTN, () => {
-      this.#openForm();
+      this.#handleOpenForm();
       this.#setHandlersOnFormEdit();
     });
   }
 
   #setHandlersOnFormEdit = () => {
-    this.#pointFormEditComponent.setEscPressHandler(this.#closeForm);
-    this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CLOSE_ROLLUP_BTN, this.#closeForm);
-    this.#pointFormEditComponent.setSubmitHandler(this.#submitForm);
+    this.#pointFormEditComponent.setEscPressHandler(this.#handleCloseForm);
+    this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CLOSE_ROLLUP_BTN, this.#handleCloseForm);
+    this.#pointFormEditComponent.setSubmitHandler(this.#handleSubmitForm);
     this.#pointFormEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
   }
 
-  #closeForm = () => {
+  #handleCloseForm = () => {
     replace(this.#singlePointComponent, this.#pointFormEditComponent);
     remove(this.#pointFormEditComponent);
     this.#pointFormEditComponent.reset(this.#oneTravelPoint);
     this.#mode = Mode.DEFAULT;
   };
 
-  #openForm = () => {
+  #handleOpenForm = () => {
     replace(this.#pointFormEditComponent, this.#singlePointComponent);
     this.#changeMode();
     this.#mode = Mode.EDITING;
   };
 
-  #submitForm = (pointUpdate) => {
+  #handleSubmitForm = (pointUpdate) => {
     this.#updateData(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
       pointUpdate,
     );
-    this.#closeForm();
+    this.#handleCloseForm();
   }
 
   #handleDeleteClick = (point) => {
@@ -107,7 +107,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#closeForm();
+      this.#handleCloseForm();
     }
   }
 
