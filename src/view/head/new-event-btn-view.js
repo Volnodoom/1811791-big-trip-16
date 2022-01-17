@@ -4,7 +4,7 @@ const creatNewEventBtnTemplate = (status) => (
   `<button 
     class="trip-main__event-add-btn  btn  btn--big  btn--yellow" 
     type="button"
-    ${status ? 'disabled' : ''}
+    ${status ? '': ''}
   >New event
   </button>`);
 
@@ -22,8 +22,8 @@ export default class NewEventBtnView extends Abstract {
     this.element.addEventListener('click', this.#handleClick);
   }
 
-  setBtnStatus = (btnStatus) => {
-    this.#btnStatus = btnStatus.state;
+  setBtnStatus = (status) => {
+    this.element.disabled = status;
   }
 
   #handleClick = () => {

@@ -11,9 +11,6 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
     offers,
   } = oneTravelPoint;
 
-  const isBlankPoint = addNewBtnState.isAddNewBtn;
-
-
   const list = destinationList.map((onePoint) => `<option value="${onePoint.destination.destinationName}"></option>`);
 
   const getSingleEvent = (eventInfo) => (
@@ -130,9 +127,9 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
     </div>
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">${isBlankPoint ? 'Cancel' : 'Delete'}</button>
+  <button class="event__reset-btn" type="reset">${addNewBtnState ? 'Cancel' : 'Delete'}</button>
 
-  ${isBlankPoint ? '' : `<button class="event__rollup-btn" type="button" data-close-rollup-form="${ListOfEventsOn.CLOSE_ROLLUP_BTN}"> <span class="visually-hidden">Open event</span> </button>`}
+  ${addNewBtnState ? '' : `<button class="event__rollup-btn" type="button" data-close-rollup-form="${ListOfEventsOn.CLOSE_ROLLUP_BTN}"> <span class="visually-hidden">Open event</span> </button>`}
 
 </header>`;
 };

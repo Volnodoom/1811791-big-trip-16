@@ -24,7 +24,7 @@ export default class TripBoardPresenter {
   #filterType = FilterLabelStartFrame.EVERYTHING.filter;
   #pointPresentersStore = new Map();
 
-  #addNewBtnStatus = {isAddNewBtn: false, state: false};
+  _isAddNewBtnActive = false;
 
   constructor(tripBoardContainer, pointsModel, filterModel) {
     this.#tripBoardContainer = tripBoardContainer;
@@ -58,6 +58,12 @@ export default class TripBoardPresenter {
   }
 
   init = () => {
+    this.#renderNewEventBtn();
+    this.#setAddNewPoint();
+    this.#renderTripBoard();
+  }
+
+  #renderNewEventBtn = () => {
 
     const prevNewEventBtnComponent = this.#newEventBtnComponent;
     this.#newEventBtnComponent = new NewEventBtnView();
@@ -65,9 +71,6 @@ export default class TripBoardPresenter {
 
     if (prevNewEventBtnComponent === null) {
       render(this.#containerForNewEventBtn, this.#newEventBtnComponent, RenderPosition.BEFOREEND);
-
-      this.#renderTripBoard();
-      this.#setAddNewPoint();
       return;
     }
 
@@ -96,6 +99,7 @@ export default class TripBoardPresenter {
     );
     this.#pointPresentersStore.set(oneTravelPoint.id, pointPresenter);
     pointPresenter.init(oneTravelPoint);
+    pointPresenter.setPolicyOnePointOneForm(this.#addNewPointPresenter.handleCloseForm);
   }
 
   #renderTripPoints = (points) => {
@@ -105,8 +109,7 @@ export default class TripBoardPresenter {
   }
 
   #renderTripBoard = () => {
-
-    if((this.allPoints.length === 0) && this.#addNewBtnStatus.state) {
+    if((this.allPoints.length === 0) && !this._isAddNewBtnActive) {
       this.#renderNoPoints();
       return;
     }
@@ -180,21 +183,27 @@ export default class TripBoardPresenter {
       this.#tripPointsListComponent,
       this.#handleViewAction,
       this.allPoints,
+      this.#handleAddNewPointStatus,
     );
 
-    this.#addNewBtnStatus = this.#addNewPointPresenter.getAddNewBtnStatus();
-    this.#newEventBtnComponent.setBtnStatus(this.#addNewBtnStatus);
 
     this.#newEventBtnComponent.setClickHandler(this.#handleNewPointCreation);
   }
 
   #handleNewPointCreation = () => {
-    this.#addNewBtnStatus = this.#addNewPointPresenter.setAddNewBtnStatus({isAddNewBtn: true, state: true});
-    this.#newEventBtnComponent.setBtnStatus(this.#addNewPointPresenter.getAddNewBtnStatus());
+
+    this.#handleAddNewPointStatus(true);
+    this.#newEventBtnComponent.setBtnStatus(this._isAddNewBtnActive);
     this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
-
+    this.#addNewPointPresenter.setTemplateForAddNewBtnStatus(true);
+    this.#handleChangeMode();
     this.#addNewPointPresenter.init();
+  }
+
+  #handleAddNewPointStatus = (isActive) => {
+    this._isAddNewBtnActive = isActive;
+    this.#newEventBtnComponent.setBtnStatus(isActive);
   }
 
 }

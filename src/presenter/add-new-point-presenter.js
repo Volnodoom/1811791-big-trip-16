@@ -9,32 +9,38 @@ export default class AddNewPointPresenter {
     #pointFormEditComponent = null;
 
     #destinationList = [];
-    _AddNewBtnState = {isAddNewBtn: false, state: false};
+    #isAddNewBtnActive = false;
+    #updateAddNewBtnStatus = null;
 
-    constructor(pointContainer, updateData, destinationList) {
+    constructor(pointContainer, updateData, destinationList, updateAddNewBtnStatus) {
       this.#pointContainer = pointContainer;
       this.#updateData = updateData;
       this.#destinationList = destinationList;
+      this.#updateAddNewBtnStatus = updateAddNewBtnStatus;
     }
 
     init = () => {
-      this.#pointFormEditComponent = new FormEditView(false, this.#destinationList, this._AddNewBtnState);
+      this.#pointFormEditComponent = new FormEditView(false, this.#destinationList, this.#isAddNewBtnActive);
 
 
       render(this.#pointContainer, this.#pointFormEditComponent, RenderPosition.AFTERBEGIN);
       this.#setHandlersOnFormEdit();
     }
 
+    setTemplateForAddNewBtnStatus = (isActive) => {
+      this.#isAddNewBtnActive = isActive;
+    }
+
 
     #setHandlersOnFormEdit = () => {
-      this.#pointFormEditComponent.setEscPressHandler(this.#handleCloseForm);
-      this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CANCEL_BTN_FORM, this.#handleCloseForm);
+      this.#pointFormEditComponent.setEscPressHandler(this.handleCloseForm);
+      this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CANCEL_BTN_FORM, this.handleCloseForm);
       this.#pointFormEditComponent.setSubmitHandler(this.#handleSubmitForm);
     }
 
-    #handleCloseForm = () => {
+    handleCloseForm = () => {
       remove(this.#pointFormEditComponent);
-      this.#toggleAddNewBtnStatus();
+      this.#updateAddNewBtnStatus(false);
     };
 
 
@@ -44,22 +50,12 @@ export default class AddNewPointPresenter {
         UpdateType.MINOR,
         pointUpdate,
       );
-      this.#handleCloseForm();
+      this.handleCloseForm();
     }
 
     setAddNewBtnStatus = (currentState) => {
-      this._AddNewBtnState = currentState;
+      this.#isAddNewBtnActive = currentState;
     }
-
-    getAddNewBtnStatus = () => this._AddNewBtnState
-
-    #toggleAddNewBtnStatus = () => {
-      this._AddNewBtnState = {
-        isAddNewBtn: !this._AddNewBtnState.isAddNewBtn,
-        state: !this._AddNewBtnState.state,
-      };
-    }
-
 
     destroy() {
       if (this.#pointFormEditComponent === null) {

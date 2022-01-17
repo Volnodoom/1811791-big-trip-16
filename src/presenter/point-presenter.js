@@ -15,6 +15,8 @@ export default class PointPresenter {
   #destinationList = [];
   #mode = Mode.DEFAULT;
 
+  #closeAddNewPointForm = null;
+
   constructor(container, updateData, changeMode, destinationList) {
     this.#pointContainer = container;
     this.#updateData = updateData;
@@ -74,6 +76,7 @@ export default class PointPresenter {
   #handleOpenForm = () => {
     replace(this.#pointFormEditComponent, this.#singlePointComponent);
     this.#changeMode();
+    this.#closeAddNewPointForm();
     this.#mode = Mode.EDITING;
   };
 
@@ -103,6 +106,10 @@ export default class PointPresenter {
         ...this.#oneTravelPoint,
         isFavorite: !this.#oneTravelPoint.isFavorite,
       });
+  }
+
+  setPolicyOnePointOneForm = (closeAddNewPointForm) => {
+    this.#closeAddNewPointForm = closeAddNewPointForm;
   }
 
   resetView() {

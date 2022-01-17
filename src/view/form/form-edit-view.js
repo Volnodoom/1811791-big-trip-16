@@ -31,7 +31,7 @@ export default class FormEditView extends Smart {
   #destinationList = [];
   #addNewBtnState = null;
 
-  constructor(oneTravelPoint, destinationList, addNewBtnState = {isAddNewBtn: false, state: false}) {
+  constructor(oneTravelPoint, destinationList, addNewBtnState = false) {
     super();
     if (oneTravelPoint === false) {
       this._data = BLANK_POINT;
