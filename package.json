@@ -28,6 +28,7 @@
   "dependencies": {
     "dayjs": "1.10.7",
     "flatpickr": "4.6.9",
+    "he": "1.2.0",
     "webpack": "5.62.1",
     "webpack-cli": "4.9.1",
     "webpack-dev-server": "4.4.0"

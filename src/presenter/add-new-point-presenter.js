@@ -9,6 +9,7 @@ export default class AddNewPointPresenter {
     #pointFormEditComponent = null;
 
     #destinationList = [];
+    _AddNewBtnState = {isAddNewBtn: false, state: false};
 
     constructor(pointContainer, updateData, destinationList) {
       this.#pointContainer = pointContainer;
@@ -17,7 +18,7 @@ export default class AddNewPointPresenter {
     }
 
     init = () => {
-      this.#pointFormEditComponent = new FormEditView(false, this.#destinationList);
+      this.#pointFormEditComponent = new FormEditView(false, this.#destinationList, this._AddNewBtnState);
 
 
       render(this.#pointContainer, this.#pointFormEditComponent, RenderPosition.AFTERBEGIN);
@@ -33,6 +34,7 @@ export default class AddNewPointPresenter {
 
     #handleCloseForm = () => {
       remove(this.#pointFormEditComponent);
+      this.#toggleAddNewBtnStatus();
     };
 
 
@@ -44,6 +46,20 @@ export default class AddNewPointPresenter {
       );
       this.#handleCloseForm();
     }
+
+    setAddNewBtnStatus = (currentState) => {
+      this._AddNewBtnState = currentState;
+    }
+
+    getAddNewBtnStatus = () => this._AddNewBtnState
+
+    #toggleAddNewBtnStatus = () => {
+      this._AddNewBtnState = {
+        isAddNewBtn: !this._AddNewBtnState.isAddNewBtn,
+        state: !this._AddNewBtnState.state,
+      };
+    }
+
 
     destroy() {
       if (this.#pointFormEditComponent === null) {

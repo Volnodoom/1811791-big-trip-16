@@ -1,7 +1,7 @@
 import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn, NOTHING } from '../../const';
 import { findCurrentOfferForUser, getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
-export const createHeaderFormTemplate = (oneTravelPoint, destinationList) => {
+export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNewBtnState) => {
   const {destinationName} = oneTravelPoint.destination;
   const {
     dateFrom,
@@ -11,10 +11,8 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList) => {
     offers,
   } = oneTravelPoint;
 
-  let isBlankPoint = false;
-  if(oneTravelPoint.isBlankPoint) {
-    isBlankPoint = true;
-  }
+  const isBlankPoint = addNewBtnState.isAddNewBtn;
+
 
   const list = destinationList.map((onePoint) => `<option value="${onePoint.destination.destinationName}"></option>`);
 

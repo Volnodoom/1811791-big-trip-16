@@ -1,5 +1,5 @@
 import { FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
-import { remove, render } from '../render';
+import { remove, render, replace } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
@@ -9,21 +9,22 @@ import NewEventBtnView from '../view/head/new-event-btn-view';
 import AddNewPointPresenter from './add-new-point-presenter';
 
 export default class TripBoardPresenter {
-  #tripBoardContainer = null;
   #pointsModel = null;
   #filterModel = null;
 
+  #tripBoardContainer = null;
   #pointsEmptyComponent = null;
   #tripPointsListComponent = new PointsListView();
   #sortingComponent = null;
-  #newEventBtnComponent = new NewEventBtnView();
+  #newEventBtnComponent = null;
   #addNewPointPresenter = null;
+  #containerForNewEventBtn = null;
 
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
   #filterType = FilterLabelStartFrame.EVERYTHING.filter;
   #pointPresentersStore = new Map();
 
-  #containerForNewEventBtn = this.#newEventBtnComponent.getContainerForBtn();
+  #addNewBtnStatus = {isAddNewBtn: false, state: false};
 
   constructor(tripBoardContainer, pointsModel, filterModel) {
     this.#tripBoardContainer = tripBoardContainer;
@@ -57,10 +58,21 @@ export default class TripBoardPresenter {
   }
 
   init = () => {
-    render(this.#containerForNewEventBtn, this.#newEventBtnComponent, RenderPosition.BEFOREEND);
-    this.#renderTripBoard();
 
-    this.#setAddNewPoint();
+    const prevNewEventBtnComponent = this.#newEventBtnComponent;
+    this.#newEventBtnComponent = new NewEventBtnView();
+    this.#containerForNewEventBtn = this.#newEventBtnComponent.getContainerForBtn();
+
+    if (prevNewEventBtnComponent === null) {
+      render(this.#containerForNewEventBtn, this.#newEventBtnComponent, RenderPosition.BEFOREEND);
+
+      this.#renderTripBoard();
+      this.#setAddNewPoint();
+      return;
+    }
+
+    replace(this.#newEventBtnComponent, prevNewEventBtnComponent);
+    remove(prevNewEventBtnComponent);
   }
 
   #renderSort = () => {
@@ -93,7 +105,8 @@ export default class TripBoardPresenter {
   }
 
   #renderTripBoard = () => {
-    if(this.allPoints.length === 0) {
+
+    if((this.allPoints.length === 0) && this.#addNewBtnStatus.state) {
       this.#renderNoPoints();
       return;
     }
@@ -169,13 +182,19 @@ export default class TripBoardPresenter {
       this.allPoints,
     );
 
+    this.#addNewBtnStatus = this.#addNewPointPresenter.getAddNewBtnStatus();
+    this.#newEventBtnComponent.setBtnStatus(this.#addNewBtnStatus);
+
     this.#newEventBtnComponent.setClickHandler(this.#handleNewPointCreation);
   }
 
   #handleNewPointCreation = () => {
+    this.#addNewBtnStatus = this.#addNewPointPresenter.setAddNewBtnStatus({isAddNewBtn: true, state: true});
+    this.#newEventBtnComponent.setBtnStatus(this.#addNewPointPresenter.getAddNewBtnStatus());
     this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
 
     this.#addNewPointPresenter.init();
   }
+
 }
