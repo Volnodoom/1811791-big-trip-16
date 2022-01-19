@@ -1,18 +1,16 @@
 import Abstract from '../abstract';
 
-const creatNewEventBtnTemplate = (status) => (
+const creatNewEventBtnTemplate = () => (
   `<button 
     class="trip-main__event-add-btn  btn  btn--big  btn--yellow" 
     type="button"
-    ${status ? '': ''}
   >New event
   </button>`);
 
 export default class NewEventBtnView extends Abstract {
-  #btnStatus = false;
 
   get template () {
-    return creatNewEventBtnTemplate(this.#btnStatus);
+    return creatNewEventBtnTemplate();
   }
 
   getContainerForBtn = () => document.querySelector('.trip-main');
@@ -22,8 +20,8 @@ export default class NewEventBtnView extends Abstract {
     this.element.addEventListener('click', this.#handleClick);
   }
 
-  setBtnStatus = (status) => {
-    this.element.disabled = status;
+  setBtnDisabledStatus = (isDisabled) => {
+    this.element.disabled = isDisabled;
   }
 
   #handleClick = () => {

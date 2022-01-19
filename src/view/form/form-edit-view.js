@@ -6,13 +6,13 @@ import flatpickr from 'flatpickr';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createFormEditingTemplate = (oneTravelPoint, destinationList, addNewBtnState) => {
+const createFormEditingTemplate = (oneTravelPoint, destinationList, isAddNewBtnActive) => {
   const {destination, hasOptions} = oneTravelPoint;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
 
-      ${createHeaderFormTemplate(oneTravelPoint, destinationList, addNewBtnState)}
+      ${createHeaderFormTemplate(oneTravelPoint, destinationList, isAddNewBtnActive)}
 
       <section class="event__details">
 
@@ -29,9 +29,9 @@ export default class FormEditView extends Smart {
   #datapickerStart = null;
   #datapickerEnd = null;
   #destinationList = [];
-  #addNewBtnState = null;
+  #isAddNewBtnActive = null;
 
-  constructor(oneTravelPoint, destinationList, addNewBtnState = false) {
+  constructor(oneTravelPoint, destinationList, isAddNewBtnActive = false) {
     super();
     if (oneTravelPoint === false) {
       this._data = BLANK_POINT;
@@ -40,7 +40,7 @@ export default class FormEditView extends Smart {
     }
 
     this.#destinationList = destinationList;
-    this.#addNewBtnState = addNewBtnState;
+    this.#isAddNewBtnActive = isAddNewBtnActive;
 
     this.#setInnerClickHandler();
     this.#setInnerChangeHandler();
@@ -48,7 +48,7 @@ export default class FormEditView extends Smart {
   }
 
   get template() {
-    return createFormEditingTemplate(this._data, this.#destinationList, this.#addNewBtnState);
+    return createFormEditingTemplate(this._data, this.#destinationList, this.#isAddNewBtnActive);
   }
 
   setClickHandler = (type, callback = null) =>  {
@@ -66,17 +66,18 @@ export default class FormEditView extends Smart {
     this.element.addEventListener('click', this.#clickHandler);
   }
 
+  #findInputDestinationElement = () => this.element.querySelector('.event__input.event__input--destination');
+  #findInputPriceElement = () => this.element.querySelector('.event__input.event__input--price');
+
   #clickHandler = (evt) => {
-    switch (true) {
-      case (evt.target.dataset.closeRollupForm === ListOfEventsOn.CLOSE_ROLLUP_BTN):
-        this._callback.clickOnRollUpBtnForm();
-        document.removeEventListener('keydown', this.#escPressHandler);
-        break;
-      case (evt.target.textContent === ListOfEventsOn.CANCEL_BTN_FORM):
-        this._callback.clickOnCancelBtn();
-        document.removeEventListener('keydown', this.#escPressHandler);
-        break;
+    if (evt.target.dataset.closeRollupForm === ListOfEventsOn.CLOSE_ROLLUP_BTN) {
+      this._callback.clickOnRollUpBtnForm();
+      document.removeEventListener('keydown', this.#escPressHandler);
+    } else if (evt.target.textContent === ListOfEventsOn.CANCEL_BTN_FORM) {
+      this._callback.clickOnCancelBtn();
+      document.removeEventListener('keydown', this.#escPressHandler);
     }
+
   }
 
   #setInnerClickHandler = () => {
@@ -92,51 +93,55 @@ export default class FormEditView extends Smart {
   }
 
   #setInnerChangeHandler = () => {
-    this.element
-      .querySelector('.event__input--destination')
-      .addEventListener('change', this.#innerChangeHandler);
+    this.#findInputDestinationElement().addEventListener('change', this.#innerDestinationHandler);
+    this.#findInputPriceElement().addEventListener('change', this.#innerPriceHandler);
   }
 
-  #innerChangeHandler = (evt) => {
+  #innerPriceHandler = () => {
+    const hasNotOnlyDigits = /\D/.test(this.#findInputPriceElement().value);
+    if (hasNotOnlyDigits) {
+      this.#findInputPriceElement().setCustomValidity('Price should be in numbers. Please, correct your input');
+    } else {
+      this.#findInputPriceElement().setCustomValidity('');
+      this._data = {
+        ...this._data,
+        basePrice: this.#findInputPriceElement().value,
+      };
+    }
+
+    this.#findInputPriceElement().reportValidity();
+  }
+
+  #innerDestinationHandler = (evt) => {
 
     const inputValue = evt.target.value;
     const hasCity = this.#destinationList.some((onePoint) => onePoint.destination.destinationName === inputValue);
 
-    const inputPriceElement = this.element.querySelector('.event__input.event__input--price');
-    const hasDifferentSimbols = /\D/.test(inputPriceElement.value);
+    if (inputValue.length === NOTHING) {
+      evt.target.setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
+    } else if (!hasCity) {
+      evt.target.setCustomValidity('This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive');
+    } else {
 
-    switch (true) {
-      case (inputValue.length === NOTHING):
-        evt.target.setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
-        break;
-      case !hasCity:
-        evt.target.setCustomValidity('This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive');
-        break;
-      case hasDifferentSimbols:
-        inputPriceElement.setCustomValidity('Price should be in numbers. Please, correct your input');
-        break;
-      default:
-        inputPriceElement.setCustomValidity('');
-        evt.target.setCustomValidity('');
-        this.updateData(
-          {
-            destination: {
-              description: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).destination.description,
-              destinationName: inputValue,
-              pictures: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).destination.pictures,
-            },
-            offers: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).offers,
-            travelType: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).travelType,
-            basePrice: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).basePrice,
-            hasOptions: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).offers.length !== NOTHING ?? false,
+      evt.target.setCustomValidity('');
+      this.updateData(
+        {
+          ...this._data,
+          destination: {
+            description: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).destination.description,
+            destinationName: inputValue,
+            pictures: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).destination.pictures,
           },
-        );
-
-        document.removeEventListener('keydown', this.#escPressHandler);
+          offers: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).offers,
+          travelType: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).travelType,
+          basePrice: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).basePrice,
+          hasOptions: this.#destinationList.find((onePoint) => onePoint.destination.destinationName === inputValue).offers.length !== NOTHING ?? false,
+        },
+      );
     }
+    document.removeEventListener('keydown', this.#escPressHandler);
 
     evt.target.reportValidity();
-    inputPriceElement.reportValidity();
   }
 
   setEscPressHandler = (callback) => {
@@ -160,31 +165,8 @@ export default class FormEditView extends Smart {
   #submitHandler = (evt) => {
     evt.preventDefault();
 
-    const hasCity = this.#destinationList.some((onePoint) => onePoint.destination.destinationName === this._data.destination.destinationName);
-    const inputElement = this.element.querySelector('.event__input.event__input--destination');
-
-    const inputPriceElement = this.element.querySelector('.event__input.event__input--price');
-    const hasDifferentSimbols = /\D/.test(inputPriceElement.value);
-
-    switch (true) {
-      case (this._data.destination.destinationName.length === NOTHING || null):
-        inputElement.setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
-        break;
-      case !hasCity:
-        inputElement.setCustomValidity('This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive');
-        document.removeEventListener('keydown', this.#escPressHandler);
-        break;
-      case hasDifferentSimbols:
-        inputPriceElement.setCustomValidity('Price should be in numbers. Please, correct your input');
-        break;
-      default:
-        inputElement.setCustomValidity('');
-        this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
-
-    }
-
-    inputElement.reportValidity();
-    inputPriceElement.reportValidity();
+    this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
+    document.removeEventListener('keydown', this.#escPressHandler);
   }
 
   setDeleteClickHandler = (callback) => {

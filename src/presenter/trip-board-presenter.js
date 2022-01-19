@@ -186,14 +186,14 @@ export default class TripBoardPresenter {
       this.#handleAddNewPointStatus,
     );
 
-
+    this.#addNewPointPresenter.handleForRefreshingBoard(this.#clearTripBoard, this.#renderTripBoard);
     this.#newEventBtnComponent.setClickHandler(this.#handleNewPointCreation);
   }
 
   #handleNewPointCreation = () => {
 
     this.#handleAddNewPointStatus(true);
-    this.#newEventBtnComponent.setBtnStatus(this._isAddNewBtnActive);
+    this.#newEventBtnComponent.setBtnDisabledStatus(this._isAddNewBtnActive);
     this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
     this.#addNewPointPresenter.setTemplateForAddNewBtnStatus(true);
@@ -203,7 +203,7 @@ export default class TripBoardPresenter {
 
   #handleAddNewPointStatus = (isActive) => {
     this._isAddNewBtnActive = isActive;
-    this.#newEventBtnComponent.setBtnStatus(isActive);
+    this.#newEventBtnComponent.setBtnDisabledStatus(isActive);
   }
 
 }
