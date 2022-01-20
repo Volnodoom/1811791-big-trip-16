@@ -1,18 +1,21 @@
+import { EmptyMessageStatement } from '../../const';
 import Abstract from '../abstract';
 
-const createPointsEmptyTemplate = (message) => (
-  `<p class="trip-events__msg">${message}</p>
-  `);
+const createPointsEmptyTemplate = (filterType) => {
+  const message = EmptyMessageStatement[filterType];
+
+  return `<p class="trip-events__msg">${message}</p>`;
+};
 
 export default class PointsEmptyView extends Abstract {
-  #message = null;
+  #filterType = null;
 
-  constructor(message) {
+  constructor(filterType) {
     super();
-    this.#message = message;
+    this.#filterType = filterType;
   }
 
   get template() {
-    return createPointsEmptyTemplate(this.#message);
+    return createPointsEmptyTemplate(this.#filterType);
   }
 }

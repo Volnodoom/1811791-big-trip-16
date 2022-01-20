@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { KeyCode, ONE_HOUR, TimeFormat, TWENTY_FOUR_HOURS } from './const';
+import { FilterLabelStartFrame, KeyCode, NOTHING, ONE_HOUR, TimeFormat, TWENTY_FOUR_HOURS } from './const';
 
 export const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -29,20 +29,6 @@ export const durationOfOnePointEvent = (difference) => {
 
 export const isEsc = ({ code }) => code === KeyCode.ESCAPE;
 
-export const updateArrayItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1)
-  ];
-};
-
 export const sortDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 
 export const sortDuration = (pointA, pointB) => {
@@ -56,4 +42,18 @@ export const sortPrice = (pointA, pointB) => pointB.basePrice-pointA.basePrice;
 export const findCurrentOfferForUser = (offers, eventType) => {
   const index = offers.findIndex((offer) => offer.type === eventType);
   return offers[index].offers;
+};
+
+const isPointInProcessOfHappening = (point) => {
+  if((dayjs(point.dateFrom).diff(dayjs()) < NOTHING) &&  (dayjs(point.dateTo).diff(dayjs()) >= NOTHING)) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export const filterPointsForTimeDifference = {
+  [FilterLabelStartFrame.EVERYTHING.filter]: (points) => points,
+  [FilterLabelStartFrame.FUTURE.filter]: (points) => points.filter((point) => (dayjs(point.dateFrom).diff(dayjs()) >= NOTHING) || isPointInProcessOfHappening(point)),
+  [FilterLabelStartFrame.PAST.filter]: (points) => points.filter((point) => (dayjs(point.dateFrom).diff(dayjs()) < NOTHING) || isPointInProcessOfHappening(point)),
 };

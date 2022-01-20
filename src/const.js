@@ -21,7 +21,6 @@ export const FilterLabelStartFrame  = {
     filter: 'everything',
     lowCaseWord: 'everything',
     capitalLetterWord: 'Everything',
-    isChecked: true,
   },
   FUTURE: {
     filter: 'future',
@@ -39,7 +38,6 @@ export const SortingLabelStartFrame = {
   DAY: {
     lowCaseWord: 'day',
     capitalLetterWord: 'Day',
-    isChecked: true,
   },
   EVENT: {
     lowCaseWord: 'event',
@@ -106,12 +104,13 @@ export const ListOfEventsOn = {
   FAVORITE_BTN: 'event__favorite-btn',
   EVENT_TYPE: 'event__type  event__type-btn',
   DESTINATION_POINT: 'event__field-group  event__field-group--destination',
+  CANCEL_BTN_FORM: 'Cancel'
 };
 
 export const EmptyMessageStatement = {
-  EVERYTHING: 'Click New Event to create your first point',
-  PAST: 'There are no past events now',
-  FUTURE: 'There are no future events now',
+  [FilterLabelStartFrame.EVERYTHING.filter]: 'Click New Event to create your first point',
+  [FilterLabelStartFrame.PAST.filter]: 'There are no past events now',
+  [FilterLabelStartFrame.FUTURE.filter]: 'There are no future events now',
 };
 
 export const KeyCode = {
@@ -123,9 +122,37 @@ export const Mode = {
   EDITING: 'EDITING',
 };
 
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export const BLANK_POINT = {
+  basePrice: '0',
+  dateFrom: '01/01/01',
+  dateTo: '01/01/01',
+  destination: {
+    description: '',
+    destinationName: '',
+    pictures: [],
+  },
+  offers: [],
+  travelType: 'Taxi',
+  isBlankPoint: true,
+  hasOptions: false,
+};
+
 export const NOTHING = 0;
+export const ARRAY_WITH_EMPTY_OBJECT = 1;
 export const LIMIT_TOWN_INFO = 3;
-export const TRAVEL_POINT_COUNT = 3;
+export const TRAVEL_POINT_COUNT = 15;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
 

@@ -1,9 +1,9 @@
 import { FilterLabelStartFrame } from '../../const';
 import Abstract from '../abstract';
 
-const createFiltersTemplate = () => {
+const createFiltersTemplate = (currentFilterType) => {
   const getSingleFilterDescription = (filterInfo) => {
-    const {lowCaseWord, capitalLetterWord, isChecked} = filterInfo;
+    const {lowCaseWord, capitalLetterWord} = filterInfo;
 
     return `<div class="trip-filters__filter">
 
@@ -12,13 +12,13 @@ const createFiltersTemplate = () => {
     class="trip-filters__filter-input  visually-hidden"
     type="radio"
     name="trip-filter"
+    ${currentFilterType === lowCaseWord ? 'checked' : ''}
     value="${lowCaseWord}"
-    ${isChecked ? 'checked' : ''}
     />
 
     <label
     class="trip-filters__filter-label"
-    for="filter-everything"
+    for="filter-${lowCaseWord}"
     >${capitalLetterWord}</label>
 
     </div>`;
@@ -30,13 +30,29 @@ const createFiltersTemplate = () => {
     .map((StartFrame) => getSingleFilterDescription(StartFrame))
     .join(' ')}
 
-
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
 };
 
 export default class UpFiltersView extends Abstract{
+  #currentFilter = null;
+
+  constructor(currentFilter) {
+    super();
+    this.#currentFilter = currentFilter;
+  }
+
   get template() {
-    return createFiltersTemplate();
+    return createFiltersTemplate(this.#currentFilter);
+  }
+
+  setFilterTypeChangeHandler = (callback) => {
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
+  }
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.value);
   }
 }

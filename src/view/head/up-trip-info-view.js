@@ -3,9 +3,8 @@ import { getTimeMMDD } from '../../utils';
 import Abstract from '../abstract';
 
 const createTripInfoTemplate = (travelPoints) => {
-
   const totalPriceWithoutAdditionalOffersPrice = travelPoints
-    .reduce((accumulator, {basePrice}) => accumulator + basePrice, NOTHING);
+    .reduce((accumulator, {basePrice}) => Number(accumulator) + Number(basePrice), NOTHING);
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">

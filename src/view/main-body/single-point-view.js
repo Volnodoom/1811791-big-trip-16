@@ -14,15 +14,17 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     isFavorite} = oneTravelPoint;
 
   const differenceInMinutes = durationOfEventInMinutes(dateFrom, dateTo);
+  let offersList;
 
-  const offersList = findCurrentOfferForUser(offers, travelType)
-    .map((offer) => `<li class="event__offer">
+  if (offers.length !== NOTHING) {
+    offersList = findCurrentOfferForUser(offers, travelType)
+      .map((offer) => `<li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </li>`)
-    .join(' ');
-
+      .join(' ');
+  }
 
   return `<li class="trip-events__item" data-pointId="${id}">
   <div class="event">

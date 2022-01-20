@@ -1,107 +1,155 @@
-import { EmptyMessageStatement, FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame } from '../const';
-import { render } from '../render';
+import { FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
+import { remove, render, replace } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
 import PointPresenter from './point-presenter';
-import { sortDate, sortDuration, sortPrice, updateArrayItem } from '../utils';
+import { filterPointsForTimeDifference, sortDate, sortDuration, sortPrice } from '../utils';
+import NewEventBtnView from '../view/head/new-event-btn-view';
+import AddNewPointPresenter from './add-new-point-presenter';
 
 export default class TripBoardPresenter {
+  #pointsModel = null;
+  #filterModel = null;
+
   #tripBoardContainer = null;
-
-  #pointsEmptyEveryComponent = new PointsEmptyView(EmptyMessageStatement.EVERYTHING);
-  #pointsEmptyPastComponent = new PointsEmptyView(EmptyMessageStatement.PAST);
-  #pointsEmptyFutureComponent = new PointsEmptyView(EmptyMessageStatement.FUTURE);
-  #sortingComponent = new SortingListView();
+  #pointsEmptyComponent = null;
   #tripPointsListComponent = new PointsListView();
+  #sortingComponent = null;
+  #newEventBtnComponent = null;
+  #addNewPointPresenter = null;
+  #containerForNewEventBtn = null;
 
-  #tripPoints = [];
-
-  #pointPresentersStore = new Map();
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+  #filterType = FilterLabelStartFrame.EVERYTHING.filter;
+  #pointPresentersStore = new Map();
 
-  constructor(tripBoardContainer) {
+  _isAddNewBtnActive = false;
+
+  constructor(tripBoardContainer, pointsModel, filterModel) {
     this.#tripBoardContainer = tripBoardContainer;
+    this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
-  init = (travelPoints) => {
-    this.#tripPoints = [...travelPoints];
-    this.#sortPoints(SortingLabelStartFrame.DAY.lowCaseWord);
+  get allPoints() {
+    this.#filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filterPointsForTimeDifference[this.#filterType](points);
+
+    switch (this.#currentSortType) {
+      case SortingLabelStartFrame.DAY.lowCaseWord:
+        filteredPoints.sort(sortDate);
+        break;
+      case SortingLabelStartFrame.TIME.lowCaseWord:
+        filteredPoints.sort(sortDuration);
+        break;
+      case SortingLabelStartFrame.PRICE.lowCaseWord:
+        filteredPoints.sort(sortPrice);
+        break;
+      default:
+        return this.#pointsModel.points;
+    }
+
+    return filteredPoints;
+  }
+
+  init = () => {
+    this.#renderNewEventBtn();
+    this.#setAddNewPoint();
     this.#renderTripBoard();
   }
 
+  #renderNewEventBtn = () => {
+
+    const prevNewEventBtnComponent = this.#newEventBtnComponent;
+    this.#newEventBtnComponent = new NewEventBtnView();
+    this.#containerForNewEventBtn = this.#newEventBtnComponent.getContainerForBtn();
+
+    if (prevNewEventBtnComponent === null) {
+      render(this.#containerForNewEventBtn, this.#newEventBtnComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    replace(this.#newEventBtnComponent, prevNewEventBtnComponent);
+    remove(prevNewEventBtnComponent);
+  }
+
   #renderSort = () => {
-    render(this.#tripBoardContainer, this.#sortingComponent, RenderPosition.BEFOREEND);
+    this.#sortingComponent = new SortingListView(this.#currentSortType);
     this.#sortingComponent.setSortTypeChangeHandler(this.#handleSortChange);
+
+    render(this.#tripBoardContainer, this.#sortingComponent, RenderPosition.BEFOREEND);
   }
 
   #renderNoPoints = () => {
-    const activeFilterStatus =  FilterLabelStartFrame.EVERYTHING.filter;
-
-    const getEmptyMessageAccordingToFilter = (activeFilter) => {
-      switch (activeFilter) {
-        case FilterLabelStartFrame.EVERYTHING.filter:
-          return render(this.#tripBoardContainer, this.#pointsEmptyEveryComponent, RenderPosition.BEFOREEND);
-        case FilterLabelStartFrame.PAST.filter:
-          return render(this.#tripBoardContainer, this.#pointsEmptyPastComponent, RenderPosition.BEFOREEND);
-        case FilterLabelStartFrame.FUTURE.filter:
-          return render(this.#tripBoardContainer, this.#pointsEmptyFutureComponent, RenderPosition.BEFOREEND);
-        default:
-          throw new Error('This filter does not exist in our dataBase');
-      }
-    };
-
-    getEmptyMessageAccordingToFilter(activeFilterStatus);
+    this.#pointsEmptyComponent = new PointsEmptyView(this.#filterType);
+    return render(this.#tripBoardContainer, this.#pointsEmptyComponent, RenderPosition.BEFOREEND);
   }
 
   #renderOneTripPoint = (oneTravelPoint) => {
     const pointPresenter = new PointPresenter(
       this.#tripPointsListComponent,
-      this.#handlePointUpdate,
+      this.#handleViewAction,
       this.#handleChangeMode,
-      this.#tripPoints);
+      this.allPoints,
+    );
     this.#pointPresentersStore.set(oneTravelPoint.id, pointPresenter);
     pointPresenter.init(oneTravelPoint);
+    pointPresenter.setPolicyOnePointOneForm(this.#addNewPointPresenter.handleCloseForm);
   }
 
-  #renderTripPoints = () => {
+  #renderTripPoints = (points) => {
     render(this.#sortingComponent, this.#tripPointsListComponent, RenderPosition.AFTEREND);
 
-    this.#tripPoints.forEach((oneTravelPoint) => this.#renderOneTripPoint(oneTravelPoint));
+    points.forEach((oneTravelPoint) => this.#renderOneTripPoint(oneTravelPoint));
   }
 
   #renderTripBoard = () => {
-    if(this.#tripPoints.length === 0) {
+    if((this.allPoints.length === 0) && !this._isAddNewBtnActive) {
       this.#renderNoPoints();
       return;
     }
 
     this.#renderSort();
-    this.#renderTripPoints();
+    this.#renderTripPoints(this.allPoints);
 
   }
 
-  #handlePointUpdate = (update) => {
-    this.#tripPoints = updateArrayItem(this.#tripPoints, update);
-    this.#pointPresentersStore.get(update.id).init(update);
-  }
-
-  #sortPoints = (sortType) => {
-    switch (sortType) {
-      case SortingLabelStartFrame.DAY.lowCaseWord:
-        this.#tripPoints.sort(sortDate);
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
         break;
-      case SortingLabelStartFrame.TIME.lowCaseWord:
-        this.#tripPoints.sort(sortDuration);
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
         break;
-      case SortingLabelStartFrame.PRICE.lowCaseWord:
-        this.#tripPoints.sort(sortPrice);
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
         break;
-      default:
-        throw new Error('Please, specify your Sorting time in TRIP-BOARD-PRESENTER file!');
     }
+  }
 
-    this.#currentSortType = sortType;
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        // - обновить часть списка (например, когда поменялось описание)
+        this.#pointPresentersStore.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        // - обновить список (например, когда задача ушла в архив)
+        this.#clearTripBoard();
+        this.#renderTripBoard();
+        break;
+      case UpdateType.MAJOR:
+        // - обновить всю доску (например, при переключении фильтра)
+        this.#clearTripBoard(true);
+        this.#renderTripBoard();
+        break;
+    }
   }
 
   #handleSortChange = (sortType) => {
@@ -109,7 +157,7 @@ export default class TripBoardPresenter {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearTripBoard();
     this.#renderTripBoard();
   }
@@ -118,9 +166,44 @@ export default class TripBoardPresenter {
     this.#pointPresentersStore.forEach((presenter) => presenter.resetView());
   }
 
-  #clearTripBoard = () => {
+  #clearTripBoard = (resetSortType = false) => {
     this.#pointPresentersStore.forEach((presenter) => presenter.destroy());
     this.#pointPresentersStore.clear();
+
+    remove(this.#sortingComponent);
+    remove(this.#pointsEmptyComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+    }
+  }
+
+  #setAddNewPoint = () => {
+    this.#addNewPointPresenter = new AddNewPointPresenter(
+      this.#tripPointsListComponent,
+      this.#handleViewAction,
+      this.allPoints,
+      this.#handleAddNewPointStatus,
+    );
+
+    this.#addNewPointPresenter.handleForRefreshingBoard(this.#clearTripBoard, this.#renderTripBoard);
+    this.#newEventBtnComponent.setClickHandler(this.#handleNewPointCreation);
+  }
+
+  #handleNewPointCreation = () => {
+
+    this.#handleAddNewPointStatus(true);
+    this.#newEventBtnComponent.setBtnDisabledStatus(this._isAddNewBtnActive);
+    this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
+    this.#addNewPointPresenter.setTemplateForAddNewBtnStatus(true);
+    this.#handleChangeMode();
+    this.#addNewPointPresenter.init();
+  }
+
+  #handleAddNewPointStatus = (isActive) => {
+    this._isAddNewBtnActive = isActive;
+    this.#newEventBtnComponent.setBtnDisabledStatus(isActive);
   }
 
 }

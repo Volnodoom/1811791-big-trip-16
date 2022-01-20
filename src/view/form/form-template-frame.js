@@ -1,7 +1,7 @@
-import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn } from '../../const';
+import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn, NOTHING } from '../../const';
 import { findCurrentOfferForUser, getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
-export const createHeaderFormTemplate = (oneTravelPoint, destinationList) => {
+export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNewBtnState) => {
   const {destinationName} = oneTravelPoint.destination;
   const {
     dateFrom,
@@ -127,21 +127,16 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList) => {
     </div>
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">Delete</button>
+  <button class="event__reset-btn" type="reset">${addNewBtnState ? 'Cancel' : 'Delete'}</button>
 
-  <button
-  class="event__rollup-btn"
-  type="button"
-  data-close-rollup-form="${ListOfEventsOn.CLOSE_ROLLUP_BTN}"
-  >
-    <span class="visually-hidden">Open event</span>
-  </button>
+  ${addNewBtnState ? '' : `<button class="event__rollup-btn" type="button" data-close-rollup-form="${ListOfEventsOn.CLOSE_ROLLUP_BTN}"> <span class="visually-hidden">Open event</span> </button>`}
 
 </header>`;
 };
 
 export const createSectionOfferTemplate = (oneTravelPoint) => {
   const {offers, travelType} = oneTravelPoint;
+  let offerList = '';
 
   const singleOfferButton = (oneOffer) => {
     const {title, price, id} = oneOffer;
@@ -162,12 +157,14 @@ export const createSectionOfferTemplate = (oneTravelPoint) => {
   </div>`;
   };
 
-  const offerList = findCurrentOfferForUser(offers, travelType).map((oneOffer) => singleOfferButton(oneOffer));
+  if (offers.length !== NOTHING) {
+    offerList = findCurrentOfferForUser(offers, travelType).map((oneOffer) => singleOfferButton(oneOffer));
+  }
 
   return `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-  <div class="event__available-offers">${offerList.join(' ')}</div>
+  <div class="event__available-offers">${offers.length !== NOTHING ? offerList.join(' ') : ''}</div>
 </section>`;
 };
 
