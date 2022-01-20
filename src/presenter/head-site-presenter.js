@@ -1,4 +1,4 @@
-import { RenderPosition, UpdateType } from '../const';
+import { FilterLabelStartFrame, MenuItem, RenderPosition, UpdateType } from '../const';
 import { remove, render, replace } from '../render';
 import { sortDate } from '../utils';
 import UpFiltersView from '../view/head/up-filters-view';
@@ -10,11 +10,16 @@ export default class HeadSitePresenter {
   #navigationContainer = null;
   #tripInfoContainer = null;
 
-  #menuContainer = new UpMenuView();
+  #menuComponent = new UpMenuView();
   #filtersComponent =  null;
 
   #filterModel = null;
   #pointsModel = null;
+
+  #destroyBoard = null;
+  #initBoard = null;
+  #hideTripEvents = null;
+  #revielTripEvents = null;
 
   constructor(containerHead, containerNavigation, pointsModel, filterModel) {
     this.#headContainer = containerHead;
@@ -22,7 +27,7 @@ export default class HeadSitePresenter {
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;
 
-    this.#filterModel.addObserver(this.#handleFilterModelEvent);
+
     this.#pointsModel.addObserver(this.#handlePointsModelEvent);
   }
 
@@ -31,11 +36,12 @@ export default class HeadSitePresenter {
       this.renderHeadInfo();
     }
 
-    render(this.#navigationContainer, this.#menuContainer, RenderPosition.BEFOREEND);
+    render(this.#navigationContainer, this.#menuComponent, RenderPosition.BEFOREEND);
+    this.#menuComponent.setMenuClickHandler(this.handleSiteMenuClick);
     this.renderFilter();
   }
 
-  get allPoints() {
+  get allPoints () {
     this.#pointsModel.points.sort(sortDate);
     return this.#pointsModel.points;
   }
@@ -60,6 +66,8 @@ export default class HeadSitePresenter {
     this.#filtersComponent =  new UpFiltersView(this.#filterModel.filter);
     this.#filtersComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
+    this.#filterModel.addObserver(this.#handleFilterModelEvent);
+
     if (prevFilterComponent === null) {
       render(this.#navigationContainer, this.#filtersComponent, RenderPosition.BEFOREEND);
       return;
@@ -67,6 +75,33 @@ export default class HeadSitePresenter {
 
     replace(this.#filtersComponent, prevFilterComponent);
     remove(prevFilterComponent);
+  }
+
+  handleSiteMenuClick = (menuItem) => {
+    switch (menuItem) {
+      case MenuItem.ADD_NEW_POINT:
+
+        break;
+      case MenuItem.TABLE:
+
+        this.#revielTripEvents();
+        this.#initBoard();
+        this.renderFilter();
+
+        break;
+      case MenuItem.STATS:
+        this.#destroyBoard();
+        this.#destroyFilter();
+        this.#hideTripEvents();
+        break;
+    }
+  }
+
+  getBoardFunctionality = (destroyBoard, initBoard, hideTripEvents, revielTripEvents) => {
+    this.#destroyBoard = destroyBoard;
+    this.#initBoard = initBoard;
+    this.#hideTripEvents = hideTripEvents;
+    this.#revielTripEvents = revielTripEvents;
   }
 
   #handleFilterTypeChange = (filterType) => {
@@ -83,5 +118,14 @@ export default class HeadSitePresenter {
 
   #handlePointsModelEvent = () => {
     this.renderHeadInfo();
+  }
+
+  #destroyFilter = () => {
+    remove(this.#filtersComponent);
+    this.#filtersComponent = null;
+
+    this.#filterModel.removeObserver(this.#handleFilterModelEvent);
+
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
   }
 }

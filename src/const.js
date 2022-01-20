@@ -149,6 +149,12 @@ export const BLANK_POINT = {
   hasOptions: false,
 };
 
+export const MenuItem = {
+  ADD_NEW_POINT: 'New Event',
+  TABLE: 'Table',
+  STATS: 'Stats',
+};
+
 export const NOTHING = 0;
 export const ARRAY_WITH_EMPTY_OBJECT = 1;
 export const LIMIT_TOWN_INFO = 3;

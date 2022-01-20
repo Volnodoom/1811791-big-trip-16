@@ -30,9 +30,6 @@ export default class TripBoardPresenter {
     this.#tripBoardContainer = tripBoardContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
-
-    this.#pointsModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get allPoints() {
@@ -61,6 +58,9 @@ export default class TripBoardPresenter {
     this.#renderNewEventBtn();
     this.#setAddNewPoint();
     this.#renderTripBoard();
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   #renderNewEventBtn = () => {
@@ -204,6 +204,15 @@ export default class TripBoardPresenter {
   #handleAddNewPointStatus = (isActive) => {
     this._isAddNewBtnActive = isActive;
     this.#newEventBtnComponent.setBtnDisabledStatus(isActive);
+  }
+
+  destroy = () => {
+    this.#clearTripBoard(true);
+
+    remove(this.#tripPointsListComponent);
+
+    this.#pointsModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
   }
 
 }
