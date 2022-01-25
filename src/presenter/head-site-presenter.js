@@ -4,14 +4,17 @@ import { sortDate } from '../utils';
 import UpFiltersView from '../view/head/up-filters-view';
 import UpMenuView from '../view/head/up-menu-view';
 import UpTripInfoView from '../view/head/up-trip-info-view';
+import StatisticsView from '../view/main-body/statistics-view';
 
 export default class HeadSitePresenter {
   #headContainer = null;
   #navigationContainer = null;
   #tripInfoContainer = null;
+  #containerForPoints = null;
 
-  #menuComponent = new UpMenuView();
+  #menuComponent = null;
   #filtersComponent =  null;
+  #StatisticsComponent = null
 
   #filterModel = null;
   #pointsModel = null;
@@ -21,12 +24,12 @@ export default class HeadSitePresenter {
   #hideTripEvents = null;
   #revielTripEvents = null;
 
-  constructor(containerHead, containerNavigation, pointsModel, filterModel) {
+  constructor(containerHead, containerNavigation, containerForPoints, pointsModel, filterModel) {
     this.#headContainer = containerHead;
     this.#navigationContainer = containerNavigation;
+    this.#containerForPoints = containerForPoints;
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;
-
 
     this.#pointsModel.addObserver(this.#handlePointsModelEvent);
   }
@@ -36,14 +39,29 @@ export default class HeadSitePresenter {
       this.renderHeadInfo();
     }
 
-    render(this.#navigationContainer, this.#menuComponent, RenderPosition.BEFOREEND);
-    this.#menuComponent.setMenuClickHandler(this.handleSiteMenuClick);
+    this.renderMenu();
     this.renderFilter();
+    this.renderStatistics();
   }
 
   get allPoints () {
     this.#pointsModel.points.sort(sortDate);
     return this.#pointsModel.points;
+  }
+
+  renderMenu = (isTableActive = true, isStatistickActive = false) => {
+    const prevMenuComponent = this.#menuComponent;
+
+    this.#menuComponent = new UpMenuView(isTableActive, isStatistickActive);
+    this.#menuComponent.setMenuClickHandler(this.handleSiteMenuClick);
+
+    if (prevMenuComponent === null) {
+      render(this.#navigationContainer, this.#menuComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    replace(this.#menuComponent, prevMenuComponent);
+    remove(prevMenuComponent);
   }
 
   renderHeadInfo = () => {
@@ -77,13 +95,18 @@ export default class HeadSitePresenter {
     remove(prevFilterComponent);
   }
 
+  renderStatistics = () => {
+    this.#StatisticsComponent = new StatisticsView(this.allPoints);
+    render(this.#containerForPoints, this.#StatisticsComponent, RenderPosition.AFTEREND);
+  }
+
   handleSiteMenuClick = (menuItem) => {
     switch (menuItem) {
       case MenuItem.ADD_NEW_POINT:
 
         break;
       case MenuItem.TABLE:
-
+        this.renderMenu(true, false);
         this.#revielTripEvents();
         this.#initBoard();
         this.renderFilter();
@@ -93,6 +116,8 @@ export default class HeadSitePresenter {
         this.#destroyBoard();
         this.#destroyFilter();
         this.#hideTripEvents();
+        this.renderMenu(false, true);
+        this.renderStatistics();
         break;
     }
   }

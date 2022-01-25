@@ -9,8 +9,15 @@ const createMenuTemplate = (isTableActive, isStatistickActive) => (
 );
 
 export default class UpMenuView extends Abstract {
-  #isTableActive = true;
-  #isStatistickActive = false;
+  #isTableActive = null;
+  #isStatistickActive = null;
+
+  constructor (isTableActive, isStatistickActive) {
+    super();
+
+    this.#isTableActive = isTableActive;
+    this.#isStatistickActive = isStatistickActive;
+  }
 
   get template() {
     return createMenuTemplate(this.#isTableActive, this.#isStatistickActive);
@@ -25,16 +32,4 @@ export default class UpMenuView extends Abstract {
     evt.preventDefault();
     this._callback.menuClick(evt.target.textContent);
   }
-
-  setMenuItem = (menuItem) => {
-    if (menuItem === MenuItem.STATS) {
-      this.#isTableActive = false;
-      this.#isStatistickActive = true;
-    } else {
-      this.#isTableActive = true;
-      this.#isStatistickActive = false;
-    }
-  }
-
-
 }

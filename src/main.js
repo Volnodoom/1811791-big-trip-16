@@ -16,14 +16,14 @@ const filterModel = new FilterModel();
 const siteHeadInformation = document.querySelector('.trip-main');
 const siteNavigation = siteHeadInformation.querySelector('.trip-controls__navigation');
 const siteMainDataBody = document.querySelector('.trip-events');
-const hideTripEvents = () => siteMainDataBody.classList.add('.trip-events--hidden');
-const revielTripEvents = () => siteMainDataBody.classList.remove('.trip-events--hidden');
+const hideTripEvents = () => siteMainDataBody.classList.add('trip-events--hidden');
+const revielTripEvents = () => siteMainDataBody.classList.remove('trip-events--hidden');
 
-const headSitePresenter = new HeadSitePresenter(siteHeadInformation, siteNavigation, pointsModel, filterModel);
+const headSitePresenter = new HeadSitePresenter(siteHeadInformation, siteNavigation, siteMainDataBody, pointsModel, filterModel);
 const tripBoardPresenter = new TripBoardPresenter(siteMainDataBody, pointsModel, filterModel);
 
 headSitePresenter.init();
-tripBoardPresenter.init();
+// tripBoardPresenter.init();
 headSitePresenter.getBoardFunctionality(
   tripBoardPresenter.destroy,
   tripBoardPresenter.init,
