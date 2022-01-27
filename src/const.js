@@ -159,7 +159,6 @@ export const BLANK_POINT = {
 };
 
 export const MenuItem = {
-  ADD_NEW_POINT: 'New Event',
   TABLE: 'Table',
   STATS: 'Stats',
 };

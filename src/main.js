@@ -23,7 +23,7 @@ const headSitePresenter = new HeadSitePresenter(siteHeadInformation, siteNavigat
 const tripBoardPresenter = new TripBoardPresenter(siteMainDataBody, pointsModel, filterModel);
 
 headSitePresenter.init();
-// tripBoardPresenter.init();
+tripBoardPresenter.init();
 headSitePresenter.getBoardFunctionality(
   tripBoardPresenter.destroy,
   tripBoardPresenter.init,

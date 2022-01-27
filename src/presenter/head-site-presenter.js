@@ -23,6 +23,7 @@ export default class HeadSitePresenter {
   #initBoard = null;
   #hideTripEvents = null;
   #revielTripEvents = null;
+  #currentMenuItem = MenuItem.TABLE;
 
   constructor(containerHead, containerNavigation, containerForPoints, pointsModel, filterModel) {
     this.#headContainer = containerHead;
@@ -41,7 +42,6 @@ export default class HeadSitePresenter {
 
     this.renderMenu();
     this.renderFilter();
-    this.renderStatistics();
   }
 
   get allPoints () {
@@ -52,7 +52,7 @@ export default class HeadSitePresenter {
   renderMenu = (isTableActive = true, isStatistickActive = false) => {
     const prevMenuComponent = this.#menuComponent;
 
-    this.#menuComponent = new UpMenuView(isTableActive, isStatistickActive);
+    this.#menuComponent = new UpMenuView(isTableActive, isStatistickActive, this.allPoints.length);
     this.#menuComponent.setMenuClickHandler(this.handleSiteMenuClick);
 
     if (prevMenuComponent === null) {
@@ -101,24 +101,24 @@ export default class HeadSitePresenter {
   }
 
   handleSiteMenuClick = (menuItem) => {
-    switch (menuItem) {
-      case MenuItem.ADD_NEW_POINT:
-
-        break;
-      case MenuItem.TABLE:
-        this.renderMenu(true, false);
-        this.#revielTripEvents();
-        this.#initBoard();
-        this.renderFilter();
-
-        break;
-      case MenuItem.STATS:
-        this.#destroyBoard();
-        this.#destroyFilter();
-        this.#hideTripEvents();
-        this.renderMenu(false, true);
-        this.renderStatistics();
-        break;
+    if (this.#currentMenuItem !== menuItem) {
+      this.#currentMenuItem = menuItem;
+      switch (menuItem) {
+        case MenuItem.TABLE:
+          this.#destroyStatistic();
+          this.renderMenu(true, false);
+          this.#revielTripEvents();
+          this.#initBoard();
+          this.renderFilter();
+          break;
+        case MenuItem.STATS:
+          this.#destroyBoard();
+          this.#destroyFilter();
+          this.#hideTripEvents();
+          this.renderMenu(false, true);
+          this.renderStatistics();
+          break;
+      }
     }
   }
 
@@ -152,5 +152,10 @@ export default class HeadSitePresenter {
     this.#filterModel.removeObserver(this.#handleFilterModelEvent);
 
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
+  }
+
+  #destroyStatistic = () => {
+    remove(this.#StatisticsComponent);
+    this.#StatisticsComponent = null;
   }
 }
