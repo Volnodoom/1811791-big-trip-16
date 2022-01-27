@@ -2,19 +2,20 @@ import Abstract from '../abstract';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { ChartNames, EventDescription, NOTHING, STATISTICS_BAR_HEIGHT } from '../../const';
-import { calculateStatisticsForMoney, calculateStatisticsForTime, calculateStatisticsForType, durationOfOnePointEvent } from '../../utils';
+import { calculateFrequencyOfType, calculateTotalMoneyForEventType, calculateTotalTimeForEventType, durationOfOnePointEvent } from '../../utils';
 
 const getArrayOfTravelTypes = () => Object.values(EventDescription).map((element) =>[element.capitalLetterWord, element.statisticsLabele]);
 
 const insertDataAccordingToChartNamex = (chartName, travelType, points) => {
-  if (chartName === ChartNames.MONEY) {
-    return calculateStatisticsForMoney(travelType, points);
-  } else if (chartName === ChartNames.TYPE) {
-    return calculateStatisticsForType(travelType, points);
-  } else if (chartName === ChartNames.TIME) {
-    return calculateStatisticsForTime(travelType, points);
-  } else {
-    throw new Error('We could not find such chart name in our DataBase');
+  switch (chartName) {
+    case ChartNames.MONEY:
+      return calculateTotalMoneyForEventType(travelType, points);
+    case ChartNames.TYPE:
+      return calculateFrequencyOfType(travelType, points);
+    case ChartNames.TIME:
+      return calculateTotalTimeForEventType(travelType, points);
+    default:
+      throw new Error('We could not find such chart name in our DataBase');
   }
 };
 
@@ -24,14 +25,15 @@ const makeArrayDataWithoutZeroValues = (chartName, points) => getArrayOfTravelTy
   .sort((valueA, valueB) => valueB[1] - valueA[1]);
 
 const getValuesOnSideBar = (chartName) => {
-  if (chartName === ChartNames.MONEY) {
-    return (val) => `€ ${val}`;
-  } else if (chartName === ChartNames.TYPE) {
-    return (val) => `${val}x`;
-  } else if (chartName === ChartNames.TIME) {
-    return (val) => `${durationOfOnePointEvent(val)}`;
-  } else {
-    throw new Error('We could not find such chart name in our DataBase');
+  switch (chartName) {
+    case ChartNames.MONEY:
+      return (val) => `€ ${val}`;
+    case ChartNames.TYPE:
+      return (val) => `${val}x`;
+    case ChartNames.TIME:
+      return (val) => `${durationOfOnePointEvent(val)}`;
+    default:
+      throw new Error('We could not find such chart name in our DataBase');
   }
 };
 

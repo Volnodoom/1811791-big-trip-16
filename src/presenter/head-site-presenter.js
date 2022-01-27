@@ -103,21 +103,18 @@ export default class HeadSitePresenter {
   handleSiteMenuClick = (menuItem) => {
     if (this.#currentMenuItem !== menuItem) {
       this.#currentMenuItem = menuItem;
-      switch (menuItem) {
-        case MenuItem.TABLE:
-          this.#destroyStatistic();
-          this.renderMenu(true, false);
-          this.#revielTripEvents();
-          this.#initBoard();
-          this.renderFilter();
-          break;
-        case MenuItem.STATS:
-          this.#destroyBoard();
-          this.#destroyFilter();
-          this.#hideTripEvents();
-          this.renderMenu(false, true);
-          this.renderStatistics();
-          break;
+      if (menuItem === MenuItem.TABLE) {
+        this.#destroyStatistic();
+        this.renderMenu(true, false);
+        this.#revielTripEvents();
+        this.#initBoard();
+        this.renderFilter();
+      } else if (menuItem === MenuItem.STATS) {
+        this.#destroyBoard();
+        this.#destroyFilter();
+        this.#hideTripEvents();
+        this.renderMenu(false, true);
+        this.renderStatistics();
       }
     }
   }

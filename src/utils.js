@@ -58,14 +58,14 @@ export const filterPointsForTimeDifference = {
   [FilterLabelStartFrame.PAST.filter]: (points) => points.filter((point) => (dayjs(point.dateFrom).diff(dayjs()) < NOTHING) || isPointInProcessOfHappening(point)),
 };
 
-export const calculateStatisticsForMoney = (eventType, points) => points
+export const calculateTotalMoneyForEventType = (eventType, points) => points
   .filter((point) => point.travelType === eventType)
   .reduce((accumulator, element) => accumulator + Number(element.basePrice), NOTHING);
 
-export const calculateStatisticsForType = (eventType, points) => points
+export const calculateFrequencyOfType = (eventType, points) => points
   .filter((point) => point.travelType === eventType).length;
 
-export const calculateStatisticsForTime = (eventType, points) => points
+export const calculateTotalTimeForEventType = (eventType, points) => points
   .filter((point) => point.travelType === eventType)
   .reduce((accumulator, element) =>
     accumulator + durationOfEventInMinutes (element.dateFrom, element.dateTo), NOTHING);
