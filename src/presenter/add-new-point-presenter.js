@@ -44,15 +44,12 @@ export default class AddNewPointPresenter {
     handleCloseForm = () => {
       remove(this.#pointFormEditComponent);
       this.#updateAddNewBtnStatus(false);
-      this.#clearBoard();
-      this.#renderBoard();
     };
 
     handleForRefreshingBoard = (clearBoard, renderBoard) => {
       this.#clearBoard = clearBoard;
       this.#renderBoard = renderBoard;
     }
-
 
     #handleSubmitForm = (pointUpdate) => {
       this.#updateData(
@@ -61,10 +58,6 @@ export default class AddNewPointPresenter {
         pointUpdate,
       );
       this.handleCloseForm();
-    }
-
-    setAddNewBtnStatus = (currentState) => {
-      this.#isAddNewBtnActive = currentState;
     }
 
     destroy() {

@@ -165,8 +165,13 @@ export default class FormEditView extends Smart {
   #submitHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
-    document.removeEventListener('keydown', this.#escPressHandler);
+    if(this.#findInputDestinationElement().value.length === NOTHING) {
+      this.#findInputDestinationElement().setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
+    } else {
+      this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
+      document.removeEventListener('keydown', this.#escPressHandler);
+    }
+    this.#findInputDestinationElement().reportValidity();
   }
 
   setDeleteClickHandler = (callback) => {
