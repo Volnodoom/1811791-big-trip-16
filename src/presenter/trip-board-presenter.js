@@ -1,4 +1,4 @@
-import { FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
+import { FilterLabelStartFrame, MenuItem, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
@@ -23,6 +23,8 @@ export default class TripBoardPresenter {
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
   #filterType = FilterLabelStartFrame.EVERYTHING.filter;
   #pointPresentersStore = new Map();
+
+  #menuClick = null;
 
   _isAddNewBtnActive = false;
 
@@ -191,7 +193,7 @@ export default class TripBoardPresenter {
   }
 
   #handleNewPointCreation = () => {
-
+    this.#menuClick(MenuItem.TABLE);
     this.#handleAddNewPointStatus(true);
     this.#newEventBtnComponent.setBtnDisabledStatus(this._isAddNewBtnActive);
     this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
@@ -204,6 +206,10 @@ export default class TripBoardPresenter {
   #handleAddNewPointStatus = (isActive) => {
     this._isAddNewBtnActive = isActive;
     this.#newEventBtnComponent.setBtnDisabledStatus(isActive);
+  }
+
+  getHeadFunctionality = (menuClick) => {
+    this.#menuClick = menuClick;
   }
 
   destroy = () => {
