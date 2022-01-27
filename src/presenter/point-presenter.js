@@ -54,6 +54,7 @@ export default class PointPresenter {
   #setHandlersOnSinglePoint = () => {
     this.#singlePointComponent.setClickHandler(ListOfEventsOn.FAVORITE_BTN, this.#handleFavoriteClick);
     this.#singlePointComponent.setClickHandler(ListOfEventsOn.ROLLUP_BTN, () => {
+      this.#closeAddNewPointForm();
       this.#handleOpenForm();
       this.#setHandlersOnFormEdit();
     });
@@ -76,7 +77,6 @@ export default class PointPresenter {
   #handleOpenForm = () => {
     replace(this.#pointFormEditComponent, this.#singlePointComponent);
     this.#changeMode();
-    this.#closeAddNewPointForm();
     this.#mode = Mode.EDITING;
   };
 
@@ -96,7 +96,6 @@ export default class PointPresenter {
       point,
     );
   }
-
 
   #handleFavoriteClick = () => {
     this.#updateData(

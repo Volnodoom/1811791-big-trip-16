@@ -1,4 +1,4 @@
-import { FilterLabelStartFrame, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
+import { FilterLabelStartFrame, MenuItem, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
@@ -24,15 +24,14 @@ export default class TripBoardPresenter {
   #filterType = FilterLabelStartFrame.EVERYTHING.filter;
   #pointPresentersStore = new Map();
 
+  #menuClick = null;
+
   _isAddNewBtnActive = false;
 
   constructor(tripBoardContainer, pointsModel, filterModel) {
     this.#tripBoardContainer = tripBoardContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
-
-    this.#pointsModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get allPoints() {
@@ -61,6 +60,9 @@ export default class TripBoardPresenter {
     this.#renderNewEventBtn();
     this.#setAddNewPoint();
     this.#renderTripBoard();
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   #renderNewEventBtn = () => {
@@ -191,7 +193,7 @@ export default class TripBoardPresenter {
   }
 
   #handleNewPointCreation = () => {
-
+    this.#menuClick(MenuItem.TABLE);
     this.#handleAddNewPointStatus(true);
     this.#newEventBtnComponent.setBtnDisabledStatus(this._isAddNewBtnActive);
     this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
@@ -204,6 +206,19 @@ export default class TripBoardPresenter {
   #handleAddNewPointStatus = (isActive) => {
     this._isAddNewBtnActive = isActive;
     this.#newEventBtnComponent.setBtnDisabledStatus(isActive);
+  }
+
+  getHeadFunctionality = (menuClick) => {
+    this.#menuClick = menuClick;
+  }
+
+  destroy = () => {
+    this.#clearTripBoard(true);
+
+    remove(this.#tripPointsListComponent);
+
+    this.#pointsModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
   }
 
 }

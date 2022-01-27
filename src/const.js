@@ -63,38 +63,47 @@ export const EventDescription = {
   TAXI: {
     lowCaseWord: 'taxi',
     capitalLetterWord: 'Taxi',
+    statisticsLabele: 'TAXI',
   },
   BUS: {
     lowCaseWord: 'bus',
     capitalLetterWord: 'Bus',
+    statisticsLabele: 'BUS',
   },
   TRAIN: {
     lowCaseWord: 'train',
     capitalLetterWord: 'Train',
+    statisticsLabele: 'TRAIN',
   },
   SHIP: {
     lowCaseWord: 'ship',
     capitalLetterWord: 'Ship',
+    statisticsLabele: 'SHIP',
   },
   DRIVE: {
     lowCaseWord: 'drive',
     capitalLetterWord: 'Drive',
+    statisticsLabele: 'DRIVE',
   },
   FLIGHT: {
     lowCaseWord: 'flight',
     capitalLetterWord: 'Flight',
+    statisticsLabele: 'FLIGHT',
   },
   CHECK_IN: {
     lowCaseWord: 'check-in',
     capitalLetterWord: 'Check-in',
+    statisticsLabele: 'CHECK-IN',
   },
   SIGHTSEEING: {
     lowCaseWord: 'sightseeing',
     capitalLetterWord: 'Sightseeing',
+    statisticsLabele: 'SIGHTSEEING',
   },
   RESTAURANT: {
     lowCaseWord: 'restaurant',
     capitalLetterWord: 'Restaurant',
+    statisticsLabele: 'RESTAURANT',
   }
 };
 
@@ -149,12 +158,24 @@ export const BLANK_POINT = {
   hasOptions: false,
 };
 
+export const MenuItem = {
+  TABLE: 'Table',
+  STATS: 'Stats',
+};
+
+export const ChartNames = {
+  MONEY: 'MONEY',
+  TYPE: 'TYPE',
+  TIME: 'TIME',
+};
+
 export const NOTHING = 0;
 export const ARRAY_WITH_EMPTY_OBJECT = 1;
 export const LIMIT_TOWN_INFO = 3;
 export const TRAVEL_POINT_COUNT = 15;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
+export const STATISTICS_BAR_HEIGHT = 450;
 
 export const CHECK_IN = 'CHECK-IN';
 export const CHECK_IN_SPECIFIC = 'CHECK_IN';
