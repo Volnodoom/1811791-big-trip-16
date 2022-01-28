@@ -51,13 +51,19 @@ export default class AddNewPointPresenter {
       this.#renderBoard = renderBoard;
     }
 
+    setSaving = () => {
+      this.#pointFormEditComponent.updateData({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+
     #handleSubmitForm = (pointUpdate) => {
       this.#updateData(
         UserAction.ADD_POINT,
         UpdateType.MINOR,
         pointUpdate,
       );
-      this.handleCloseForm();
     }
 
     destroy() {

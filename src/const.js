@@ -141,6 +141,7 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export const BLANK_POINT = {
@@ -169,13 +170,26 @@ export const ChartNames = {
   TIME: 'TIME',
 };
 
+export const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+};
+
 export const NOTHING = 0;
 export const ARRAY_WITH_EMPTY_OBJECT = 1;
 export const LIMIT_TOWN_INFO = 3;
-export const TRAVEL_POINT_COUNT = 15;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
 export const STATISTICS_BAR_HEIGHT = 450;
+export const AUTHORIZATION  = 'Basic hS2suktyikiu6wecl1sa2j';
+export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
 export const CHECK_IN = 'CHECK-IN';
 export const CHECK_IN_SPECIFIC = 'CHECK_IN';

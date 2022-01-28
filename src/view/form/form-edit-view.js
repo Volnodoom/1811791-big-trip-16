@@ -245,12 +245,20 @@ export default class FormEditView extends Smart {
   static parsePointInformationToData = (pointInfo) => ({
     ...pointInfo,
     hasOptions: pointInfo.offers.length !== NOTHING ?? false,
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false,
   })
 
   static parseDataToPointInfo = (data) => {
     const point = {...data};
 
     delete point.hasOptions;
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+
     if (point.isBlankPoint) {
       delete point.isBlankPoint;
     }

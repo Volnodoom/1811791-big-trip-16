@@ -16,8 +16,8 @@ const createSinglePointTemplate = (oneTravelPoint) => {
   const differenceInMinutes = durationOfEventInMinutes(dateFrom, dateTo);
   let offersList;
 
-  if (offers.length !== NOTHING) {
-    offersList = findCurrentOfferForUser(offers, travelType)
+  if (offers.length > NOTHING) {
+    offersList = offers
       .map((offer) => `<li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
@@ -72,7 +72,7 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
 
-    ${offers.length === NOTHING ? '' : offersList}
+    ${offers.length > NOTHING ? offersList :'' }
 
     </ul>
 

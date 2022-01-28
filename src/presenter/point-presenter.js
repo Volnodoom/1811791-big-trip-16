@@ -1,4 +1,4 @@
-import { ListOfEventsOn, Mode, RenderPosition, UpdateType, UserAction } from '../const';
+import { ListOfEventsOn, Mode, RenderPosition, State, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
 import FormEditView from '../view/form/form-edit-view';
 import SinglePointView from '../view/main-body/single-point-view';
@@ -46,6 +46,7 @@ export default class PointPresenter {
 
     if(this.#mode === Mode.EDITING) {
       replace(this.#pointFormEditComponent, prevPointFormEditComponent);
+      // this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointFormEditComponent);
@@ -86,7 +87,6 @@ export default class PointPresenter {
       UpdateType.MINOR,
       pointUpdate,
     );
-    this.#handleCloseForm();
   }
 
   #handleDeleteClick = (point) => {
@@ -114,6 +114,27 @@ export default class PointPresenter {
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
       this.#handleCloseForm();
+    }
+  }
+
+  setViewState = (state) => {
+    if(this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    switch (state) {
+      case State.SAVING:
+        this.#pointFormEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this.#pointFormEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
     }
   }
 

@@ -1,15 +1,28 @@
 import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn, NOTHING } from '../../const';
 import { findCurrentOfferForUser, getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
-export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNewBtnState) => {
-  const {destinationName} = oneTravelPoint.destination;
+export const createHeaderFormTemplate = (pointData, destinationList, addNewBtnState) => {
+  const {destinationName} = pointData.destination;
   const {
     dateFrom,
     dateTo,
     travelType,
     basePrice,
     offers,
-  } = oneTravelPoint;
+    isDisabled,
+    isSaving,
+    isDeleting,
+  } = pointData;
+
+  const createCanselDeleteBtnTemplate = () => {
+    if (addNewBtnState) {
+      return 'Cancel';
+    } else {
+      if (isDeleting) {
+        return 'Deleting ...';
+      } else { return 'Delete';}
+    }
+  }
 
   const list = destinationList.map((onePoint) => `<option value="${onePoint.destination.destinationName}"></option>`);
 
@@ -21,6 +34,7 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
         class="event__type-input  visually-hidden"
         type="radio" name="event-type"
         value="${eventInfo.lowCaseWord}"
+        ${isDisabled ? 'disabled' : ''}
         />
 
       <label class="event__type-label  event__type-label--${eventInfo.lowCaseWord}"
@@ -31,13 +45,13 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
     </div>`
   );
 
-  const getListOfEventsForThePoint = () => offers.map((offer) => {
-    if (offer.type.toUpperCase() !== CHECK_IN) {
-      return EventDescription[offer.type.toUpperCase()];
+  const getListOfEventsForThePoint = () => {
+    if (offers.type.toUpperCase() !== CHECK_IN) {
+      return EventDescription[offers.type.toUpperCase()];
     } else {
       return EventDescription[CHECK_IN_SPECIFIC];
     }
-  });
+  };
 
   return `  <header class="event__header">
   <div class="event__type-wrapper">
@@ -58,7 +72,7 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
       <fieldset class="event__type-group">
       <legend class="visually-hidden">Event type</legend>
 
-    ${getListOfEventsForThePoint()
+    ${offers.type === undefined ? '' : getListOfEventsForThePoint()
     .map((description) => getSingleEvent(description))
     .join(' ')}
 
@@ -81,6 +95,7 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
     name="event-destination"
     value="${destinationName}"
     list="destination-list-1"
+    ${isDisabled ? 'disabled' : ''}
     >
 
     <datalist id="destination-list-1">
@@ -97,6 +112,7 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
     type="text"
     name="event-start-time"
     value="${getTimeDDMMYYWithSlashAndHHMM(dateFrom)}"
+    ${isDisabled ? 'disabled' : ''}
     >
     &mdash;
     <label class="visually-hidden" for="event-end-time-1">To</label>
@@ -106,6 +122,7 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
     id="event-end-time-1" type="text"
     name="event-end-time"
     value="${getTimeDDMMYYWithSlashAndHHMM(dateTo)}"
+    ${isDisabled ? 'disabled' : ''}
     >
 
   </div>
@@ -122,12 +139,23 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
     type="text"
     name="event-price"
     value="${basePrice}"
-    >
+    ${isDisabled ? 'disabled' : ''}>
 
     </div>
 
-  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">${addNewBtnState ? 'Cancel' : 'Delete'}</button>
+  <button 
+  class="event__save-btn  btn  btn--blue" 
+  type="submit" 
+  ${isDisabled ? 'disabled' : ''}>
+    ${isSaving ? 'Saving...' : 'Save'}
+  </button>
+
+  <button 
+  class="event__reset-btn" 
+  type="reset"
+  ${isDisabled ? 'disabled' : ''}>
+    ${createCanselDeleteBtnTemplate()}
+  </button>
 
   ${addNewBtnState ? '' : `<button class="event__rollup-btn" type="button" data-close-rollup-form="${ListOfEventsOn.CLOSE_ROLLUP_BTN}"> <span class="visually-hidden">Open event</span> </button>`}
 
@@ -144,12 +172,12 @@ export const createSectionOfferTemplate = (oneTravelPoint) => {
     return `<div class="event__offer-selector">
     <input
     class="event__offer-checkbox  visually-hidden"
-    id="event-offer-luggage-${id}"
+    id="event-offer-${id}"
     type="checkbox"
-    name="event-offer-luggage"
+    name="event-offer"
     >
 
-    <label class="event__offer-label" for="event-offer-luggage-${id}">
+    <label class="event__offer-label" for="event-offer-${id}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${price}</span>
@@ -157,14 +185,14 @@ export const createSectionOfferTemplate = (oneTravelPoint) => {
   </div>`;
   };
 
-  if (offers.length !== NOTHING) {
-    offerList = findCurrentOfferForUser(offers, travelType).map((oneOffer) => singleOfferButton(oneOffer));
+  if (offers.length > NOTHING) {
+    offerList = offers.map((oneOffer) => singleOfferButton(oneOffer));
   }
 
   return `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-  <div class="event__available-offers">${offers.length !== NOTHING ? offerList.join(' ') : ''}</div>
+  <div class="event__available-offers">${offers.length > NOTHING ? offerList.join(' ') : ''}</div>
 </section>`;
 };
 
