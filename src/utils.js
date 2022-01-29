@@ -32,12 +32,6 @@ export const sortDuration = (pointA, pointB) => {
 
 export const sortPrice = (pointA, pointB) => pointB.basePrice-pointA.basePrice;
 
-//check if this function is in use
-export const findCurrentOfferForUser = (offers, eventType) => {
-  const index = offers.findIndex((offer) => offer.type === eventType);
-  return offers[index].offers;
-};
-
 const isPointInProcessOfHappening = (point) => {
   if((dayjs(point.dateFrom).diff(dayjs()) < NOTHING) &&  (dayjs(point.dateTo).diff(dayjs()) >= NOTHING)) {
     return true;

@@ -12,16 +12,16 @@ export default class PointPresenter {
   #pointFormEditComponent = null;
 
   #oneTravelPoint = null;
-  #destinationList = [];
+  #listOfOptions = null;
   #mode = Mode.DEFAULT;
 
   #closeAddNewPointForm = null;
 
-  constructor(container, updateData, changeMode, destinationList) {
+  constructor(container, updateData, changeMode, listOfOptions) {
     this.#pointContainer = container;
     this.#updateData = updateData;
     this.#changeMode = changeMode;
-    this.#destinationList = destinationList;
+    this.#listOfOptions = listOfOptions;
   }
 
   init = (point) => {
@@ -31,7 +31,7 @@ export default class PointPresenter {
     const prevPointFormEditComponent = this.#pointFormEditComponent;
 
     this.#singlePointComponent = new SinglePointView(point);
-    this.#pointFormEditComponent = new FormEditView(point, this.#destinationList);
+    this.#pointFormEditComponent = new FormEditView(point, this.#listOfOptions);
 
     this.#setHandlersOnSinglePoint();
 
@@ -45,8 +45,8 @@ export default class PointPresenter {
     }
 
     if(this.#mode === Mode.EDITING) {
-      replace(this.#pointFormEditComponent, prevPointFormEditComponent);
-      // this.#mode = Mode.DEFAULT;
+      replace(this.#singlePointComponent, prevPointFormEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointFormEditComponent);
@@ -122,6 +122,14 @@ export default class PointPresenter {
       return;
     }
 
+    const resetFormState = () => {
+      this.#pointFormEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
     switch (state) {
       case State.SAVING:
         this.#pointFormEditComponent.updateData({
@@ -134,6 +142,10 @@ export default class PointPresenter {
           isDisabled: true,
           isDeleting: true,
         });
+        break;
+      case State.ABORTING:
+        this.#singlePointComponent.shake(resetFormState);
+        this.#pointFormEditComponent.shake(resetFormState);
         break;
     }
   }

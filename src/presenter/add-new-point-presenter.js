@@ -1,4 +1,4 @@
-import { ListOfEventsOn, RenderPosition, UpdateType, UserAction } from '../const';
+import { BLANK_POINT, ListOfEventsOn, RenderPosition, UpdateType, UserAction } from '../const';
 import { remove, render } from '../render';
 import FormEditView from '../view/form/form-edit-view';
 
@@ -8,23 +8,24 @@ export default class AddNewPointPresenter {
 
     #pointFormEditComponent = null;
 
-    #destinationList = [];
+    #listOfOptions = [];
     #isAddNewBtnActive = false;
     #updateAddNewBtnStatus = null;
 
     #clearBoard = null;
     #renderBoard =null;
 
-    constructor(pointContainer, updateData, destinationList, updateAddNewBtnStatus) {
+    constructor(pointContainer, updateData, updateAddNewBtnStatus) {
       this.#pointContainer = pointContainer;
       this.#updateData = updateData;
-      this.#destinationList = destinationList;
+
       this.#updateAddNewBtnStatus = updateAddNewBtnStatus;
     }
 
-    init = () => {
-      this.#pointFormEditComponent = new FormEditView(false, this.#destinationList, this.#isAddNewBtnActive);
+    init = (listOfOptions) => {
+      this.#listOfOptions = listOfOptions;
 
+      this.#pointFormEditComponent = new FormEditView(BLANK_POINT, this.#listOfOptions, this.#isAddNewBtnActive);
 
       render(this.#pointContainer, this.#pointFormEditComponent, RenderPosition.AFTERBEGIN);
       this.#setHandlersOnFormEdit();
@@ -56,6 +57,18 @@ export default class AddNewPointPresenter {
         isDisabled: true,
         isSaving: true,
       });
+    }
+
+    setAborting = () => {
+      const resetFormState = () => {
+        this.#pointFormEditComponent.updateData({
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false,
+        });
+      };
+
+      this.#pointFormEditComponent.shake(resetFormState);
     }
 
     #handleSubmitForm = (pointUpdate) => {

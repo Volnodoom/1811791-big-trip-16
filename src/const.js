@@ -113,7 +113,8 @@ export const ListOfEventsOn = {
   FAVORITE_BTN: 'event__favorite-btn',
   EVENT_TYPE: 'event__type  event__type-btn',
   DESTINATION_POINT: 'event__field-group  event__field-group--destination',
-  CANCEL_BTN_FORM: 'Cancel'
+  CANCEL_BTN_FORM: 'Cancel',
+  OFFER_BTN: 'OFFER BTN',
 };
 
 export const EmptyMessageStatement = {
@@ -145,7 +146,7 @@ export const UpdateType = {
 };
 
 export const BLANK_POINT = {
-  basePrice: '0',
+  basePrice: '',
   dateFrom: '01/01/01',
   dateTo: '01/01/01',
   destination: {
@@ -154,9 +155,8 @@ export const BLANK_POINT = {
     pictures: [],
   },
   offers: [],
-  travelType: 'Taxi',
-  isBlankPoint: true,
-  hasOptions: false,
+  isFavorite: false,
+  travelType: 'taxi',
 };
 
 export const MenuItem = {
@@ -180,6 +180,7 @@ export const Method = {
 export const State = {
   SAVING: 'SAVING',
   DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
 
 export const NOTHING = 0;
@@ -188,8 +189,9 @@ export const LIMIT_TOWN_INFO = 3;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
 export const STATISTICS_BAR_HEIGHT = 450;
-export const AUTHORIZATION  = 'Basic hS2suktyikiu6wecl1sa2j';
+export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const SHAKE_DURATION = 0.6;
+
+export const AUTHORIZATION  = 'Basic hS2suktyik563bdl1sa2j';
 export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
-export const CHECK_IN = 'CHECK-IN';
-export const CHECK_IN_SPECIFIC = 'CHECK_IN';

@@ -3,6 +3,8 @@ import AbstractObservable from './abstract-observer';
 
 export default class PointesModel extends AbstractObservable {
   #points = [];
+  #listOfDestinations = null;
+  #listOfOffers = null;
   #apiService = null;
 
   constructor(apiService) {
@@ -14,6 +16,10 @@ export default class PointesModel extends AbstractObservable {
     return this.#points;
   }
 
+  getListOfDestinations = () => this.#listOfDestinations;
+
+  getListOfOffers = () => this.#listOfOffers;
+
   init = async () => {
     try {
       const points = await this.#apiService.points;
@@ -22,9 +28,21 @@ export default class PointesModel extends AbstractObservable {
       this.#points = [];
     }
 
+    try {
+      const destinations = await this.#apiService.getListOfDestinations();
+      this.#listOfDestinations = destinations.map((point) => this.#adaptDestinationsToClient(point));
+    } catch (err) {
+      this.#listOfDestinations = [];
+    }
+
+    try {
+      this.#listOfOffers = await this.#apiService.getListOfOffers();
+    } catch (err) {
+      this.#listOfOffers = [];
+    }
+
     this._notify(UpdateType.INIT);
   }
-
 
   updatePoint = async(updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
@@ -67,7 +85,7 @@ export default class PointesModel extends AbstractObservable {
   }
 
   deletePoint = async(updateType, update) => {
-    const index = this.#points.findIndex((task) => task.id === update.id);
+    const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting point');
@@ -107,6 +125,16 @@ export default class PointesModel extends AbstractObservable {
     delete adaptedPoint['is_favorite'];
     delete adaptedPoint.type;
 
+    return adaptedPoint;
+  }
+
+  #adaptDestinationsToClient = (destination) => {
+    const adaptedPoint = {
+      ...destination,
+      destinationName: destination.name,
+    };
+
+    delete adaptedPoint.name;
     return adaptedPoint;
   }
 }
