@@ -187,7 +187,6 @@ export const ErrorMessage = {
   PRICE: 'Price should be in numbers. Please, correct your input',
   SELECT_CITY: 'Please select a city from the list or text it. Register is case sensitive',
   SELECT_EXISTED_CITY: 'This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive',
-  DATE_END_EVENT: 'Date of the event end could not be earlier then the date of the event\'s start. Please, correct the date of the end event',
 };
 
 export const NOTHING = 0;
@@ -197,6 +196,8 @@ export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
 export const ONE_DAY = 1;
 export const DAY_FORMAT = 'day';
+export const FIVE = 5;
+export const MINUTES = 'm';
 export const STATISTICS_BAR_HEIGHT = 275;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 export const SHAKE_DURATION = 0.6;

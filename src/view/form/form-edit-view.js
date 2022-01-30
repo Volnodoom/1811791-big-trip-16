@@ -1,5 +1,5 @@
 import { BLANK_POINT, ErrorMessage, ListOfEventsOn, NOTHING } from '../../const';
-import { correctDateFormatForFlitpicker, isDayEndEarlyDayStart, isDayEndEarlyDayStartFlatpicker, isEsc } from '../../utils';
+import { addFiveMinutes, correctDateFormatForFlitpicker, isDayEndEarlyDayStart, isDayEndEarlyDayStartFlatpicker, isEsc } from '../../utils';
 import Smart from '../smart';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
 import flatpickr from 'flatpickr';
@@ -205,8 +205,6 @@ export default class FormEditView extends Smart {
       this.#findInputDestinationElement().setCustomValidity(ErrorMessage.SELECT_CITY);
     } else if (hasNotOnlyDigits || (this.#findInputPriceElement().value === '')) {
       this.#findInputPriceElement().setCustomValidity(ErrorMessage.PRICE);
-    } else if (isDayEndEarlyDayStart(this._data.dateFrom, this._data.dateTo)) {
-      window.alert(ErrorMessage.DATE_END_EVENT);
     } else {
       this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
       document.removeEventListener('keydown', this.#escPressHandler);
@@ -257,9 +255,22 @@ export default class FormEditView extends Smart {
       ...this._data,
       dateFrom: userDate,
     });
+    if (isDayEndEarlyDayStart(userDate, this._data.dateTo)) {
+      this.updateData({
+        ...this._data,
+        dateTo: addFiveMinutes(this._data.dateFrom),
+      });
+    }
   }
 
   #endDateChangeHandler = ([userDate]) => {
+    if (isDayEndEarlyDayStart(this._data.dateFrom, userDate)) {
+      this.updateData({
+        ...this._data,
+        dateTo: addFiveMinutes(this._data.dateFrom),
+      });
+      return;
+    }
     this.updateData({
       ...this._data,
       dateTo: userDate,
