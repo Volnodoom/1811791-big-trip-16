@@ -1,16 +1,11 @@
-import { NOTHING, TRAVEL_POINT_COUNT } from './const';
-import { generateTravelPoints } from './mock/points';
-import { getRandomInteger } from './utils';
+import { AUTHORIZATION, END_POINT } from './const';
 import HeadSitePresenter from './presenter/head-site-presenter';
 import TripBoardPresenter from './presenter/trip-board-presenter';
 import PointesModel from './model/points-model';
 import FilterModel from './model/filter-model';
+import ApiService from './api-service';
 
-const tripPoints = new Array ([TRAVEL_POINT_COUNT, NOTHING][getRandomInteger(0, 1)]).fill(' ').map(generateTravelPoints);
-
-const pointsModel = new PointesModel();
-pointsModel.points = tripPoints;
-
+const pointsModel = new PointesModel(new ApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
 
 const siteHeadInformation = document.querySelector('.trip-main');
@@ -22,7 +17,7 @@ const revielTripEvents = () => siteMainDataBody.classList.remove('trip-events--h
 const headSitePresenter = new HeadSitePresenter(siteHeadInformation, siteNavigation, siteMainDataBody, pointsModel, filterModel);
 const tripBoardPresenter = new TripBoardPresenter(siteMainDataBody, pointsModel, filterModel);
 
-headSitePresenter.init();
+
 tripBoardPresenter.init();
 headSitePresenter.getBoardFunctionality(
   tripBoardPresenter.destroy,
@@ -32,3 +27,7 @@ headSitePresenter.getBoardFunctionality(
 tripBoardPresenter.getHeadFunctionality(
   headSitePresenter.handleSiteMenuClick,
 );
+
+pointsModel.init().finally(() => {
+  headSitePresenter.init();
+});

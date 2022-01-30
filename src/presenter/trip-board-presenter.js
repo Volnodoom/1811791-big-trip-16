@@ -1,8 +1,9 @@
-import { FilterLabelStartFrame, MenuItem, RenderPosition, SortingLabelStartFrame, UpdateType, UserAction } from '../const';
+import { FilterLabelStartFrame, MenuItem, NOTHING, RenderPosition, SortingLabelStartFrame, State, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
+import LoadingView from '../view/main-body/loading-view';
 import PointPresenter from './point-presenter';
 import { filterPointsForTimeDifference, sortDate, sortDuration, sortPrice } from '../utils';
 import NewEventBtnView from '../view/head/new-event-btn-view';
@@ -13,16 +14,19 @@ export default class TripBoardPresenter {
   #filterModel = null;
 
   #tripBoardContainer = null;
+  #containerForNewEventBtn = null;
+
   #pointsEmptyComponent = null;
   #tripPointsListComponent = new PointsListView();
   #sortingComponent = null;
   #newEventBtnComponent = null;
-  #addNewPointPresenter = null;
-  #containerForNewEventBtn = null;
+  #loadingComponent = new LoadingView();
 
+  #pointPresentersStore = new Map();
+  #addNewPointPresenter = null;
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
   #filterType = FilterLabelStartFrame.EVERYTHING.filter;
-  #pointPresentersStore = new Map();
+  #isLoading = true;
 
   #menuClick = null;
 
@@ -58,6 +62,7 @@ export default class TripBoardPresenter {
 
   init = () => {
     this.#renderNewEventBtn();
+    this.#newEventBtnComponent.setBtnDisabledStatus(this.#isLoading);
     this.#setAddNewPoint();
     this.#renderTripBoard();
 
@@ -66,9 +71,8 @@ export default class TripBoardPresenter {
   }
 
   #renderNewEventBtn = () => {
-
     const prevNewEventBtnComponent = this.#newEventBtnComponent;
-    this.#newEventBtnComponent = new NewEventBtnView();
+    this.#newEventBtnComponent = new NewEventBtnView(this.#isLoading);
     this.#containerForNewEventBtn = this.#newEventBtnComponent.getContainerForBtn();
 
     if (prevNewEventBtnComponent === null) {
@@ -97,7 +101,10 @@ export default class TripBoardPresenter {
       this.#tripPointsListComponent,
       this.#handleViewAction,
       this.#handleChangeMode,
-      this.allPoints,
+      {
+        destinations: this.#pointsModel.getListOfDestinations(),
+        offers: this.#pointsModel.getListOfOffers(),
+      },
     );
     this.#pointPresentersStore.set(oneTravelPoint.id, pointPresenter);
     pointPresenter.init(oneTravelPoint);
@@ -107,10 +114,17 @@ export default class TripBoardPresenter {
   #renderTripPoints = (points) => {
     render(this.#sortingComponent, this.#tripPointsListComponent, RenderPosition.AFTEREND);
 
-    points.forEach((oneTravelPoint) => this.#renderOneTripPoint(oneTravelPoint));
+    if(points) {
+      points.forEach((oneTravelPoint) => this.#renderOneTripPoint(oneTravelPoint));
+    }
   }
 
   #renderTripBoard = () => {
+    if(this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if((this.allPoints.length === 0) && !this._isAddNewBtnActive) {
       this.#renderNoPoints();
       return;
@@ -121,16 +135,38 @@ export default class TripBoardPresenter {
 
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #renderLoading = () => {
+    render(this.#tripBoardContainer, this.#loadingComponent, RenderPosition.BEFOREEND);
+  }
+
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresentersStore.get(update.id).setViewState(State.SAVING);
+        try{
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresentersStore.get(update.id).setViewState(State.ABORTING);
+        }
         break;
+
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#addNewPointPresenter.setSaving();
+        try{
+          await this.#pointsModel.addPoint(updateType, update);
+          this.#handleAddNewPointStatus(false);
+        } catch (err) {
+          this.#addNewPointPresenter.setAborting();
+        }
         break;
+
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresentersStore.get(update.id).setViewState(State.DELETING);
+        try{
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresentersStore.get(update.id).setViewState(State.ABORTING);
+        }
         break;
     }
   }
@@ -138,17 +174,20 @@ export default class TripBoardPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#pointPresentersStore.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
         this.#clearTripBoard();
         this.#renderTripBoard();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
         this.#clearTripBoard(true);
+        this.#renderTripBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        this.#newEventBtnComponent.setBtnDisabledStatus(this.#isLoading);
+        remove(this.#loadingComponent);
         this.#renderTripBoard();
         break;
     }
@@ -169,11 +208,13 @@ export default class TripBoardPresenter {
   }
 
   #clearTripBoard = (resetSortType = false) => {
+    this.#addNewPointPresenter.destroy();
     this.#pointPresentersStore.forEach((presenter) => presenter.destroy());
     this.#pointPresentersStore.clear();
 
     remove(this.#sortingComponent);
     remove(this.#pointsEmptyComponent);
+    remove(this.#loadingComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
@@ -184,7 +225,6 @@ export default class TripBoardPresenter {
     this.#addNewPointPresenter = new AddNewPointPresenter(
       this.#tripPointsListComponent,
       this.#handleViewAction,
-      this.allPoints,
       this.#handleAddNewPointStatus,
     );
 
@@ -197,10 +237,24 @@ export default class TripBoardPresenter {
     this.#handleAddNewPointStatus(true);
     this.#newEventBtnComponent.setBtnDisabledStatus(this._isAddNewBtnActive);
     this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
-    this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
+    if(this.#filterType !== FilterLabelStartFrame.EVERYTHING.filter) {
+      this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
+    }
     this.#addNewPointPresenter.setTemplateForAddNewBtnStatus(true);
     this.#handleChangeMode();
-    this.#addNewPointPresenter.init();
+    if (this.allPoints.length === NOTHING) {
+      remove(this.#pointsEmptyComponent);
+      this.#renderSort();
+      this.#renderTripPoints();
+
+    }
+    this.#addNewPointPresenter.init(
+      {
+        destinations: this.#pointsModel.getListOfDestinations(),
+        offers: this.#pointsModel.getListOfOffers(),
+      },
+      this.allPoints.length === NOTHING,
+    );
   }
 
   #handleAddNewPointStatus = (isActive) => {

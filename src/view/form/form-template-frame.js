@@ -1,47 +1,60 @@
-import { CHECK_IN, CHECK_IN_SPECIFIC, EventDescription, ListOfEventsOn, NOTHING } from '../../const';
-import { findCurrentOfferForUser, getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
+import { EventDescription, ListOfEventsOn, NOTHING } from '../../const';
+import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
-export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNewBtnState) => {
-  const {destinationName} = oneTravelPoint.destination;
+export const createHeaderFormTemplate = (pointData, listOfOptions, addNewBtnState) => {
+  const {destinationName} = pointData.destination;
   const {
     dateFrom,
     dateTo,
     travelType,
     basePrice,
-    offers,
-  } = oneTravelPoint;
+    id,
+    isDisabled,
+    isSaving,
+    isDeleting,
+  } = pointData;
 
-  const list = destinationList.map((onePoint) => `<option value="${onePoint.destination.destinationName}"></option>`);
+  const createCanselDeleteBtnTemplate = () => {
+    if (addNewBtnState) {
+      return 'Cancel';
+    } else {
+      if (isDeleting) {
+        return 'Deleting ...';
+      } else { return 'Delete';}
+    }
+  };
+
+  const listOfDestination = listOfOptions.destinations
+    .map((onePoint) => `<option value="${onePoint.destinationName}"></option>`).join(' ');
 
   const getSingleEvent = (eventInfo) => (
     `<div class="event__type-item">
 
       <input
-        id="event-type-${eventInfo.lowCaseWord}-1"
+        id="event-type-${eventInfo.lowCaseWord}-${id}"
         class="event__type-input  visually-hidden"
-        type="radio" name="event-type"
+        type="radio" 
+        name="event-type"
         value="${eventInfo.lowCaseWord}"
+        ${isDisabled ? 'disabled' : ''}
         />
 
       <label class="event__type-label  event__type-label--${eventInfo.lowCaseWord}"
-      for="event-type-${eventInfo.lowCaseWord}-1"
+      for="event-type-${eventInfo.lowCaseWord}-${id}"
       data-event-type = "${ListOfEventsOn.EVENT_TYPE}"
       >${eventInfo.capitalLetterWord}</label>
 
     </div>`
   );
 
-  const getListOfEventsForThePoint = () => offers.map((offer) => {
-    if (offer.type.toUpperCase() !== CHECK_IN) {
-      return EventDescription[offer.type.toUpperCase()];
-    } else {
-      return EventDescription[CHECK_IN_SPECIFIC];
-    }
-  });
+  const listOfSingleEvents =  Object
+    .values(EventDescription)
+    .map((description) => getSingleEvent(description))
+    .join(' ');
 
   return `  <header class="event__header">
   <div class="event__type-wrapper">
-    <label class="event__type  event__type-btn" for="event-type-toggle-1">
+    <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
       <span class="visually-hidden">Choose event type</span>
 
       <img
@@ -52,15 +65,13 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
       alt="Event ${travelType} icon">
 
       </label>
-    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
 
     <div class="event__type-list">
       <fieldset class="event__type-group">
       <legend class="visually-hidden">Event type</legend>
 
-    ${getListOfEventsForThePoint()
-    .map((description) => getSingleEvent(description))
-    .join(' ')}
+    ${listOfSingleEvents}
 
       </fieldset>
     </div>
@@ -69,87 +80,120 @@ export const createHeaderFormTemplate = (oneTravelPoint, destinationList, addNew
 
   <div class="event__field-group  event__field-group--destination">
     <label class="event__label  event__type-output"
-    for="event-destination-1"
+    for="event-destination-${id}"
     data-destination-point="${ListOfEventsOn.DESTINATION_POINT}">
     ${travelType.replace(travelType[0], travelType[0].toUpperCase())}
     </label>
 
     <input
     class="event__input  event__input--destination"
-    id="event-destination-1"
+    id="event-destination-${id}"
     type="text"
     name="event-destination"
     value="${destinationName}"
-    list="destination-list-1"
+    list="destination-list-${id}"
+    ${isDisabled ? 'disabled' : ''}
     >
 
-    <datalist id="destination-list-1">
-      ${list.join(' ')}
+    <datalist id="destination-list-${id}">
+      ${listOfDestination}
     </datalist>
   </div>
 
   <div class="event__field-group  event__field-group--time">
-    <label class="visually-hidden" for="event-start-time-1">From</label>
+    <label class="visually-hidden" for="event-start-time-${id}">From</label>
 
     <input
     class="event__input  event__input--time"
-    id="event-start-time-1"
+    id="event-start-time-${id}"
     type="text"
     name="event-start-time"
     value="${getTimeDDMMYYWithSlashAndHHMM(dateFrom)}"
+    ${isDisabled ? 'disabled' : ''}
     >
     &mdash;
-    <label class="visually-hidden" for="event-end-time-1">To</label>
+    <label class="visually-hidden" for="event-end-time-${id}">To</label>
 
     <input
     class="event__input  event__input--time"
-    id="event-end-time-1" type="text"
+    id="event-end-time-${id}" type="text"
     name="event-end-time"
     value="${getTimeDDMMYYWithSlashAndHHMM(dateTo)}"
+    ${isDisabled ? 'disabled' : ''}
     >
 
   </div>
 
   <div class="event__field-group  event__field-group--price">
-    <label class="event__label" for="event-price-1">
+    <label class="event__label" for="event-price-${id}">
       <span class="visually-hidden">Price</span>
       &euro;
     </label>
 
     <input
     class="event__input  event__input--price"
-    id="event-price-1"
+    id="event-price-${id}"
     type="text"
     name="event-price"
     value="${basePrice}"
-    >
+    ${isDisabled ? 'disabled' : ''}>
 
     </div>
 
-  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">${addNewBtnState ? 'Cancel' : 'Delete'}</button>
+  <button 
+  class="event__save-btn  btn  btn--blue" 
+  type="submit" 
+  ${isDisabled ? 'disabled' : ''}>
+    ${isSaving ? 'Saving...' : 'Save'}
+  </button>
 
-  ${addNewBtnState ? '' : `<button class="event__rollup-btn" type="button" data-close-rollup-form="${ListOfEventsOn.CLOSE_ROLLUP_BTN}"> <span class="visually-hidden">Open event</span> </button>`}
+  <button 
+  class="event__reset-btn" 
+  type="reset"
+  ${isDisabled ? 'disabled' : ''}>
+    ${createCanselDeleteBtnTemplate()}
+  </button>
+
+  ${addNewBtnState
+    ? ''
+    : `<button class="event__rollup-btn" type="button" data-close-rollup-form="${ListOfEventsOn.CLOSE_ROLLUP_BTN}"> <span class="visually-hidden">Open event</span> </button>`}
 
 </header>`;
 };
 
-export const createSectionOfferTemplate = (oneTravelPoint) => {
-  const {offers, travelType} = oneTravelPoint;
-  let offerList = '';
+export const createSectionOfferTemplate = (oneTravelPoint, listOfOptions) => {
+  const {travelType} = oneTravelPoint;
+  const offersFromCustomer = oneTravelPoint.offers;
+  const offersList = listOfOptions.offers;
+
+  const findCurrentOfferFromList = offersList.find((oneOffer) => oneOffer.type === travelType);
 
   const singleOfferButton = (oneOffer) => {
     const {title, price, id} = oneOffer;
 
+    const isSelected = () => {
+      if (offersFromCustomer.length === NOTHING) {
+        return false;
+      } else if (offersFromCustomer.some((customerSelection) => customerSelection.id === oneOffer.id)) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
     return `<div class="event__offer-selector">
     <input
     class="event__offer-checkbox  visually-hidden"
-    id="event-offer-luggage-${id}"
+    id="event-offer-${id}"
     type="checkbox"
-    name="event-offer-luggage"
+    name="event-offer"
+    ${isSelected() ? 'checked' : ''}
     >
 
-    <label class="event__offer-label" for="event-offer-luggage-${id}">
+    <label 
+    class="event__offer-label" 
+    for="event-offer-${id}"
+    data-event-offer="${ListOfEventsOn.OFFER_BTN}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${price}</span>
@@ -157,14 +201,15 @@ export const createSectionOfferTemplate = (oneTravelPoint) => {
   </div>`;
   };
 
-  if (offers.length !== NOTHING) {
-    offerList = findCurrentOfferForUser(offers, travelType).map((oneOffer) => singleOfferButton(oneOffer));
-  }
+  const listOfOffers = findCurrentOfferFromList.offers
+    .map((oneOffer) => singleOfferButton(oneOffer))
+    .join(' ');
+
 
   return `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-  <div class="event__available-offers">${offers.length !== NOTHING ? offerList.join(' ') : ''}</div>
+  <div class="event__available-offers">${listOfOffers}</div>
 </section>`;
 };
 
@@ -172,7 +217,8 @@ export const createFormDestinationTemplate = (oneTravelPoint) => {
   const {description, pictures} = oneTravelPoint.destination;
 
   const pictureList = pictures
-    .map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`);
+    .map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
+    .join(' ');
 
   return `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -180,7 +226,7 @@ export const createFormDestinationTemplate = (oneTravelPoint) => {
 
     <div class="event__photos-container">
       <div class="event__photos-tape">
-        ${pictureList.join(' ')}
+        ${pictureList}
       </div>
     </div>
   </section>`;

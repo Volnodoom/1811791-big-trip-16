@@ -1,5 +1,5 @@
 import { ListOfEventsOn, NOTHING } from '../../const';
-import { durationOfEventInMinutes, durationOfOnePointEvent, findCurrentOfferForUser, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
+import { durationOfEventInMinutes, durationOfOnePointEvent, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
 import Abstract from '../abstract';
 
 const createSinglePointTemplate = (oneTravelPoint) => {
@@ -14,17 +14,14 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     isFavorite} = oneTravelPoint;
 
   const differenceInMinutes = durationOfEventInMinutes(dateFrom, dateTo);
-  let offersList;
-
-  if (offers.length !== NOTHING) {
-    offersList = findCurrentOfferForUser(offers, travelType)
-      .map((offer) => `<li class="event__offer">
+  const offersList = () => offers
+    .map((offer) => `<li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </li>`)
-      .join(' ');
-  }
+    .join(' ');
+
 
   return `<li class="trip-events__item" data-pointId="${id}">
   <div class="event">
@@ -72,7 +69,7 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
 
-    ${offers.length === NOTHING ? '' : offersList}
+    ${offers.length > NOTHING ? offersList() :'' }
 
     </ul>
 

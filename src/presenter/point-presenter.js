@@ -1,4 +1,4 @@
-import { ListOfEventsOn, Mode, RenderPosition, UpdateType, UserAction } from '../const';
+import { ListOfEventsOn, Mode, RenderPosition, State, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
 import FormEditView from '../view/form/form-edit-view';
 import SinglePointView from '../view/main-body/single-point-view';
@@ -12,16 +12,16 @@ export default class PointPresenter {
   #pointFormEditComponent = null;
 
   #oneTravelPoint = null;
-  #destinationList = [];
+  #listOfOptions = null;
   #mode = Mode.DEFAULT;
 
   #closeAddNewPointForm = null;
 
-  constructor(container, updateData, changeMode, destinationList) {
+  constructor(container, updateData, changeMode, listOfOptions) {
     this.#pointContainer = container;
     this.#updateData = updateData;
     this.#changeMode = changeMode;
-    this.#destinationList = destinationList;
+    this.#listOfOptions = listOfOptions;
   }
 
   init = (point) => {
@@ -31,7 +31,7 @@ export default class PointPresenter {
     const prevPointFormEditComponent = this.#pointFormEditComponent;
 
     this.#singlePointComponent = new SinglePointView(point);
-    this.#pointFormEditComponent = new FormEditView(point, this.#destinationList);
+    this.#pointFormEditComponent = new FormEditView(point, this.#listOfOptions);
 
     this.#setHandlersOnSinglePoint();
 
@@ -46,6 +46,7 @@ export default class PointPresenter {
 
     if(this.#mode === Mode.EDITING) {
       replace(this.#pointFormEditComponent, prevPointFormEditComponent);
+      // this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointFormEditComponent);
@@ -86,7 +87,6 @@ export default class PointPresenter {
       UpdateType.MINOR,
       pointUpdate,
     );
-    this.#handleCloseForm();
   }
 
   #handleDeleteClick = (point) => {
@@ -114,6 +114,39 @@ export default class PointPresenter {
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
       this.#handleCloseForm();
+    }
+  }
+
+  setViewState = (state) => {
+    if(this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointFormEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this.#pointFormEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this.#pointFormEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this.#singlePointComponent.shake(resetFormState);
+        this.#pointFormEditComponent.shake(resetFormState);
+        break;
     }
   }
 

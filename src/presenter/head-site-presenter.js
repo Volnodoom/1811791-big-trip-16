@@ -25,6 +25,7 @@ export default class HeadSitePresenter {
   #revielTripEvents = null;
   #currentMenuItem = MenuItem.TABLE;
 
+
   constructor(containerHead, containerNavigation, containerForPoints, pointsModel, filterModel) {
     this.#headContainer = containerHead;
     this.#navigationContainer = containerNavigation;
@@ -42,6 +43,8 @@ export default class HeadSitePresenter {
 
     this.renderMenu();
     this.renderFilter();
+
+    this.#pointsModel.addObserver(this.#handlePointsModelEvent);
   }
 
   get allPoints () {
@@ -139,7 +142,10 @@ export default class HeadSitePresenter {
   }
 
   #handlePointsModelEvent = () => {
-    this.renderHeadInfo();
+    if (this.allPoints.length > 0) {
+      this.renderHeadInfo();
+    }
+    this.renderMenu();
   }
 
   #destroyFilter = () => {

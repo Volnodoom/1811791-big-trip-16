@@ -113,7 +113,8 @@ export const ListOfEventsOn = {
   FAVORITE_BTN: 'event__favorite-btn',
   EVENT_TYPE: 'event__type  event__type-btn',
   DESTINATION_POINT: 'event__field-group  event__field-group--destination',
-  CANCEL_BTN_FORM: 'Cancel'
+  CANCEL_BTN_FORM: 'Cancel',
+  OFFER_BTN: 'OFFER BTN',
 };
 
 export const EmptyMessageStatement = {
@@ -141,21 +142,21 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export const BLANK_POINT = {
-  basePrice: '0',
-  dateFrom: '01/01/01',
-  dateTo: '01/01/01',
+  basePrice: '',
+  dateFrom: '01/01/22',
+  dateTo: '01/01/22',
   destination: {
     description: '',
     destinationName: '',
     pictures: [],
   },
   offers: [],
-  travelType: 'Taxi',
-  isBlankPoint: true,
-  hasOptions: false,
+  isFavorite: false,
+  travelType: 'taxi',
 };
 
 export const MenuItem = {
@@ -169,13 +170,38 @@ export const ChartNames = {
   TIME: 'TIME',
 };
 
+export const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
+export const ErrorMessage = {
+  PRICE: 'Price should be in numbers. Please, correct your input',
+  SELECT_CITY: 'Please select a city from the list or text it. Register is case sensitive',
+  SELECT_EXISTED_CITY: 'This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive',
+};
+
 export const NOTHING = 0;
 export const ARRAY_WITH_EMPTY_OBJECT = 1;
 export const LIMIT_TOWN_INFO = 3;
-export const TRAVEL_POINT_COUNT = 15;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
-export const STATISTICS_BAR_HEIGHT = 450;
+export const ONE_DAY = 1;
+export const DAY_FORMAT = 'day';
+export const FIVE = 5;
+export const MINUTES = 'm';
+export const STATISTICS_BAR_HEIGHT = 275;
+export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const SHAKE_DURATION = 0.6;
 
-export const CHECK_IN = 'CHECK-IN';
-export const CHECK_IN_SPECIFIC = 'CHECK_IN';
+export const AUTHORIZATION  = 'Basic hS2suktyik563bdl1sa2j';
+export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
+
