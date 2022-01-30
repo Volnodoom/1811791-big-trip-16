@@ -4,7 +4,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { ChartNames, EventDescription, NOTHING, STATISTICS_BAR_HEIGHT } from '../../const';
 import { calculateFrequencyOfType, calculateTotalMoneyForEventType, calculateTotalTimeForEventType, durationOfOnePointEvent } from '../../utils';
 
-const getArrayOfTravelTypes = () => Object.values(EventDescription).map((element) =>[element.capitalLetterWord, element.statisticsLabele]);
+const getArrayOfTravelTypes = () => Object.values(EventDescription).map((element) =>[element.lowCaseWord, element.statisticsLabele]);
 
 const insertDataAccordingToChartNamex = (chartName, travelType, points) => {
   switch (chartName) {
@@ -47,7 +47,7 @@ const renderChart = (typeOfCtx, chartName, points) => new Chart(typeOfCtx, {
       backgroundColor: '#ffffff',
       hoverBackgroundColor: '#ffffff',
       anchor: 'start',
-      barThickness: 44,
+      barThickness: 30,
       minBarLength: 50,
     }],
   },

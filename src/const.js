@@ -197,7 +197,7 @@ export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
 export const ONE_DAY = 1;
 export const DAY_FORMAT = 'day';
-export const STATISTICS_BAR_HEIGHT = 450;
+export const STATISTICS_BAR_HEIGHT = 275;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 export const SHAKE_DURATION = 0.6;
 
