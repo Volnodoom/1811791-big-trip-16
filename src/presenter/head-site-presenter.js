@@ -43,6 +43,8 @@ export default class HeadSitePresenter {
 
     this.renderMenu();
     this.renderFilter();
+
+    this.#pointsModel.addObserver(this.#handlePointsModelEvent);
   }
 
   get allPoints () {
@@ -143,6 +145,7 @@ export default class HeadSitePresenter {
     if (this.allPoints.length > 0) {
       this.renderHeadInfo();
     }
+    this.renderMenu();
   }
 
   #destroyFilter = () => {
