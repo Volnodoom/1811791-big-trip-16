@@ -147,7 +147,6 @@ export default class FormEditView extends Smart {
         },
       );
     }
-    document.removeEventListener('keydown', this.#escPressHandler);
 
     evt.target.reportValidity();
   }
@@ -273,7 +272,10 @@ export default class FormEditView extends Smart {
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
     this.#setDatepicker();
     this.#setInnerChangeHandler();
-    this.setDeleteClickHandler(this._callback.deleteClick);
+    document.addEventListener('keydown', this.#escPressHandler);
+    if (!this.#isAddNewBtnActive) {
+      this.setDeleteClickHandler(this._callback.deleteClick);
+    }
   }
 
   reset = (point) => {

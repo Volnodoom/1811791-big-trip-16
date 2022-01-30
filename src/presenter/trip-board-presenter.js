@@ -252,7 +252,8 @@ export default class TripBoardPresenter {
       {
         destinations: this.#pointsModel.getListOfDestinations(),
         offers: this.#pointsModel.getListOfOffers(),
-      }
+      },
+      this.allPoints.length === NOTHING,
     );
   }
 

@@ -4,9 +4,10 @@ import FormEditView from '../view/form/form-edit-view';
 
 export default class AddNewPointPresenter {
     #pointContainer = null;
-    #updateData = null;
-
     #pointFormEditComponent = null;
+
+    #updateData = null;
+    #isNoPoints = null;
 
     #listOfOptions = [];
     #isAddNewBtnActive = false;
@@ -22,8 +23,9 @@ export default class AddNewPointPresenter {
       this.#updateAddNewBtnStatus = updateAddNewBtnStatus;
     }
 
-    init = (listOfOptions) => {
+    init = (listOfOptions, isNoPoints) => {
       this.#listOfOptions = listOfOptions;
+      this.#isNoPoints = isNoPoints;
 
       this.#pointFormEditComponent = new FormEditView(BLANK_POINT, this.#listOfOptions, this.#isAddNewBtnActive);
 
@@ -45,6 +47,11 @@ export default class AddNewPointPresenter {
     handleCloseForm = () => {
       remove(this.#pointFormEditComponent);
       this.#updateAddNewBtnStatus(false);
+
+      if (this.#isNoPoints) {
+        this.#clearBoard();
+        this.#renderBoard();
+      }
     };
 
     handleForRefreshingBoard = (clearBoard, renderBoard) => {
