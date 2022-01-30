@@ -1,4 +1,4 @@
-import { FilterLabelStartFrame, MenuItem, RenderPosition, SortingLabelStartFrame, State, UpdateType, UserAction } from '../const';
+import { FilterLabelStartFrame, MenuItem, NOTHING, RenderPosition, SortingLabelStartFrame, State, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
@@ -114,7 +114,9 @@ export default class TripBoardPresenter {
   #renderTripPoints = (points) => {
     render(this.#sortingComponent, this.#tripPointsListComponent, RenderPosition.AFTEREND);
 
-    points.forEach((oneTravelPoint) => this.#renderOneTripPoint(oneTravelPoint));
+    if(points) {
+      points.forEach((oneTravelPoint) => this.#renderOneTripPoint(oneTravelPoint));
+    }
   }
 
   #renderTripBoard = () => {
@@ -240,6 +242,12 @@ export default class TripBoardPresenter {
     }
     this.#addNewPointPresenter.setTemplateForAddNewBtnStatus(true);
     this.#handleChangeMode();
+    if (this.allPoints.length === NOTHING) {
+      remove(this.#pointsEmptyComponent);
+      this.#renderSort();
+      this.#renderTripPoints();
+
+    }
     this.#addNewPointPresenter.init(
       {
         destinations: this.#pointsModel.getListOfDestinations(),

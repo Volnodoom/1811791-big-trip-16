@@ -4,7 +4,16 @@ import Abstract from '../abstract';
 
 const createTripInfoTemplate = (travelPoints) => {
   const totalPriceWithoutAdditionalOffersPrice = travelPoints
-    .reduce((accumulator, {basePrice}) => Number(accumulator) + Number(basePrice), NOTHING);
+    .reduce((accumulator, point) => {
+      if (point.offers.length > NOTHING) {
+        return Number(accumulator)
+        + Number(point.basePrice)
+        + Number(point.offers
+          .reduce((accumulatorOffer, offer) => Number(accumulatorOffer) + Number(offer.price), NOTHING));
+      } else {
+        return Number(accumulator) + Number(point.basePrice);
+      }
+    }, NOTHING);
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">

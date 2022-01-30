@@ -24,7 +24,7 @@ export default class HeadSitePresenter {
   #hideTripEvents = null;
   #revielTripEvents = null;
   #currentMenuItem = MenuItem.TABLE;
-  #isLoading = null;
+
 
   constructor(containerHead, containerNavigation, containerForPoints, pointsModel, filterModel) {
     this.#headContainer = containerHead;
@@ -120,12 +120,11 @@ export default class HeadSitePresenter {
     }
   }
 
-  getBoardFunctionality = (destroyBoard, initBoard, hideTripEvents, revielTripEvents, isLoading) => {
+  getBoardFunctionality = (destroyBoard, initBoard, hideTripEvents, revielTripEvents) => {
     this.#destroyBoard = destroyBoard;
     this.#initBoard = initBoard;
     this.#hideTripEvents = hideTripEvents;
     this.#revielTripEvents = revielTripEvents;
-    this.#isLoading = isLoading;
   }
 
   #handleFilterTypeChange = (filterType) => {
@@ -141,7 +140,9 @@ export default class HeadSitePresenter {
   }
 
   #handlePointsModelEvent = () => {
-    this.renderHeadInfo();
+    if (this.allPoints.length > 0) {
+      this.renderHeadInfo();
+    }
   }
 
   #destroyFilter = () => {

@@ -147,8 +147,8 @@ export const UpdateType = {
 
 export const BLANK_POINT = {
   basePrice: '',
-  dateFrom: '01/01/01',
-  dateTo: '01/01/01',
+  dateFrom: '01/01/22',
+  dateTo: '01/01/22',
   destination: {
     description: '',
     destinationName: '',
@@ -183,11 +183,20 @@ export const State = {
   ABORTING: 'ABORTING',
 };
 
+export const ErrorMessage = {
+  PRICE: 'Price should be in numbers. Please, correct your input',
+  SELECT_CITY: 'Please select a city from the list or text it. Register is case sensitive',
+  SELECT_EXISTED_CITY: 'This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive',
+  DATE_END_EVENT: 'Date of the event end could not be earlier then the date of the event\'s start. Please, correct the date of the end event',
+};
+
 export const NOTHING = 0;
 export const ARRAY_WITH_EMPTY_OBJECT = 1;
 export const LIMIT_TOWN_INFO = 3;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
+export const ONE_DAY = 1;
+export const DAY_FORMAT = 'day';
 export const STATISTICS_BAR_HEIGHT = 450;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 export const SHAKE_DURATION = 0.6;

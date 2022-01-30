@@ -1,5 +1,5 @@
-import { BLANK_POINT, ListOfEventsOn, NOTHING } from '../../const';
-import { isEsc } from '../../utils';
+import { BLANK_POINT, ErrorMessage, ListOfEventsOn, NOTHING } from '../../const';
+import { correctDateFormatForFlitpicker, isDayEndEarlyDayStart, isDayEndEarlyDayStartFlatpicker, isEsc } from '../../utils';
 import Smart from '../smart';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
 import flatpickr from 'flatpickr';
@@ -76,6 +76,7 @@ export default class FormEditView extends Smart {
   #findInputDestinationElement = () => this.element.querySelector('.event__input.event__input--destination');
   #findInputPriceElement = () => this.element.querySelector('.event__input.event__input--price');
   #findAllCheckBoxes = () => this.element.querySelectorAll('.event__offer-checkbox.visually-hidden');
+  #findInputEndDataElement = () => this.element.querySelector('[name="event-end-time"]');
 
   #clickHandler = (evt) => {
     if (evt.target.dataset.closeRollupForm === ListOfEventsOn.CLOSE_ROLLUP_BTN) {
@@ -113,7 +114,7 @@ export default class FormEditView extends Smart {
   #innerPriceHandler = () => {
     const hasNotOnlyDigits = /\D/.test(he.encode(this.#findInputPriceElement().value.trim()));
     if (hasNotOnlyDigits) {
-      this.#findInputPriceElement().setCustomValidity('Price should be in numbers. Please, correct your input');
+      this.#findInputPriceElement().setCustomValidity(ErrorMessage.PRICE);
     } else {
       this.#findInputPriceElement().setCustomValidity('');
       this._data = {
@@ -130,11 +131,10 @@ export default class FormEditView extends Smart {
     const hasCity = this.#listOfOptions.destinations.some((onePoint) => onePoint.destinationName === inputValue);
 
     if (inputValue.length === NOTHING) {
-      evt.target.setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
+      evt.target.setCustomValidity(ErrorMessage.SELECT_CITY);
     } else if (!hasCity) {
-      evt.target.setCustomValidity('This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive');
+      evt.target.setCustomValidity(ErrorMessage.SELECT_EXISTED_CITY);
     } else {
-
       evt.target.setCustomValidity('');
       this.updateData(
         {
@@ -203,9 +203,11 @@ export default class FormEditView extends Smart {
     const hasNotOnlyDigits = /\D/.test(this.#findInputPriceElement().value.trim());
 
     if(this.#findInputDestinationElement().value.length === NOTHING) {
-      this.#findInputDestinationElement().setCustomValidity('Please select a city from the list or text it. Register is case sensitive');
+      this.#findInputDestinationElement().setCustomValidity(ErrorMessage.SELECT_CITY);
     } else if (hasNotOnlyDigits || (this.#findInputPriceElement().value === '')) {
-      this.#findInputPriceElement().setCustomValidity('Price should be in numbers. Please, correct your input');
+      this.#findInputPriceElement().setCustomValidity(ErrorMessage.PRICE);
+    } else if (isDayEndEarlyDayStart(this._data.dateFrom, this._data.dateTo)) {
+      window.alert(ErrorMessage.DATE_END_EVENT);
     } else {
       this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
       document.removeEventListener('keydown', this.#escPressHandler);
@@ -229,31 +231,40 @@ export default class FormEditView extends Smart {
       this.element.querySelector('[name="event-start-time"]'),
       {
         enableTime: true,
-        dateFormat: 'd/m/Y H:m',
+        dateFormat: 'd/m/Y H:i',
         'time_24hr': true,
-        defaultDate: this._data.dateFrom,
+        defaultDate: correctDateFormatForFlitpicker(this._data.dateFrom),
         onChange: this.#startDateChangeHandler,
       },
     );
 
     this.#datapickerEnd = flatpickr(
-      this.element.querySelector('[name="event-end-time"]'),
+      this.#findInputEndDataElement(),
       {
         enableTime: true,
-        dateFormat: 'd/m/Y H:m',
+        dateFormat: 'd/m/Y H:i',
         'time_24hr': true,
-        defaultDate: this._data.dateTo,
+        defaultDate: correctDateFormatForFlitpicker(this._data.dateTo),
         onChange: this.#endDateChangeHandler,
+        disable: [
+          (date) => (isDayEndEarlyDayStartFlatpicker(this._data.dateFrom, date))
+        ],
       },
     );
   }
 
   #startDateChangeHandler = ([userDate]) => {
-    this.updateData({dateFrom: userDate});
+    this.updateData({
+      ...this._data,
+      dateFrom: userDate,
+    });
   }
 
   #endDateChangeHandler = ([userDate]) => {
-    this.updateData({dateTo: userDate});
+    this.updateData({
+      ...this._data,
+      dateTo: userDate,
+    });
   }
 
   restoreHandlers = () => {
