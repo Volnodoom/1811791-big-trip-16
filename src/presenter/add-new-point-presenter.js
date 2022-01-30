@@ -45,12 +45,14 @@ export default class AddNewPointPresenter {
     }
 
     handleCloseForm = () => {
-      remove(this.#pointFormEditComponent);
-      this.#updateAddNewBtnStatus(false);
+      if (this.#pointFormEditComponent) {
+        remove(this.#pointFormEditComponent);
+        this.#updateAddNewBtnStatus(false);
 
-      if (this.#isNoPoints) {
-        this.#clearBoard();
-        this.#renderBoard();
+        if (this.#isNoPoints) {
+          this.#clearBoard();
+          this.#renderBoard();
+        }
       }
     };
 
