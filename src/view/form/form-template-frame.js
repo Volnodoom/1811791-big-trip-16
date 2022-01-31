@@ -1,4 +1,4 @@
-import { EventDescription, ListOfEventsOn, NOTHING } from '../../const';
+import { EventDescription, FormBtnNaming, ListOfEventsOn, NOTHING } from '../../const';
 import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
 export const createHeaderFormTemplate = (pointData, listOfOptions, addNewBtnState) => {
@@ -16,11 +16,11 @@ export const createHeaderFormTemplate = (pointData, listOfOptions, addNewBtnStat
 
   const createCanselDeleteBtnTemplate = () => {
     if (addNewBtnState) {
-      return 'Cancel';
+      return FormBtnNaming.CANCEL;
     } else {
       if (isDeleting) {
-        return 'Deleting ...';
-      } else { return 'Delete';}
+        return FormBtnNaming.DELETING;
+      } else { return FormBtnNaming.DELETE;}
     }
   };
 

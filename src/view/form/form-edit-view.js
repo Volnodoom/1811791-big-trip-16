@@ -1,4 +1,4 @@
-import { BLANK_POINT, ErrorMessage, ListOfEventsOn, NOTHING } from '../../const';
+import { BLANK_POINT, ErrorMessage, ID_NUMBER, ListOfEventsOn, NOTHING, NO_DIGITS } from '../../const';
 import { addFiveMinutes, correctDateFormatForFlitpicker, isDayEndEarlyDayStart, isDayEndEarlyDayStartFlatpicker, isEsc } from '../../utils';
 import Smart from '../smart';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
@@ -184,7 +184,8 @@ export default class FormEditView extends Smart {
   }
 
   #handleInnerPrice = () => {
-    const hasNotOnlyDigits = /\D/.test(he.encode(this.#findInputPriceElement().value.trim()));
+    const hasNotOnlyDigits = NO_DIGITS.test(he.encode(this.#findInputPriceElement().value.trim()));
+
     if (hasNotOnlyDigits) {
       this.#findInputPriceElement().setCustomValidity(ErrorMessage.PRICE);
     } else {
@@ -225,7 +226,7 @@ export default class FormEditView extends Smart {
 
   #handleInnerCheckBox = (evt) => {
     const checkboxElement = evt.target;
-    const selectedOfferId = /\d{1,}/.exec(checkboxElement.id)[0];
+    const selectedOfferId = ID_NUMBER.exec(checkboxElement.id)[0];
 
     if (!checkboxElement.checked) {
       const index = this._data.offers.findIndex((offer) => Number(offer.id) === Number(selectedOfferId));
@@ -263,7 +264,8 @@ export default class FormEditView extends Smart {
 
   #handleSubmit = (evt) => {
     evt.preventDefault();
-    const hasNotOnlyDigits = /\D/.test(this.#findInputPriceElement().value.trim());
+
+    const hasNotOnlyDigits = NO_DIGITS.test(this.#findInputPriceElement().value.trim());
 
     if(this.#findInputDestinationElement().value.length === NOTHING) {
       this.#findInputDestinationElement().setCustomValidity(ErrorMessage.SELECT_CITY);
@@ -286,27 +288,21 @@ export default class FormEditView extends Smart {
     this.updateData({
       ...this._data,
       dateFrom: userDate,
-    });
+    }, true);
     if (isDayEndEarlyDayStart(userDate, this._data.dateTo)) {
       this.updateData({
         ...this._data,
         dateTo: addFiveMinutes(this._data.dateFrom),
       });
     }
+    this.#datapickerEnd.set('minDate', userDate);
   }
 
   #handleEndDateChange = ([userDate]) => {
-    if (isDayEndEarlyDayStart(this._data.dateFrom, userDate)) {
-      this.updateData({
-        ...this._data,
-        dateTo: addFiveMinutes(this._data.dateFrom),
-      });
-      return;
-    }
     this.updateData({
       ...this._data,
       dateTo: userDate,
-    });
+    }, true);
   }
 
   static parsePointInformationToData = (pointInfo) => ({

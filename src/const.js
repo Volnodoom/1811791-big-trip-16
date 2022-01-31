@@ -189,8 +189,13 @@ export const ErrorMessage = {
   SELECT_EXISTED_CITY: 'This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive',
 };
 
+export const FormBtnNaming = {
+  CANCEL: 'Cansel',
+  DELETE: 'Delete',
+  DELETING: 'Deleting',
+};
+
 export const NOTHING = 0;
-export const ARRAY_WITH_EMPTY_OBJECT = 1;
 export const LIMIT_TOWN_INFO = 3;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
@@ -201,6 +206,8 @@ export const MINUTES = 'm';
 export const STATISTICS_BAR_HEIGHT = 290;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 export const SHAKE_DURATION = 0.6;
+export const NO_DIGITS = /\D/;
+export const ID_NUMBER = /\d{1,}/;
 
 export const AUTHORIZATION  = 'Basic hS2suktyik563bdl1sa2j';
 export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';

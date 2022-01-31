@@ -32,13 +32,7 @@ export const sortDuration = (pointA, pointB) => {
 
 export const sortPrice = (pointA, pointB) => pointB.basePrice-pointA.basePrice;
 
-const isPointInProcessOfHappening = (point) => {
-  if((dayjs(point.dateFrom).diff(dayjs()) < NOTHING) &&  (dayjs(point.dateTo).diff(dayjs()) >= NOTHING)) {
-    return true;
-  } else {
-    return false;
-  }
-};
+const isPointInProcessOfHappening = (point) =>(dayjs(point.dateFrom).diff(dayjs()) < NOTHING) &&  (dayjs(point.dateTo).diff(dayjs()) >= NOTHING);
 
 export const filterPointsForTimeDifference = {
   [FilterLabelStartFrame.EVERYTHING.filter]: (points) => points,
