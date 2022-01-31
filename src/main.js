@@ -23,7 +23,7 @@ headSitePresenter.getBoardFunctionality(
   tripBoardPresenter.destroy,
   tripBoardPresenter.init,
   hideTripEvents,
-  revielTripEvents,);
+  revielTripEvents);
 tripBoardPresenter.getHeadFunctionality(
   headSitePresenter.handleSiteMenuClick,
 );

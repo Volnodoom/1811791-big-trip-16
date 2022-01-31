@@ -31,7 +31,7 @@ export const FilterLabelStartFrame  = {
     filter: 'past',
     lowCaseWord: 'past',
     capitalLetterWord: 'Past',
-  }
+  },
 };
 
 export const SortingLabelStartFrame = {
@@ -56,7 +56,7 @@ export const SortingLabelStartFrame = {
     lowCaseWord: 'offer',
     capitalLetterWord: 'Offers',
     isDisabled: true,
-  }
+  },
 };
 
 export const EventDescription = {
@@ -104,7 +104,7 @@ export const EventDescription = {
     lowCaseWord: 'restaurant',
     capitalLetterWord: 'Restaurant',
     statisticsLabele: 'RESTAURANT',
-  }
+  },
 };
 
 export const ListOfEventsOn = {
