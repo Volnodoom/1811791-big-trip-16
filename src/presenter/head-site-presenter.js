@@ -129,6 +129,20 @@ export default class HeadSitePresenter {
     this.#revielTripEvents = revielTripEvents;
   }
 
+  #destroyFilter = () => {
+    remove(this.#filtersComponent);
+    this.#filtersComponent = null;
+
+    this.#filterModel.removeObserver(this.#handleFilterModelEvent);
+
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
+  }
+
+  #destroyStatistic = () => {
+    remove(this.#StatisticsComponent);
+    this.#StatisticsComponent = null;
+  }
+
   #handleFilterTypeChange = (filterType) => {
     if (this.#filterModel.filter === filterType) {
       return;
@@ -148,17 +162,4 @@ export default class HeadSitePresenter {
     this.renderMenu();
   }
 
-  #destroyFilter = () => {
-    remove(this.#filtersComponent);
-    this.#filtersComponent = null;
-
-    this.#filterModel.removeObserver(this.#handleFilterModelEvent);
-
-    this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
-  }
-
-  #destroyStatistic = () => {
-    remove(this.#StatisticsComponent);
-    this.#StatisticsComponent = null;
-  }
 }

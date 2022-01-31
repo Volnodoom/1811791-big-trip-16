@@ -166,9 +166,9 @@ export const createSectionOfferTemplate = (oneTravelPoint, listOfOptions) => {
   const offersFromCustomer = oneTravelPoint.offers;
   const offersList = listOfOptions.offers;
 
-  const findCurrentOfferFromList = offersList.find((oneOffer) => oneOffer.type === travelType);
+  const currentOfferFromList = offersList.find((oneOffer) => oneOffer.type === travelType);
 
-  const singleOfferButton = (oneOffer) => {
+  const getSingleOfferButton = (oneOffer) => {
     const {title, price, id} = oneOffer;
 
     const isSelected = () => {
@@ -201,8 +201,8 @@ export const createSectionOfferTemplate = (oneTravelPoint, listOfOptions) => {
   </div>`;
   };
 
-  const listOfOffers = findCurrentOfferFromList.offers
-    .map((oneOffer) => singleOfferButton(oneOffer))
+  const listOfOffers = currentOfferFromList.offers
+    .map((oneOffer) => getSingleOfferButton(oneOffer))
     .join(' ');
 
 

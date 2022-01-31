@@ -2,7 +2,7 @@ import Abstract from '../abstract';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { ChartNames, EventDescription, NOTHING, STATISTICS_BAR_HEIGHT } from '../../const';
-import { calculateFrequencyOfType, calculateTotalMoneyForEventType, calculateTotalTimeForEventType, durationOfOnePointEvent } from '../../utils';
+import { calculateFrequencyOfType, calculateTotalMoneyForEventType, calculateTotalTimeForEventType, getDurationOfOnePointEvent } from '../../utils';
 
 const getArrayOfTravelTypes = () => Object.values(EventDescription).map((element) =>[element.lowCaseWord, element.statisticsLabele]);
 
@@ -31,7 +31,7 @@ const getValuesOnSideBar = (chartName) => {
     case ChartNames.TYPE:
       return (val) => `${val}x`;
     case ChartNames.TIME:
-      return (val) => `${durationOfOnePointEvent(val)}`;
+      return (val) => `${getDurationOfOnePointEvent(val)}`;
     default:
       throw new Error('We could not find such chart name in our DataBase');
   }
@@ -124,10 +124,6 @@ const createStatisticTemplate = () => (
 export default class StatisticsView extends Abstract {
   #points = [];
 
-  #moneyChart = null;
-  #typeChart = null;
-  #timeChart = null;
-
   constructor (points) {
     super();
 
@@ -145,9 +141,9 @@ export default class StatisticsView extends Abstract {
     const typeCtx = this.element.querySelector('#type');
     const timeCtx = this.element.querySelector('#time');
 
-    this.#moneyChart = renderChart(moneyCtx, ChartNames.MONEY, this.#points);
-    this.#typeChart = renderChart(typeCtx, ChartNames.TYPE, this.#points);
-    this.#timeChart = renderChart(timeCtx, ChartNames.TIME, this.#points);
+    renderChart(moneyCtx, ChartNames.MONEY, this.#points);
+    renderChart(typeCtx, ChartNames.TYPE, this.#points);
+    renderChart(timeCtx, ChartNames.TIME, this.#points);
 
     moneyCtx.height = STATISTICS_BAR_HEIGHT;
     typeCtx.height = STATISTICS_BAR_HEIGHT;

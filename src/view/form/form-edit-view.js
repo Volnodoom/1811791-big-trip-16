@@ -70,7 +70,7 @@ export default class FormEditView extends Smart {
         throw new Error('ClickHandler does not contain such TYPE of callback');
     }
 
-    this.element.addEventListener('click', this.#clickHandler);
+    this.element.addEventListener('click', this.#handleClick);
   }
 
   #findInputDestinationElement = () => this.element.querySelector('.event__input.event__input--destination');
@@ -78,22 +78,100 @@ export default class FormEditView extends Smart {
   #findAllCheckBoxes = () => this.element.querySelectorAll('.event__offer-checkbox.visually-hidden');
   #findInputEndDataElement = () => this.element.querySelector('[name="event-end-time"]');
 
-  #clickHandler = (evt) => {
+  #setInnerClickHandler = () => {
+    this.element.addEventListener('click', this.#handleInnerClick);
+  }
+
+  #setInnerChangeHandler = () => {
+    this.#findInputDestinationElement().addEventListener('change', this.#handleInnerDestination);
+    this.#findInputPriceElement().addEventListener('change', this.#handleInnerPrice);
+    Array.from(this.#findAllCheckBoxes()).forEach((checkbox) => checkbox.addEventListener('change', this.#handleInnerCheckBox));
+  }
+
+  setEscPressHandler = (callback) => {
+    this._callback.pressEscape = callback;
+    document.addEventListener('keydown', this.#handleEscPress);
+  }
+
+  setSubmitHandler = (callback) => {
+    this._callback.submitClick = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#handleSubmit);
+  }
+
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleFormDeleteClick);
+  }
+
+  #setDatepicker = () => {
+    this.#datapickerStart = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/Y H:i',
+        'time_24hr': true,
+        defaultDate: correctDateFormatForFlitpicker(this._data.dateFrom),
+        onChange: this.#handleStartDateChange,
+      },
+    );
+
+    this.#datapickerEnd = flatpickr(
+      this.#findInputEndDataElement(),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/Y H:i',
+        'time_24hr': true,
+        defaultDate: correctDateFormatForFlitpicker(this._data.dateTo),
+        onChange: this.#handleEndDateChange,
+        disable: [
+          (date) => (isDayEndEarlyDayStartFlatpicker(this._data.dateFrom, date))
+        ],
+      },
+    );
+  }
+
+  restoreHandlers = () => {
+    this.element.addEventListener('click', this.#handleClick);
+    this.#setInnerClickHandler();
+    this.element.querySelector('form').addEventListener('submit', this.#handleSubmit);
+    this.#setDatepicker();
+    this.#setInnerChangeHandler();
+    document.addEventListener('keydown', this.#handleEscPress);
+    if (!this.#isAddNewBtnActive) {
+      this.setDeleteClickHandler(this._callback.deleteClick);
+    }
+  }
+
+  reset = (point) => {
+    this.updateData(
+      FormEditView.parsePointInformationToData(point),
+    );
+  }
+
+  removeElement  = () => {
+    super.removeElement();
+
+    if (this.#datapickerStart || this.#datapickerEnd) {
+      this.#datapickerStart.destroy();
+      this.#datapickerStart = null;
+      this.#datapickerEnd.destroy();
+      this.#datapickerEnd = null;
+    }
+  }
+
+  #handleClick = (evt) => {
     if (evt.target.dataset.closeRollupForm === ListOfEventsOn.CLOSE_ROLLUP_BTN) {
       this._callback.clickOnRollUpBtnForm();
-      document.removeEventListener('keydown', this.#escPressHandler);
+      document.removeEventListener('keydown', this.#handleEscPress);
     } else if (evt.target.textContent.trim() === ListOfEventsOn.CANCEL_BTN_FORM) {
       this._callback.clickOnCancelBtn();
-      document.removeEventListener('keydown', this.#escPressHandler);
+      document.removeEventListener('keydown', this.#handleEscPress);
     }
 
   }
 
-  #setInnerClickHandler = () => {
-    this.element.addEventListener('click', this.#innerClickHandler);
-  }
-
-  #innerClickHandler = (evt) => {
+  #handleInnerClick = (evt) => {
     switch (true) {
       case (evt.target.dataset.eventType === ListOfEventsOn.EVENT_TYPE):
         this.updateData({
@@ -105,13 +183,7 @@ export default class FormEditView extends Smart {
     }
   }
 
-  #setInnerChangeHandler = () => {
-    this.#findInputDestinationElement().addEventListener('change', this.#innerDestinationHandler);
-    this.#findInputPriceElement().addEventListener('change', this.#innerPriceHandler);
-    Array.from(this.#findAllCheckBoxes()).forEach((checkbox) => checkbox.addEventListener('change', this.#innerCheckBoxHandler));
-  }
-
-  #innerPriceHandler = () => {
+  #handleInnerPrice = () => {
     const hasNotOnlyDigits = /\D/.test(he.encode(this.#findInputPriceElement().value.trim()));
     if (hasNotOnlyDigits) {
       this.#findInputPriceElement().setCustomValidity(ErrorMessage.PRICE);
@@ -126,7 +198,7 @@ export default class FormEditView extends Smart {
     this.#findInputPriceElement().reportValidity();
   }
 
-  #innerDestinationHandler = (evt) => {
+  #handleInnerDestination = (evt) => {
     const inputValue = he.encode(evt.target.value);
     const hasCity = this.#listOfOptions.destinations.some((onePoint) => onePoint.destinationName === inputValue);
 
@@ -151,7 +223,7 @@ export default class FormEditView extends Smart {
     evt.target.reportValidity();
   }
 
-  #innerCheckBoxHandler = (evt) => {
+  #handleInnerCheckBox = (evt) => {
     const checkboxElement = evt.target;
     const selectedOfferId = /\d{1,}/.exec(checkboxElement.id)[0];
 
@@ -165,6 +237,7 @@ export default class FormEditView extends Smart {
           ...this._data.offers.slice(index + 1),
         ]
       });
+
     } else {
       const offerForCurrentType = this.#listOfOptions.offers.find((offer) => offer.type === this._data.travelType);
       const addedOffer = offerForCurrentType.offers.find((offer) => Number(offer.id) === Number(selectedOfferId));
@@ -176,28 +249,19 @@ export default class FormEditView extends Smart {
           ...this._data.offers,
         ]
       });
+
     }
   }
 
-  setEscPressHandler = (callback) => {
-    this._callback.pressEscape = callback;
-    document.addEventListener('keydown', this.#escPressHandler);
-  }
-
-  #escPressHandler = (evt) => {
+  #handleEscPress = (evt) => {
     if (isEsc(evt)) {
       evt.preventDefault();
       this._callback.pressEscape();
-      document.removeEventListener('keydown', this.#escPressHandler);
+      document.removeEventListener('keydown', this.#handleEscPress);
     }
   }
 
-  setSubmitHandler = (callback) => {
-    this._callback.submitClick = callback;
-    this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
-  }
-
-  #submitHandler = (evt) => {
+  #handleSubmit = (evt) => {
     evt.preventDefault();
     const hasNotOnlyDigits = /\D/.test(this.#findInputPriceElement().value.trim());
 
@@ -207,50 +271,18 @@ export default class FormEditView extends Smart {
       this.#findInputPriceElement().setCustomValidity(ErrorMessage.PRICE);
     } else {
       this._callback.submitClick(FormEditView.parseDataToPointInfo(this._data));
-      document.removeEventListener('keydown', this.#escPressHandler);
+      document.removeEventListener('keydown', this.#handleEscPress);
     }
     this.#findInputDestinationElement().reportValidity();
     this.#findInputPriceElement().reportValidity();
   }
 
-  setDeleteClickHandler = (callback) => {
-    this._callback.deleteClick = callback;
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
-  }
-
-  #formDeleteClickHandler = (evt) => {
+  #handleFormDeleteClick = (evt) => {
     evt.preventDefault();
     this._callback.deleteClick(FormEditView.parseDataToPointInfo(this._data));
   }
 
-  #setDatepicker = () => {
-    this.#datapickerStart = flatpickr(
-      this.element.querySelector('[name="event-start-time"]'),
-      {
-        enableTime: true,
-        dateFormat: 'd/m/Y H:i',
-        'time_24hr': true,
-        defaultDate: correctDateFormatForFlitpicker(this._data.dateFrom),
-        onChange: this.#startDateChangeHandler,
-      },
-    );
-
-    this.#datapickerEnd = flatpickr(
-      this.#findInputEndDataElement(),
-      {
-        enableTime: true,
-        dateFormat: 'd/m/Y H:i',
-        'time_24hr': true,
-        defaultDate: correctDateFormatForFlitpicker(this._data.dateTo),
-        onChange: this.#endDateChangeHandler,
-        disable: [
-          (date) => (isDayEndEarlyDayStartFlatpicker(this._data.dateFrom, date))
-        ],
-      },
-    );
-  }
-
-  #startDateChangeHandler = ([userDate]) => {
+  #handleStartDateChange = ([userDate]) => {
     this.updateData({
       ...this._data,
       dateFrom: userDate,
@@ -263,7 +295,7 @@ export default class FormEditView extends Smart {
     }
   }
 
-  #endDateChangeHandler = ([userDate]) => {
+  #handleEndDateChange = ([userDate]) => {
     if (isDayEndEarlyDayStart(this._data.dateFrom, userDate)) {
       this.updateData({
         ...this._data,
@@ -275,35 +307,6 @@ export default class FormEditView extends Smart {
       ...this._data,
       dateTo: userDate,
     });
-  }
-
-  restoreHandlers = () => {
-    this.element.addEventListener('click', this.#clickHandler);
-    this.#setInnerClickHandler();
-    this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
-    this.#setDatepicker();
-    this.#setInnerChangeHandler();
-    document.addEventListener('keydown', this.#escPressHandler);
-    if (!this.#isAddNewBtnActive) {
-      this.setDeleteClickHandler(this._callback.deleteClick);
-    }
-  }
-
-  reset = (point) => {
-    this.updateData(
-      FormEditView.parsePointInformationToData(point),
-    );
-  }
-
-  removeElement  = () => {
-    super.removeElement();
-
-    if (this.#datapickerStart || this.#datapickerEnd) {
-      this.#datapickerStart.destroy();
-      this.#datapickerStart = null;
-      this.#datapickerEnd.destroy();
-      this.#datapickerEnd = null;
-    }
   }
 
   static parsePointInformationToData = (pointInfo) => ({

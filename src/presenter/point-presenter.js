@@ -46,7 +46,6 @@ export default class PointPresenter {
 
     if(this.#mode === Mode.EDITING) {
       replace(this.#pointFormEditComponent, prevPointFormEditComponent);
-      // this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointFormEditComponent);
@@ -66,45 +65,6 @@ export default class PointPresenter {
     this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CLOSE_ROLLUP_BTN, this.#handleCloseForm);
     this.#pointFormEditComponent.setSubmitHandler(this.#handleSubmitForm);
     this.#pointFormEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
-  }
-
-  #handleCloseForm = () => {
-    replace(this.#singlePointComponent, this.#pointFormEditComponent);
-    remove(this.#pointFormEditComponent);
-    this.#pointFormEditComponent.reset(this.#oneTravelPoint);
-    this.#mode = Mode.DEFAULT;
-  };
-
-  #handleOpenForm = () => {
-    replace(this.#pointFormEditComponent, this.#singlePointComponent);
-    this.#changeMode();
-    this.#mode = Mode.EDITING;
-  };
-
-  #handleSubmitForm = (pointUpdate) => {
-    this.#updateData(
-      UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      pointUpdate,
-    );
-  }
-
-  #handleDeleteClick = (point) => {
-    this.#updateData(
-      UserAction.DELETE_POINT,
-      UpdateType.MINOR,
-      point,
-    );
-  }
-
-  #handleFavoriteClick = () => {
-    this.#updateData(
-      UserAction.UPDATE_POINT,
-      UpdateType.PATCH,
-      {
-        ...this.#oneTravelPoint,
-        isFavorite: !this.#oneTravelPoint.isFavorite,
-      });
   }
 
   setPolicyOnePointOneForm = (closeAddNewPointForm) => {
@@ -153,5 +113,44 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointFormEditComponent);
     remove(this.#singlePointComponent);
+  }
+
+  #handleCloseForm = () => {
+    replace(this.#singlePointComponent, this.#pointFormEditComponent);
+    remove(this.#pointFormEditComponent);
+    this.#pointFormEditComponent.reset(this.#oneTravelPoint);
+    this.#mode = Mode.DEFAULT;
+  };
+
+  #handleOpenForm = () => {
+    replace(this.#pointFormEditComponent, this.#singlePointComponent);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
+  };
+
+  #handleSubmitForm = (pointUpdate) => {
+    this.#updateData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      pointUpdate,
+    );
+  }
+
+  #handleDeleteClick = (point) => {
+    this.#updateData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+  }
+
+  #handleFavoriteClick = () => {
+    this.#updateData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {
+        ...this.#oneTravelPoint,
+        isFavorite: !this.#oneTravelPoint.isFavorite,
+      });
   }
 }

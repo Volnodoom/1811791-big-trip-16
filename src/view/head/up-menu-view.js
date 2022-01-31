@@ -27,10 +27,10 @@ export default class UpMenuView extends Abstract {
 
   setMenuClickHandler = (callback) => {
     this._callback.menuClick = callback;
-    this.element.addEventListener('click', this.#menuClickHandler);
+    this.element.addEventListener('click', this.#handleMenuClick);
   }
 
-  #menuClickHandler = (evt) => {
+  #handleMenuClick = (evt) => {
     evt.preventDefault();
     this._callback.menuClick(evt.target.textContent);
   }

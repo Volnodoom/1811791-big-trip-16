@@ -23,7 +23,7 @@ export default class TripBoardPresenter {
   #loadingComponent = new LoadingView();
 
   #pointPresentersStore = new Map();
-  #addNewPointPresenter = null;
+  #newPointPresenter = null;
   #currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
   #filterType = FilterLabelStartFrame.EVERYTHING.filter;
   #isLoading = true;
@@ -108,7 +108,7 @@ export default class TripBoardPresenter {
     );
     this.#pointPresentersStore.set(oneTravelPoint.id, pointPresenter);
     pointPresenter.init(oneTravelPoint);
-    pointPresenter.setPolicyOnePointOneForm(this.#addNewPointPresenter.handleCloseForm);
+    pointPresenter.setPolicyOnePointOneForm(this.#newPointPresenter.handleCloseForm);
   }
 
   #renderTripPoints = (points) => {
@@ -139,6 +139,44 @@ export default class TripBoardPresenter {
     render(this.#tripBoardContainer, this.#loadingComponent, RenderPosition.BEFOREEND);
   }
 
+  #clearTripBoard = (resetSortType = false) => {
+    this.#newPointPresenter.destroy();
+    this.#pointPresentersStore.forEach((presenter) => presenter.destroy());
+    this.#pointPresentersStore.clear();
+
+    remove(this.#sortingComponent);
+    remove(this.#pointsEmptyComponent);
+    remove(this.#loadingComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+    }
+  }
+
+  #setAddNewPoint = () => {
+    this.#newPointPresenter = new AddNewPointPresenter(
+      this.#tripPointsListComponent,
+      this.#handleViewAction,
+      this.#handleAddNewPointStatus,
+    );
+
+    this.#newPointPresenter.handleForRefreshingBoard(this.#clearTripBoard, this.#renderTripBoard);
+    this.#newEventBtnComponent.setClickHandler(this.#handleNewPointCreation);
+  }
+
+  getHeadFunctionality = (menuClick) => {
+    this.#menuClick = menuClick;
+  }
+
+  destroy = () => {
+    this.#clearTripBoard(true);
+
+    remove(this.#tripPointsListComponent);
+
+    this.#pointsModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
+  }
+
   #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
@@ -151,12 +189,12 @@ export default class TripBoardPresenter {
         break;
 
       case UserAction.ADD_POINT:
-        this.#addNewPointPresenter.setSaving();
+        this.#newPointPresenter.setSaving();
         try{
           await this.#pointsModel.addPoint(updateType, update);
           this.#handleAddNewPointStatus(false);
         } catch (err) {
-          this.#addNewPointPresenter.setAborting();
+          this.#newPointPresenter.setAborting();
         }
         break;
 
@@ -207,48 +245,27 @@ export default class TripBoardPresenter {
     this.#pointPresentersStore.forEach((presenter) => presenter.resetView());
   }
 
-  #clearTripBoard = (resetSortType = false) => {
-    this.#addNewPointPresenter.destroy();
-    this.#pointPresentersStore.forEach((presenter) => presenter.destroy());
-    this.#pointPresentersStore.clear();
-
-    remove(this.#sortingComponent);
-    remove(this.#pointsEmptyComponent);
-    remove(this.#loadingComponent);
-
-    if (resetSortType) {
-      this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
-    }
-  }
-
-  #setAddNewPoint = () => {
-    this.#addNewPointPresenter = new AddNewPointPresenter(
-      this.#tripPointsListComponent,
-      this.#handleViewAction,
-      this.#handleAddNewPointStatus,
-    );
-
-    this.#addNewPointPresenter.handleForRefreshingBoard(this.#clearTripBoard, this.#renderTripBoard);
-    this.#newEventBtnComponent.setClickHandler(this.#handleNewPointCreation);
-  }
-
   #handleNewPointCreation = () => {
     this.#menuClick(MenuItem.TABLE);
     this.#handleAddNewPointStatus(true);
     this.#newEventBtnComponent.setBtnDisabledStatus(this._isAddNewBtnActive);
     this.#currentSortType = SortingLabelStartFrame.DAY.lowCaseWord;
+
     if(this.#filterType !== FilterLabelStartFrame.EVERYTHING.filter) {
       this.#filterModel.setFilter(UpdateType.MAJOR, FilterLabelStartFrame.EVERYTHING.filter);
     }
-    this.#addNewPointPresenter.setTemplateForAddNewBtnStatus(true);
+
+    this.#newPointPresenter.setTemplateForAddNewBtnStatus(true);
     this.#handleChangeMode();
+
     if (this.allPoints.length === NOTHING) {
       remove(this.#pointsEmptyComponent);
       this.#renderSort();
       this.#renderTripPoints();
 
     }
-    this.#addNewPointPresenter.init(
+
+    this.#newPointPresenter.init(
       {
         destinations: this.#pointsModel.getListOfDestinations(),
         offers: this.#pointsModel.getListOfOffers(),
@@ -261,18 +278,4 @@ export default class TripBoardPresenter {
     this._isAddNewBtnActive = isActive;
     this.#newEventBtnComponent.setBtnDisabledStatus(isActive);
   }
-
-  getHeadFunctionality = (menuClick) => {
-    this.#menuClick = menuClick;
-  }
-
-  destroy = () => {
-    this.#clearTripBoard(true);
-
-    remove(this.#tripPointsListComponent);
-
-    this.#pointsModel.removeObserver(this.#handleModelEvent);
-    this.#filterModel.removeObserver(this.#handleModelEvent);
-  }
-
 }

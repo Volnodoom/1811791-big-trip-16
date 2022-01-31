@@ -1,5 +1,5 @@
 import { ListOfEventsOn, NOTHING } from '../../const';
-import { durationOfEventInMinutes, durationOfOnePointEvent, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
+import { getDurationOfEventInMinutes, getDurationOfOnePointEvent, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
 import Abstract from '../abstract';
 
 const createSinglePointTemplate = (oneTravelPoint) => {
@@ -13,8 +13,8 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     basePrice,
     isFavorite} = oneTravelPoint;
 
-  const differenceInMinutes = durationOfEventInMinutes(dateFrom, dateTo);
-  const offersList = () => offers
+  const differenceInMinutes = getDurationOfEventInMinutes(dateFrom, dateTo);
+  const getOffersList = () => offers
     .map((offer) => `<li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
@@ -60,7 +60,7 @@ const createSinglePointTemplate = (oneTravelPoint) => {
 
       </p>
 
-      <p class="event__duration">${durationOfOnePointEvent(differenceInMinutes)}</p>
+      <p class="event__duration">${getDurationOfOnePointEvent(differenceInMinutes)}</p>
     </div>
 
     <p class="event__price">
@@ -69,7 +69,7 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
 
-    ${offers.length > NOTHING ? offersList() :'' }
+    ${offers.length > NOTHING ? getOffersList() :'' }
 
     </ul>
 
@@ -111,18 +111,18 @@ export default class SinglePointView extends Abstract {
     switch (type) {
       case ListOfEventsOn.ROLLUP_BTN:
         this._callback.clickOnRollUpBtnPoint = callback;
-        this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+        this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleClick);
         break;
       case ListOfEventsOn.FAVORITE_BTN:
         this._callback.clickOnFavoriteBtn = callback;
-        this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#clickHandler);
+        this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#handleClick);
         break;
       default:
         throw new Error('ClickHandler for SINGLE-POINT_VIEW does not contain such TYPE of callback');
     }
   }
 
-  #clickHandler = (evt) => {
+  #handleClick = (evt) => {
     switch (true) {
       case (evt.target.dataset.singleRollup === ListOfEventsOn.ROLLUP_BTN):
         this._callback.clickOnRollUpBtnPoint();

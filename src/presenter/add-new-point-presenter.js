@@ -37,7 +37,6 @@ export default class AddNewPointPresenter {
       this.#isAddNewBtnActive = isActive;
     }
 
-
     #setHandlersOnFormEdit = () => {
       this.#pointFormEditComponent.setEscPressHandler(this.handleCloseForm);
       this.#pointFormEditComponent.setClickHandler(ListOfEventsOn.CANCEL_BTN_FORM, this.handleCloseForm);
@@ -80,14 +79,6 @@ export default class AddNewPointPresenter {
       this.#pointFormEditComponent.shake(resetFormState);
     }
 
-    #handleSubmitForm = (pointUpdate) => {
-      this.#updateData(
-        UserAction.ADD_POINT,
-        UpdateType.MINOR,
-        pointUpdate,
-      );
-    }
-
     destroy() {
       if (this.#pointFormEditComponent === null) {
         return;
@@ -95,6 +86,14 @@ export default class AddNewPointPresenter {
 
       remove(this.#pointFormEditComponent);
       this.#pointFormEditComponent = null;
+    }
+
+    #handleSubmitForm = (pointUpdate) => {
+      this.#updateData(
+        UserAction.ADD_POINT,
+        UpdateType.MINOR,
+        pointUpdate,
+      );
     }
 
 }

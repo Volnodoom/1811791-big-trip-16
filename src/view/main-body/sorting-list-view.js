@@ -57,10 +57,10 @@ export default class SortingListView extends Abstract{
 
   setSortTypeChangeHandler = (callback) => {
     this._callback.sortTypeChange = callback;
-    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+    this.element.addEventListener('click', this.#handleSortTypeChange);
   }
 
-  #sortTypeChangeHandler = (evt) => {
+  #handleSortTypeChange = (evt) => {
     switch (evt.target.dataset.sortType) {
       case SortingLabelStartFrame.DAY.lowCaseWord:
         this._callback.sortTypeChange(evt.target.dataset.sortType);

@@ -198,7 +198,7 @@ export const ONE_DAY = 1;
 export const DAY_FORMAT = 'day';
 export const FIVE = 5;
 export const MINUTES = 'm';
-export const STATISTICS_BAR_HEIGHT = 275;
+export const STATISTICS_BAR_HEIGHT = 290;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 export const SHAKE_DURATION = 0.6;
 

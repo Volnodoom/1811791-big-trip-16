@@ -48,10 +48,10 @@ export default class UpFiltersView extends Abstract{
 
   setFilterTypeChangeHandler = (callback) => {
     this._callback.filterTypeChange = callback;
-    this.element.addEventListener('change', this.#filterTypeChangeHandler);
+    this.element.addEventListener('change', this.#handleFilterTypeChange);
   }
 
-  #filterTypeChangeHandler = (evt) => {
+  #handleFilterTypeChange = (evt) => {
     evt.preventDefault();
     this._callback.filterTypeChange(evt.target.value);
   }

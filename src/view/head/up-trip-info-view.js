@@ -3,7 +3,7 @@ import { getTimeMMDD } from '../../utils';
 import Abstract from '../abstract';
 
 const createTripInfoTemplate = (travelPoints) => {
-  const totalPriceWithoutAdditionalOffersPrice = travelPoints
+  const totalPrice = travelPoints
     .reduce((accumulator, point) => {
       if (point.offers.length > NOTHING) {
         return Number(accumulator)
@@ -25,7 +25,7 @@ const createTripInfoTemplate = (travelPoints) => {
       <p class="trip-info__dates">${getTimeMMDD(travelPoints[0].dateFrom)}&nbsp;&mdash;&nbsp;${getTimeMMDD(travelPoints[travelPoints.length-1].dateTo)}</p>
     </div>
     <p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPriceWithoutAdditionalOffersPrice}</span>
+    Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
     </p>
   </section>`;
 };

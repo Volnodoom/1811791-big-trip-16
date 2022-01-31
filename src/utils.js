@@ -7,9 +7,9 @@ export const getTimeYYYYMMDDHHMM = (data) => dayjs(data).format(`${TimeFormat.YE
 export const getTimeDDMMYYWithSlashAndHHMM = (data) => dayjs(data).format(`${TimeFormat.DAY_FORMAT}/${TimeFormat.MONTH_NUMBER_FORMAT}/${TimeFormat.YEAR_FORMAT_SHORT} ${getTimeHHMM(data)}`);
 export const getTimeMMDD = (data) => dayjs(data).format(`${TimeFormat.MONTH_WORDS_FORMAT} ${TimeFormat.DAY_FORMAT}`);
 
-export const durationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).diff(dayjs(timeStart), TimeFormat.MINUTES_FOR_DIFFERENCE);
+export const getDurationOfEventInMinutes = (timeStart, timeEnd) => dayjs(timeEnd).diff(dayjs(timeStart), TimeFormat.MINUTES_FOR_DIFFERENCE);
 
-export const durationOfOnePointEvent = (difference) => {
+export const getDurationOfOnePointEvent = (difference) => {
   switch (true) {
     case (difference < ONE_HOUR) :
       return `${difference}M`;
@@ -25,8 +25,8 @@ export const isEsc = ({ code }) => code === KeyCode.ESCAPE;
 export const sortDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 
 export const sortDuration = (pointA, pointB) => {
-  const valueA = durationOfEventInMinutes(pointA.dateFrom, pointA.dateTo);
-  const valueB = durationOfEventInMinutes(pointB.dateFrom, pointB.dateTo);
+  const valueA = getDurationOfEventInMinutes(pointA.dateFrom, pointA.dateTo);
+  const valueB = getDurationOfEventInMinutes(pointB.dateFrom, pointB.dateTo);
   return valueB-valueA;
 };
 
@@ -61,4 +61,4 @@ export const calculateFrequencyOfType = (eventType, points) => points
 export const calculateTotalTimeForEventType = (eventType, points) => points
   .filter((point) => point.travelType === eventType)
   .reduce((accumulator, element) =>
-    accumulator + durationOfEventInMinutes (element.dateFrom, element.dateTo), NOTHING);
+    accumulator + getDurationOfEventInMinutes (element.dateFrom, element.dateTo), NOTHING);
