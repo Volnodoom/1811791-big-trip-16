@@ -27,7 +27,7 @@ const createFiltersTemplate = (currentFilterType) => {
   return `<form class="trip-filters" action="#" method="get">
     ${Object
     .values(FilterLabelStartFrame)
-    .map((StartFrame) => getSingleFilterDescription(StartFrame))
+    .map((frame) => getSingleFilterDescription(frame))
     .join(' ')}
 
     <button class="visually-hidden" type="submit">Accept filter</button>

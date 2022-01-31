@@ -1,19 +1,19 @@
-import { LIMIT_TOWN_INFO, NOTHING } from '../../const';
+import { LIMIT_TOWN_INFO } from '../../const';
 import { getTimeMMDD } from '../../utils';
 import Abstract from '../abstract';
 
 const createTripInfoTemplate = (travelPoints) => {
   const totalPrice = travelPoints
     .reduce((accumulator, point) => {
-      if (point.offers.length > NOTHING) {
+      if (point.offers.length > 0) {
         return Number(accumulator)
         + Number(point.basePrice)
         + Number(point.offers
-          .reduce((accumulatorOffer, offer) => Number(accumulatorOffer) + Number(offer.price), NOTHING));
+          .reduce((accumulatorOffer, offer) => Number(accumulatorOffer) + Number(offer.price), 0));
       } else {
         return Number(accumulator) + Number(point.basePrice);
       }
-    }, NOTHING);
+    }, 0);
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">

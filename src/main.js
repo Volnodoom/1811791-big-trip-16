@@ -1,11 +1,11 @@
 import { AUTHORIZATION, END_POINT } from './const';
 import HeadSitePresenter from './presenter/head-site-presenter';
 import TripBoardPresenter from './presenter/trip-board-presenter';
-import PointesModel from './model/points-model';
+import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
 import ApiService from './api-service';
 
-const pointsModel = new PointesModel(new ApiService(END_POINT, AUTHORIZATION));
+const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
 
 const siteHeadInformation = document.querySelector('.trip-main');

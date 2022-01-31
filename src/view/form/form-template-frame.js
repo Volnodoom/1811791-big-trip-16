@@ -1,4 +1,4 @@
-import { EventDescription, FormBtnNaming, ListOfEventsOn, NOTHING } from '../../const';
+import { EventDescription, FormBtnNaming, ListOfEventsOn } from '../../const';
 import { getTimeDDMMYYWithSlashAndHHMM } from '../../utils';
 
 export const createHeaderFormTemplate = (pointData, listOfOptions, addNewBtnState) => {
@@ -20,8 +20,9 @@ export const createHeaderFormTemplate = (pointData, listOfOptions, addNewBtnStat
     } else {
       if (isDeleting) {
         return FormBtnNaming.DELETING;
-      } else { return FormBtnNaming.DELETE;}
-    }
+      }}
+
+    return FormBtnNaming.DELETE;
   };
 
   const listOfDestination = listOfOptions.destinations
@@ -172,13 +173,11 @@ export const createSectionOfferTemplate = (oneTravelPoint, listOfOptions) => {
     const {title, price, id} = oneOffer;
 
     const isSelected = () => {
-      if (offersFromCustomer.length === NOTHING) {
-        return false;
-      } else if (offersFromCustomer.some((customerSelection) => customerSelection.id === oneOffer.id)) {
-        return true;
-      } else {
+      if (offersFromCustomer.length === 0) {
         return false;
       }
+
+      return offersFromCustomer.some((customerSelection) => customerSelection.id === oneOffer.id);
     };
 
     return `<div class="event__offer-selector">

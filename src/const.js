@@ -7,6 +7,7 @@ export const TimeFormat = {
   HOURS_FORMAT: 'HH',
   MINUTES_FORMAT:'mm',
   MINUTES_FOR_DIFFERENCE: 'm',
+  FLATPICKER: 'DD/MM/YYYY HH:mm',
 };
 
 export const RenderPosition = {
@@ -190,12 +191,16 @@ export const ErrorMessage = {
 };
 
 export const FormBtnNaming = {
-  CANCEL: 'Cansel',
+  CANCEL: 'Cancel',
   DELETE: 'Delete',
   DELETING: 'Deleting',
 };
 
-export const NOTHING = 0;
+export const ChartColor = {
+  WHITE: '#ffffff',
+  BLACK: '#000000',
+};
+
 export const LIMIT_TOWN_INFO = 3;
 export const ONE_HOUR = 60;
 export const TWENTY_FOUR_HOURS = 1440;
@@ -209,6 +214,6 @@ export const SHAKE_DURATION = 0.6;
 export const NO_DIGITS = /\D/;
 export const ID_NUMBER = /\d{1,}/;
 
-export const AUTHORIZATION  = 'Basic hS2suktyik563bdl1sa2j';
+export const AUTHORIZATION  = 'Basic hS2sukt3234rs363bdl1sa2j';
 export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 

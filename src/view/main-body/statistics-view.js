@@ -1,7 +1,7 @@
 import Abstract from '../abstract';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { ChartNames, EventDescription, NOTHING, STATISTICS_BAR_HEIGHT } from '../../const';
+import { ChartColor, ChartNames, EventDescription, STATISTICS_BAR_HEIGHT } from '../../const';
 import { calculateFrequencyOfType, calculateTotalMoneyForEventType, calculateTotalTimeForEventType, getDurationOfOnePointEvent } from '../../utils';
 
 const getArrayOfTravelTypes = () => Object.values(EventDescription).map((element) =>[element.lowCaseWord, element.statisticsLabele]);
@@ -21,7 +21,7 @@ const insertDataAccordingToChartNamex = (chartName, travelType, points) => {
 
 const makeArrayDataWithoutZeroValues = (chartName, points) => getArrayOfTravelTypes()
   .map((travelType) => [travelType[1], insertDataAccordingToChartNamex(chartName, travelType[0], points)])
-  .filter((line) => line[1] !== NOTHING)
+  .filter((line) => line[1] !== 0)
   .sort((valueA, valueB) => valueB[1] - valueA[1]);
 
 const getValuesOnSideBar = (chartName) => {
@@ -44,11 +44,11 @@ const renderChart = (typeOfCtx, chartName, points) => new Chart(typeOfCtx, {
     labels: makeArrayDataWithoutZeroValues(chartName, points).map((line) => line[0]),
     datasets: [{
       data: makeArrayDataWithoutZeroValues(chartName, points).map((line) => line[1]),
-      backgroundColor: '#ffffff',
-      hoverBackgroundColor: '#ffffff',
+      backgroundColor: ChartColor.WHITE,
+      hoverBackgroundColor: ChartColor.WHITE,
       anchor: 'start',
       barThickness: 30,
-      minBarLength: 50,
+      minBarLength: 120,
     }],
   },
   options: {
@@ -58,7 +58,7 @@ const renderChart = (typeOfCtx, chartName, points) => new Chart(typeOfCtx, {
         font: {
           size: 13,
         },
-        color: '#000000',
+        color: ChartColor.BLACK,
         anchor: 'end',
         align: 'start',
         formatter: getValuesOnSideBar(chartName),
@@ -67,14 +67,14 @@ const renderChart = (typeOfCtx, chartName, points) => new Chart(typeOfCtx, {
     title: {
       display: true,
       text: chartName,
-      fontColor: '#000000',
+      fontColor: ChartColor.BLACK,
       fontSize: 23,
       position: 'left',
     },
     scales: {
       yAxes: [{
         ticks: {
-          fontColor: '#000000',
+          fontColor: ChartColor.BLACK,
           padding: 5,
           fontSize: 13,
         },
@@ -141,13 +141,13 @@ export default class StatisticsView extends Abstract {
     const typeCtx = this.element.querySelector('#type');
     const timeCtx = this.element.querySelector('#time');
 
-    renderChart(moneyCtx, ChartNames.MONEY, this.#points);
-    renderChart(typeCtx, ChartNames.TYPE, this.#points);
-    renderChart(timeCtx, ChartNames.TIME, this.#points);
-
     moneyCtx.height = STATISTICS_BAR_HEIGHT;
     typeCtx.height = STATISTICS_BAR_HEIGHT;
     timeCtx.height = STATISTICS_BAR_HEIGHT;
+
+    renderChart(moneyCtx, ChartNames.MONEY, this.#points);
+    renderChart(typeCtx, ChartNames.TYPE, this.#points);
+    renderChart(timeCtx, ChartNames.TIME, this.#points);
   }
 
 }

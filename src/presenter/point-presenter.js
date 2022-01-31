@@ -117,6 +117,7 @@ export default class PointPresenter {
 
   #handleCloseForm = () => {
     replace(this.#singlePointComponent, this.#pointFormEditComponent);
+    this.#pointFormEditComponent.removeEscEventListner();
     remove(this.#pointFormEditComponent);
     this.#pointFormEditComponent.reset(this.#oneTravelPoint);
     this.#mode = Mode.DEFAULT;

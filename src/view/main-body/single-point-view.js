@@ -1,4 +1,4 @@
-import { ListOfEventsOn, NOTHING } from '../../const';
+import { ListOfEventsOn } from '../../const';
 import { getDurationOfEventInMinutes, getDurationOfOnePointEvent, getTimeHHMM, getTimeMMDD, getTimeYYYYMMDD, getTimeYYYYMMDDHHMM } from '../../utils';
 import Abstract from '../abstract';
 
@@ -69,7 +69,7 @@ const createSinglePointTemplate = (oneTravelPoint) => {
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
 
-    ${offers.length > NOTHING ? getOffersList() :'' }
+    ${offers.length > 0 ? getOffersList() :'' }
 
     </ul>
 

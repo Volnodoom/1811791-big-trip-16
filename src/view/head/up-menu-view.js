@@ -1,10 +1,10 @@
-import { MenuItem, NOTHING } from '../../const';
+import { MenuItem } from '../../const';
 import Abstract from '../abstract';
 
 const createMenuTemplate = (isTableActive, isStatistickActive, numberOfPoints) => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
     <a class="trip-tabs__btn  ${isTableActive ? 'trip-tabs__btn--active' : ''}" href="#"}>${MenuItem.TABLE}</a>
-    ${numberOfPoints > NOTHING ? `<a class="trip-tabs__btn  ${isStatistickActive ? 'trip-tabs__btn--active' : ''}" href="#">${MenuItem.STATS}</a>` : ''}
+    ${numberOfPoints > 0 ? `<a class="trip-tabs__btn  ${isStatistickActive ? 'trip-tabs__btn--active' : ''}" href="#">${MenuItem.STATS}</a>` : ''}
   </nav>`
 );
 

@@ -1,7 +1,7 @@
 import { UpdateType } from '../const';
 import AbstractObservable from './abstract-observer';
 
-export default class PointesModel extends AbstractObservable {
+export default class PointsModel extends AbstractObservable {
   #points = [];
   #listOfDestinations = null;
   #listOfOffers = null;

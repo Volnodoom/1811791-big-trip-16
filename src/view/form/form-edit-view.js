@@ -1,4 +1,4 @@
-import { BLANK_POINT, ErrorMessage, ID_NUMBER, ListOfEventsOn, NOTHING, NO_DIGITS } from '../../const';
+import { BLANK_POINT, ErrorMessage, ID_NUMBER, ListOfEventsOn, NO_DIGITS } from '../../const';
 import { addFiveMinutes, correctDateFormatForFlitpicker, isDayEndEarlyDayStart, isDayEndEarlyDayStartFlatpicker, isEsc } from '../../utils';
 import Smart from '../smart';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
@@ -9,7 +9,7 @@ import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createFormEditingTemplate = (oneTravelPoint, listOfOptions, isAddNewBtnActive) => {
   const {travelType, destination, } = oneTravelPoint;
-  const hasOptions = listOfOptions.offers.find((oneOffer) => oneOffer.type === travelType).offers.length > NOTHING;
+  const hasOptions = listOfOptions.offers.find((oneOffer) => oneOffer.type === travelType).offers.length > 0;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -137,7 +137,6 @@ export default class FormEditView extends Smart {
     this.element.querySelector('form').addEventListener('submit', this.#handleSubmit);
     this.#setDatepicker();
     this.#setInnerChangeHandler();
-    document.addEventListener('keydown', this.#handleEscPress);
     if (!this.#isAddNewBtnActive) {
       this.setDeleteClickHandler(this._callback.deleteClick);
     }
@@ -158,6 +157,10 @@ export default class FormEditView extends Smart {
       this.#datapickerEnd.destroy();
       this.#datapickerEnd = null;
     }
+  }
+
+  removeEscEventListner = () => {
+    document.removeEventListener('keydown', this.#handleEscPress);
   }
 
   #handleClick = (evt) => {
@@ -203,7 +206,7 @@ export default class FormEditView extends Smart {
     const inputValue = he.encode(evt.target.value);
     const hasCity = this.#listOfOptions.destinations.some((onePoint) => onePoint.destinationName === inputValue);
 
-    if (inputValue.length === NOTHING) {
+    if (inputValue.length === 0) {
       evt.target.setCustomValidity(ErrorMessage.SELECT_CITY);
     } else if (!hasCity) {
       evt.target.setCustomValidity(ErrorMessage.SELECT_EXISTED_CITY);
@@ -267,7 +270,7 @@ export default class FormEditView extends Smart {
 
     const hasNotOnlyDigits = NO_DIGITS.test(this.#findInputPriceElement().value.trim());
 
-    if(this.#findInputDestinationElement().value.length === NOTHING) {
+    if(this.#findInputDestinationElement().value.length === 0) {
       this.#findInputDestinationElement().setCustomValidity(ErrorMessage.SELECT_CITY);
     } else if (hasNotOnlyDigits || (this.#findInputPriceElement().value === '')) {
       this.#findInputPriceElement().setCustomValidity(ErrorMessage.PRICE);
