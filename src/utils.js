@@ -43,7 +43,7 @@ export const filterPointsForTimeDifference = {
 export const isDayEndEarlyDayStartFlatpicker = (dayStart, dayEnd) => dayjs(dayEnd).diff(dayjs(dayStart).subtract(ONE_DAY, DAY_FORMAT)) < 0;
 export const isDayEndEarlyDayStart = (dayStart, dayEnd) => dayjs(dayEnd).diff(dayjs(dayStart)) < 0;
 export const addFiveMinutes = (date) =>  dayjs(date).add(FIVE, MINUTES);
-export const correctDateFormatForFlitpicker = (date) => dayjs(date).format(TimeFormat.FLATPICKER);
+export const correctDateFormatForFlitpicker = (date) => dayjs(date).format(TimeFormat.DAY_JS_TO_FLATPICKER);
 
 export const calculateTotalMoneyForEventType = (eventType, points) => points
   .filter((point) => point.travelType === eventType)

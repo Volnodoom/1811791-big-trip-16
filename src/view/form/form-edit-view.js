@@ -1,4 +1,4 @@
-import { BLANK_POINT, ErrorMessage, ID_NUMBER, ListOfEventsOn, NO_DIGITS } from '../../const';
+import { BLANK_POINT, ErrorMessage, ID_NUMBER, ListOfEventsOn, NO_DIGITS, TimeFormat } from '../../const';
 import { addFiveMinutes, correctDateFormatForFlitpicker, isDayEndEarlyDayStart, isDayEndEarlyDayStartFlatpicker, isEsc } from '../../utils';
 import Smart from '../smart';
 import { createFormDestinationTemplate, createHeaderFormTemplate, createSectionOfferTemplate } from './form-template-frame';
@@ -109,7 +109,7 @@ export default class FormEditView extends Smart {
       this.element.querySelector('[name="event-start-time"]'),
       {
         enableTime: true,
-        dateFormat: 'd/m/Y H:i',
+        dateFormat: TimeFormat.FLATPICKER,
         'time_24hr': true,
         defaultDate: correctDateFormatForFlitpicker(this._data.dateFrom),
         onChange: this.#handleStartDateChange,
@@ -120,7 +120,7 @@ export default class FormEditView extends Smart {
       this.#findInputEndDataElement(),
       {
         enableTime: true,
-        dateFormat: 'd/m/Y H:i',
+        dateFormat: TimeFormat.FLATPICKER,
         'time_24hr': true,
         defaultDate: correctDateFormatForFlitpicker(this._data.dateTo),
         onChange: this.#handleEndDateChange,

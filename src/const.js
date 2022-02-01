@@ -7,7 +7,8 @@ export const TimeFormat = {
   HOURS_FORMAT: 'HH',
   MINUTES_FORMAT:'mm',
   MINUTES_FOR_DIFFERENCE: 'm',
-  FLATPICKER: 'DD/MM/YYYY HH:mm',
+  DAY_JS_TO_FLATPICKER: 'DD/MM/YY HH:mm',
+  FLATPICKER: 'd/m/y H:i',
 };
 
 export const RenderPosition = {
