@@ -31,3 +31,7 @@ tripBoardPresenter.getHeadFunctionality(
 pointsModel.init().finally(() => {
   headSitePresenter.init();
 });
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
