@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 import { DAY_FORMAT, FilterLabelStartFrame, FIVE, KeyCode, MINUTES, ONE_DAY, ONE_HOUR, TimeFormat, TWENTY_FOUR_HOURS } from './const';
 
+export const isEsc = ({ code }) => code === KeyCode.ESCAPE;
+export const isOnline = () => window.navigator.onLine;
+
 export const getTimeYYYYMMDD = (data) => dayjs(data).format(`${TimeFormat.YEAR_FORMAT}-${TimeFormat.MONTH_NUMBER_FORMAT}-${TimeFormat.DAY_FORMAT}`);
 export const getTimeHHMM = (data) => dayjs(data).format(`${TimeFormat.HOURS_FORMAT}:${TimeFormat.MINUTES_FORMAT}`);
 export const getTimeYYYYMMDDHHMM = (data) => dayjs(data).format(`${TimeFormat.YEAR_FORMAT}-${TimeFormat.MONTH_NUMBER_FORMAT}-${TimeFormat.DAY_FORMAT}T${getTimeHHMM(data)}`);
@@ -19,8 +22,6 @@ export const getDurationOfOnePointEvent = (difference) => {
       return `${Math.floor(difference/TWENTY_FOUR_HOURS)}D ${Math.floor(difference%TWENTY_FOUR_HOURS/ONE_HOUR)}H ${difference%TWENTY_FOUR_HOURS%ONE_HOUR}M`;
   }
 };
-
-export const isEsc = ({ code }) => code === KeyCode.ESCAPE;
 
 export const sortDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 

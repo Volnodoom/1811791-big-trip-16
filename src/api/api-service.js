@@ -1,4 +1,4 @@
-import { Method } from './const';
+import { Method } from '../const';
 
 export default class ApiService {
   #endPoint = null;
@@ -9,10 +9,9 @@ export default class ApiService {
     this.#authorization = authorization;
   }
 
-  get points() {
-    return this.#load({url: '/points'})
+  getPoints = () =>
+    this.#load({url: '/points'})
       .then(ApiService.parseResponse);
-  }
 
   getListOfDestinations = () => this.#load({url: '/destinations'})
     .then(ApiService.parseResponse)
@@ -24,7 +23,7 @@ export default class ApiService {
     const response = await this.#load({
       url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(point)),
+      body: JSON.stringify(this.adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -37,7 +36,7 @@ export default class ApiService {
     const response = await this.#load({
       url: 'points',
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(point)),
+      body: JSON.stringify(this.adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -53,6 +52,19 @@ export default class ApiService {
     });
 
     return response;
+  }
+
+  sync = async(data) => {
+    const response = await this.#load({
+      url: 'points/sync',
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
   }
 
   #load = async({
@@ -76,7 +88,7 @@ export default class ApiService {
     }
   }
 
-  #adaptToServer = (point) => {
+  static adaptToServer = (point) => {
     const adaptedPoint = {
       ...point,
       'base_price': Number(point.basePrice),
@@ -109,6 +121,6 @@ export default class ApiService {
   }
 
   static catchError = (err) => {
-    throw err;
+    throw new Error (`Something went wrong with data ${err}`);
   }
 }

@@ -1,13 +1,14 @@
-import { FilterLabelStartFrame, MenuItem, RenderPosition, SortingLabelStartFrame, State, UpdateType, UserAction } from '../const';
+import { FilterLabelStartFrame, MenuItem, RenderPosition, SortingLabelStartFrame, State, ToastMessage, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
 import PointsEmptyView from '../view/main-body/points-empty-view';
 import SortingListView from '../view/main-body/sorting-list-view';
 import PointsListView from '../view/main-body/points-list-view';
 import LoadingView from '../view/main-body/loading-view';
 import PointPresenter from './point-presenter';
-import { filterPointsForTimeDifference, sortDate, sortDuration, sortPrice } from '../utils';
+import { filterPointsForTimeDifference, isOnline, sortDate, sortDuration, sortPrice } from '../utils';
 import NewEventBtnView from '../view/head/new-event-btn-view';
 import AddNewPointPresenter from './add-new-point-presenter';
+import { toast } from '../toast';
 
 export default class TripBoardPresenter {
   #pointsModel = null;
@@ -246,6 +247,11 @@ export default class TripBoardPresenter {
   }
 
   #handleNewPointCreation = () => {
+    if (!isOnline()) {
+      toast(ToastMessage.ADD_NEW_POINT);
+      return;
+    }
+
     this.#menuClick(MenuItem.TABLE);
     this.#handleAddNewPointStatus(true);
     this.#newEventBtnComponent.setBtnDisabledStatus(this._isAddNewBtnActive);

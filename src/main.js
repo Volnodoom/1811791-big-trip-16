@@ -1,11 +1,18 @@
-import { AUTHORIZATION, END_POINT } from './const';
+import { AUTHORIZATION, END_POINT, STORE_NAME } from './const';
 import HeadSitePresenter from './presenter/head-site-presenter';
 import TripBoardPresenter from './presenter/trip-board-presenter';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
-import ApiService from './api-service';
+import ApiService from './api/api-service';
+import Store from './api/store';
+import Provider from './api/provider';
 
-const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
+const store = new Store(STORE_NAME, window.localStorage);
+const provider =   new Provider(
+  new ApiService(END_POINT, AUTHORIZATION),
+  store
+);
+const pointsModel = new PointsModel(provider);
 const filterModel = new FilterModel();
 
 const siteHeadInformation = document.querySelector('.trip-main');
@@ -34,4 +41,13 @@ pointsModel.init().finally(() => {
 
 window.addEventListener('load', () => {
   navigator.serviceWorker.register('/sw.js');
+});
+
+window.addEventListener('online', () => {
+  document.title = document.title.replace(' [offline]', '');
+  provider.sync();
+});
+
+window.addEventListener('offline', () => {
+  document.title += ' [offline]';
 });

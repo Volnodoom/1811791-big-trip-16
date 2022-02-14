@@ -191,6 +191,11 @@ export const ErrorMessage = {
   SELECT_EXISTED_CITY: 'This city does not exist in our list. Please select another city from the list or text it. Register is case sensitive',
 };
 
+export const ToastMessage = {
+  ADD_NEW_POINT: 'You can\'t create new point offline',
+
+};
+
 export const FormBtnNaming = {
   CANCEL: 'Cancel',
   DELETE: 'Delete',
@@ -214,7 +219,11 @@ export const SHAKE_ANIMATION_TIMEOUT = 600;
 export const SHAKE_DURATION = 0.6;
 export const NO_DIGITS = /\D/;
 export const ID_NUMBER = /\d{1,}/;
+export const TOAST_SHOW_TIME = 5000;
+export const STORE_PREFIX = 'big-trip-local-storage';
+export const STORE_VER = 'v16';
+export const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
-export const AUTHORIZATION  = 'Basic hS2sukt3234rs363bdl1sa2j';
-export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
+export const AUTHORIZATION  = 'Basic hS2sukt3s234rs363bdl1sa2j';
+export const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 

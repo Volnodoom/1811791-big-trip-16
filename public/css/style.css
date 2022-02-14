@@ -978,6 +978,30 @@ main {
 .statistics__item:not(:last-child) {
   margin-bottom: 78px; }
 
+  .shake {
+    animation: shake 0.6s;
+  }
+
+  .toast {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 1rem;
+    background-color: #ff4e4e;
+
+    animation: show-and-hide ease-in-out forwards;
+  }
+
+  .toast__text {
+    color: #fff;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
   @keyframes shake {
     0%,
     100% {
@@ -1000,6 +1024,3 @@ main {
     }
   }
   
-  .shake {
-    animation: shake 0.6s;
-  }
