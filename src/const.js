@@ -193,7 +193,8 @@ export const ErrorMessage = {
 
 export const ToastMessage = {
   ADD_NEW_POINT: 'You can\'t create new point offline',
-
+  SAVE_POINT: 'You can\'t save point offline',
+  DELETE_POINT: 'You can\'t delete point offline',
 };
 
 export const FormBtnNaming = {
@@ -225,5 +226,5 @@ export const STORE_VER = 'v16';
 export const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 export const AUTHORIZATION  = 'Basic hS2sukt3s234rs363bdl1sa2j';
-export const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 

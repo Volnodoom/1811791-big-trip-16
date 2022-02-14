@@ -1,5 +1,7 @@
-import { ListOfEventsOn, Mode, RenderPosition, State, UpdateType, UserAction } from '../const';
+import { ListOfEventsOn, Mode, RenderPosition, State, ToastMessage, UpdateType, UserAction } from '../const';
 import { remove, render, replace } from '../render';
+import { toast } from '../toast';
+import { isOnline } from '../utils';
 import FormEditView from '../view/form/form-edit-view';
 import SinglePointView from '../view/main-body/single-point-view';
 
@@ -31,7 +33,7 @@ export default class PointPresenter {
     const prevPointFormEditComponent = this.#pointFormEditComponent;
 
     this.#singlePointComponent = new SinglePointView(point);
-    this.#pointFormEditComponent = new FormEditView(point, this.#listOfOptions);
+
 
     this.#setHandlersOnSinglePoint();
 
@@ -54,6 +56,7 @@ export default class PointPresenter {
   #setHandlersOnSinglePoint = () => {
     this.#singlePointComponent.setClickHandler(ListOfEventsOn.FAVORITE_BTN, this.#handleFavoriteClick);
     this.#singlePointComponent.setClickHandler(ListOfEventsOn.ROLLUP_BTN, () => {
+      this.#pointFormEditComponent = new FormEditView(this.#oneTravelPoint, this.#listOfOptions);
       this.#closeAddNewPointForm();
       this.#handleOpenForm();
       this.#setHandlersOnFormEdit();
@@ -130,6 +133,11 @@ export default class PointPresenter {
   };
 
   #handleSubmitForm = (pointUpdate) => {
+    if (!isOnline()) {
+      toast(ToastMessage.SAVE_POINT);
+      return;
+    }
+
     this.#updateData(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
@@ -138,6 +146,11 @@ export default class PointPresenter {
   }
 
   #handleDeleteClick = (point) => {
+    if (!isOnline()) {
+      toast(ToastMessage.DELETE_POINT);
+      return;
+    }
+
     this.#updateData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
