@@ -94,10 +94,7 @@ export default class Provider {
 
       }), {});
 
-  static getSyncedPoints = (items) => {
-    console.log(items);
-    return items
-      .filter(({success}) => success)
-      .map(({payload}) => payload.point);
-  };
+  static getSyncedPoints = (items) => items
+    .filter(({success}) => success)
+    .map(({payload}) => payload.point);
 }
